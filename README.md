@@ -1,4 +1,4 @@
-## Introduction
+## Introduction FMD_FRAMEWORK
 
 Fabric Metadata-Driven Framework (FMD)
 
@@ -6,10 +6,14 @@ Efficient data management is a cornerstone of modern organizations, and leveragi
 
 Key Features:
 
-**Enhanced Data Governance:** FMD ensures comprehensive data governance by maintaining detailed metadata, enabling better data quality, consistency, and compliance.
-**Scalability and Flexibility:** The framework is designed to scale seamlessly with your organization's growth, adapting to evolving data needs without compromising performance.
-**Streamlined Data Integration:** FMD simplifies the integration of diverse data sources, providing a unified view of your data landscape.
-**Cost Efficiency:** By optimizing data processes and reducing redundancy, FMD helps organizations achieve significant cost savings.
+-**Enhanced Data Governance:** FMD ensures comprehensive data governance by maintaining detailed metadata, enabling better data quality, consistency, and compliance.
+
+-**Scalability and Flexibility:** 
+The framework is designed to scale seamlessly with your organization's growth, adapting to evolving data needs without compromising performance.
+
+-**Streamlined Data Integration:** FMD simplifies the integration of diverse data sources, providing a unified view of your data landscape.
+
+-**Cost Efficiency:** By optimizing data processes and reducing redundancy, FMD helps organizations achieve significant cost savings.
 
 
 ## FMD_FRAMEWORK Deployment
