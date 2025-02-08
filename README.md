@@ -67,7 +67,8 @@ Create the following two connections and Write down the Connection ID for later 
 ### 4. Create Workspace and Config Lakehouse
 
 - Create a new workspace "FMD_FRAMEWORK_CONFIGURATION" (Name is up to you)
-- Create a new SQL database "SQL_FMD_FRAMEWORK" in this workspace. (Note: Currently there is no API available to create this automatically)
+- Create a new SQL database "SQL_FMD_FRAMEWORK" in this workspace. (Note: Currently there is no API available to create this automatically) ![create_sql_database](/Images/FMD_create_sql_database.png)
+  
 - Create a new Lakehouse called "LH_CONFIGURATION"
     - Do not enable schema
     - Within the files section, create a subfolder named "deployment"
