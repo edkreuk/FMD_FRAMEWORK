@@ -4,6 +4,9 @@ Fabric Metadata-Driven Framework (FMD)
 
 Efficient data management is a cornerstone of modern organizations, and leveraging the right tools can make all the difference. The Fabric Metadata-Driven Framework (FMD) is a cutting-edge solution designed to optimize data handling and utilization. This innovative framework harnesses the powerful capabilities of the Fabric SQL Database to build a robust, scalable, and flexible metadata-driven architecture.
 
+![deployment_file](/Images/FMD_FRAMEWORK.jpeg)
+
+
 Key Features:
 
 -**Enhanced Data Governance:** FMD ensures comprehensive data governance by maintaining detailed metadata, enabling better data quality, consistency, and compliance.
