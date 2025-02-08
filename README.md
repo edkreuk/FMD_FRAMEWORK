@@ -73,13 +73,13 @@ Create the following two connections and Write down the Connection ID for later 
     - Within the files section, create a subfolder named "deployment"
     - Upload the file "FMD_deployment.json" to the new folder
 
-![deployment_file](/images/FMD_add_deployment_file.png)
+![deployment_file](/Images/FMD_add_deployment_file.png)
 
 - Import Notebooks (NB: Make sure your are in the Fabric Experience)
     - Import the notebook "NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb" into the workspace
     - Import the notebook "NB_FMD_DEPLOYMENT_UTILS.ipynb" into the workspace
 
-![Fabric Experience](/images/FMD_Fabric_Experience.png)
+![Fabric Experience](/Images/FMD_Fabric_Experience.png)
 
 ### 6. Notebook Configuration
 
