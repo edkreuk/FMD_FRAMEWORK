@@ -52,12 +52,7 @@ Create the following two connections and Write down the Connection ID for later 
 
 | | |
 | -------------| ------------- |
-|Connection Name | CON_FMD_FABRIC_API  |
-|Connection Type|  Web v2  |
-|Base Url  | https://api.fabric.microsoft.com/v1/  |
-|Token Audience Url|https://api.fabric.microsoft.com|
-|Authentification|OAuth2|
-|-|-|
+|
 |Connection Name| CON_FMD_FABRICPIPELINES  |
 |Connection Type|  Fabric Data Pipelines|
 |Authentification|OAuth2|
@@ -70,17 +65,10 @@ Create the following two connections and Write down the Connection ID for later 
 ### 4. Create Workspace and Config Lakehouse
 
 - Create a new workspace "FMD_FRAMEWORK_CONFIGURATION" (Name is up to you)
-- Create a new SQL database "SQL_FMD_FRAMEWORK" in this workspace. (Note: Currently there is no API available to create this automatically)
+
   
 ![create_sql_database](/Images/FMD_create_sql_database.png)
   
-- Create a new Lakehouse called "LH_CONFIGURATION"
-    - Do not enable schema
-    - Within the files section, create a subfolder named "deployment"
-    - Upload the file "FMD_deployment.json" to the new folder
-
-![deployment_file](/Images/FMD_add_deployment_file.png)
-
 - Import Notebooks (NB: Make sure your are in the Fabric Experience)
     - Import the notebook "NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb" into the workspace
     - Import the notebook "NB_FMD_DEPLOYMENT_UTILS.ipynb" into the workspace
@@ -92,7 +80,7 @@ Create the following two connections and Write down the Connection ID for later 
 Deployment Configuration Script
 This script is used to configure deployment settings for different environments (development and production) in a Fabric SQL Framework. Below is a detailed explanation of each section of the script.
 
-Open the notebook NB_FMD_DEPLOYMENT_MULTI_ENV and scroll to the second cell. This is the deployment configuration.
+Open the notebook NB_FMD_DEPLOYMENT_MULTI_ENV and scroll to the third cell. This is the deployment configuration.
 
 1. Capacity ID
 capacity_id = '075e5656-1234-5678-a36c8c0e8bca'
@@ -148,7 +136,6 @@ Purpose: Defines configurations for different environments (development and prod
 		- capacity_id: Capacity ID to be used.
 connections: Various connection identifiers for the environment.
     - CON_FMD_FSQL (is created in a earlier stage): fill in the guid
-    - CON_FMD_API_FABRIC (is created in a earlier stage): fill in the guid
     - CON_FMD_FABRICPIPELINES (is created in a earlier stage): fill in the guid
     - CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: None)
     - CON_FMD_ASQL_02: optional connection. Used if you want to connect to an second Azure SQL database (default: None)
@@ -173,7 +160,6 @@ connections: Various connection identifiers for the environment.
 				},
 				'connections' : {
 					'CON_FMD_FSQL' : '372237f9-709a-48f8-8fb2-ce06940c990e',
-					'CON_FMD_API_FABRIC' : '644f217a-8761-4f19-b1b7-a40bfe0ec2af',
 					'CON_FMD_ASQL_01' : 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
 					'CON_FMD_ASQL_02' : '11a8e5fe-fbca-4822-9ba4-9162cf56e6dd',
 					'CON_FMD_ADLS_01' : 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
@@ -197,7 +183,6 @@ connections: Various connection identifiers for the environment.
 				},
 				'connections' : {
 					'CON_FMD_FSQL' : '372237f9-709a-48f8-8fb2-ce06940c990e',
-					'CON_FMD_API_FABRIC' : '644f217a-8761-4f19-b1b7-a40bfe0ec2af',
 					'CON_FMD_ASQL_01' : 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
 					'CON_FMD_ASQL_02' : '11a8e5fe-fbca-4822-9ba4-9162cf56e6dd',
 					'CON_FMD_ADLS_01' : 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
@@ -211,6 +196,10 @@ connections: Various connection identifiers for the environment.
 1. Deployment File
 deployment_file = 'deployment/FMD_deployment.json'
 Purpose: Specifies the source file to read the deployment manifest from.
+
+**Remarks:**
+
+- Fabric SQL Database can fail. Mostly this will be caused of to many Fabric Databases in your tenant. Try to create the Fabric Database manually, you will directly see if this is the case. If not you can add the manual added database setting to the Deployment Notebook in cell 3.
 
 
 ## Contributing
