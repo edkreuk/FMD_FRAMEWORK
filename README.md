@@ -200,6 +200,7 @@ Purpose: Specifies the source file to read the deployment manifest from.
 **Remarks:**
 
 - Fabric SQL Database can fail. Mostly this will be caused of to many Fabric Databases in your tenant. Try to create the Fabric Database manually, you will directly see if this is the case. If not you can add the manual added database setting to the Deployment Notebook in cell 3.
+- In a trial capacity you can't create more than 3 databases.
 
 
 ## Contributing
