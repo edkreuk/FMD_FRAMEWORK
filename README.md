@@ -52,7 +52,6 @@ Create the following two connections and Write down the Connection ID for later 
 
 | | |
 | -------------| ------------- |
-|
 |Connection Name| CON_FMD_FABRICPIPELINES  |
 |Connection Type|  Fabric Data Pipelines|
 |Authentification|OAuth2|
