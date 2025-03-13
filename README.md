@@ -20,6 +20,7 @@ The framework is designed to scale seamlessly with your organization's growth, a
 
 
 ## FMD_FRAMEWORK Deployment
+![FMD_Overviewe](/Images/FMD_Overview.png)
 
 ### Requirements
 
@@ -65,8 +66,7 @@ Create the following two connections and Write down the Connection ID for later 
 
 - Create a new workspace "FMD_FRAMEWORK_CONFIGURATION" (Name is up to you)
 
-  
-![create_sql_database](/Images/FMD_create_sql_database.png)
+
   
 - Import Notebooks (NB: Make sure your are in the Fabric Experience)
     - Import the notebook "NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb" into the workspace
@@ -120,11 +120,11 @@ role: The role assigned to the principal (e.g., Member, Admin
 
 1. Logging settings. 
 Purpose: Defines the configuration for the logging items. This can be a different workspace or the same workspace as of the following items. 
-If you wan't you can change the default workspace name and warehousename
+
 
 1. Configuration settings. 
 Purpose: Defines the configuration for the Configuration items. This can be a different workspace or the same workspace for the other items. 
-If you wan't you can change the default workspace name and databasename (database is already created in a previous step)
+
 	
 1. Environments. 
 Purpose: Defines configurations for different environments (development and production). Each environment includes:
@@ -149,12 +149,12 @@ connections: Various connection identifiers for the environment.
 					'data' : {
 						'name' : 'FMD_FRAMEWORK_DATA (D)',
 						'roles' : workspace_roles,
-						'capacity_id' : capacity_id
+						'capacity_id' : capacity_id_dvlm
 					},
 					'code' : {
-						'name' : 'FMD_FRAMEWORK_CODE_MH2 (D)',
+						'name' : 'FMD_FRAMEWORK_CODE (D)',
 						'roles' : workspace_roles,
-						'capacity_id' : capacity_id
+						'capacity_id' : capacity_id_dvlm
 					}
 				},
 				'connections' : {
@@ -172,12 +172,12 @@ connections: Various connection identifiers for the environment.
 					'data' : {
 						'name' : 'FMD_FRAMEWORK_DATA',
 						'roles' : workspace_roles,
-						'capacity_id' : capacity_id
+						'capacity_id' : capacity_id_prod
 					},
 					'code' : {
-						'name' : 'FMD_FRAMEWORK_CODE_MH (prod)',
+						'name' : 'FMD_FRAMEWORK_CODE (prod)',
 						'roles' : workspace_roles,
-						'capacity_id' : capacity_id
+						'capacity_id' : capacity_id_prod
 					}
 				},
 				'connections' : {
@@ -200,7 +200,11 @@ Purpose: Specifies the source file to read the deployment manifest from.
 
 - Fabric SQL Database can fail. Mostly this will be caused of to many Fabric Databases in your tenant. Try to create the Fabric Database manually, you will directly see if this is the case. If not you can add the manual added database setting to the Deployment Notebook in cell 3.
 - In a trial capacity you can't create more than 3 databases.
+- In the deployment notebook you can receicve the following error
+![Fabric Experience](/Images/FMD_DATABASE_ERROR_NOTEBOOK.png)
 
+  You check this by creating the database manually
+![Fabric Database Error](/Images/FMD_DATABASE_ERROR.png)
 
 ## Contributing
 
