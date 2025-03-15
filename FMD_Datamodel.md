@@ -12,7 +12,7 @@ Table to store all the connections
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
 | ConnectionId        | int                | PRIMARY KEY, IDENTITY(1,1)         |             |
-| ConnectionGuid      | uniqueidentifier   | UNIQUE                             |      Guid of the connection which you find in Fabroc       |
+| ConnectionGuid      | uniqueidentifier   | UNIQUE                             | GUID of the connection in Fabric |
 | Name                | varchar(200)       | NOT NULL                           |       Name of the connection      |
 | Type                | varchar(50)        | NOT NULL                           |             |
 | GatewayType         | varchar(50)        | NULL                               |             |
@@ -20,14 +20,14 @@ Table to store all the connections
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
 #### DataSource
-Table to store all the datasources every Datasource has a connection to 1 Connection
+Table to store all datasources, each datasource has a connection to one connection
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
 | DataSourceId        | int                | PRIMARY KEY, IDENTITY(1,1)         |             |
 | ConnectionId        | int                | NOT NULL                           |             |
 | Name                | varchar(100)       | NOT NULL                           |    Name of the Datasource in case of SQL server, this is the field for the databasename         |
 | Namespace           | varchar(100)       | NOT NULL                           |      Prefix for the table in the lakehouse       |
-| Type                | varchar(30)        | NULL                               |   Check below which type's are supported, Type are used to define the correct pipeline execution        |
+| Type                | varchar(30)        | NULL                               | Defines the type of datasource, used to determine the correct pipeline execution |
 | Description         | nvarchar(200)      | NULL                               |             |
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
@@ -39,7 +39,7 @@ Table to store all the datasources every Datasource has a connection to 1 Connec
 |OneLake              |ONELAKE_TABLES_01   |         
 
 #### Workspace
-Table to store the workspaces, during the initial setup all workspaces are added by default
+Table to store workspaces. All workspaces are added by default during the initial setup.
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
 | WorkspaceId         | int                | PRIMARY KEY, IDENTITY(1,1)         |             |
@@ -47,7 +47,7 @@ Table to store the workspaces, during the initial setup all workspaces are added
 | Name                | varchar(100)       | NOT NULL                           |             |
 
 #### Pipeline
-Table to store the Pipelines per workspace, during the initial setup all pipelines are added by default. Currently  the table is not used in any of the processes in the FMD_Framework
+Table to store the Pipelines per workspace, during the initial setup all pipelines are added by default. Currently, this table is not used in any processes within the FMD Framework.
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
 | PipelineId          | int                | PRIMARY KEY, IDENTITY(1,1)         |             |
@@ -57,7 +57,7 @@ Table to store the Pipelines per workspace, during the initial setup all pipelin
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
 #### Lakehouse
-Table to store the workspaces, during the initial setup all Lakehouse are added by default
+Table to store lakehouses. All lakehouses are added by default during the initial setup.
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
 | LakehouseId         | int                | PRIMARY KEY, IDENTITY(1,1)         |             |
@@ -67,7 +67,7 @@ Table to store the workspaces, during the initial setup all Lakehouse are added 
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
 #### LandingzoneEntity
-Table to store the Landingzoen entitie
+Table to store the Landingzone entity
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
 | LandingzoneEntityId | bigint             | PRIMARY KEY, IDENTITY(1,1)         |             |
@@ -89,7 +89,7 @@ LH_DATA_LANDINGZONE            |
 | BronzeLayerEntityId | bigint             | PRIMARY KEY, IDENTITY(1,1)         |             |
 | LandingzoneEntityId | bigint             | NOT NULL                           |   Reference to the Landingzone Entity          |
 | LakehouseId         | int                | NOT NULL                           |    Connection to the Lakehouse  LH_BRONZE_LAYER         |
-| Schema              | nvarchar(100)      | NOT NULL                           |   Schema in the Bronze Layer, advise use the same as the Landingzone for transparancy          |Name in the Bronze Layer, advise use the same as the Landingzone for transparancy
+| Schema              | nvarchar(100)      | NOT NULL                           |   Schema in the Bronze Layer, recommended to use the same as the Landingzone for transparency  |
 | Name                | nvarchar(200)      | NOT NULL                           |             |
 | PrimaryKeys         | nvarchar(200)      | NOT NULL                           |   What are/is the Primarykey of this table, this is needed to check if the records already exist or not          |
 | FileType            | nvarchar(20)       | NOT NULL, DEFAULT ('Delta')        |   Delta          |
@@ -102,10 +102,10 @@ LH_DATA_LANDINGZONE            |
 | SilverLayerEntityId | bigint             | PRIMARY KEY, IDENTITY(1,1)         |             |
 | BronzeLayerEntityId | bigint             | NOT NULL                           | Reference to the BronzeLayer Entity             |
 | LakehouseId         | int                | NOT NULL                           | Connection to the Lakehouse  LH_SILVER_LAYER         |
-| Schema              | nvarchar(100)      | NULL                               | Schema in the Bronze Layer, advise use the same as the Landingzone for transparancy            |
+| Schema              | nvarchar(100)      | NULL                               | Schema in the Silver Layer, recommended to use the same as the Landingzone for transparency    |
 | Name                | nvarchar(200)      | NULL                               |   Table in the Bronze Layer, advise use the same as the Landingzone for transparancy          |
 | FileType            | nvarchar(20)       | NOT NULL, DEFAULT ('Delta')        |    Delta         |
-| CleansingRules      | nvarchar(max)      | NULL                               |  hich cleansing rules should be applied. Check in documentation how this works              |
+| CleansingRules      | nvarchar(max)      | NULL                               | Cleansing rules to be applied. Refer to documentation for details.                           |
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
 ### Execution Schema
