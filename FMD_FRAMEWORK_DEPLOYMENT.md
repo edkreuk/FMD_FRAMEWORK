@@ -1,30 +1,10 @@
-## Introduction FMD_FRAMEWORK
-
-Fabric Metadata-Driven Framework (FMD)
-
-Efficient data management is a cornerstone of modern organizations, and leveraging the right tools can make all the difference. The Fabric Metadata-Driven Framework (FMD) is a cutting-edge solution designed to optimize data handling and utilization. This innovative framework harnesses the powerful capabilities of the Fabric SQL Database to build a robust, scalable, and flexible metadata-driven architecture.
-
-![deployment_file](/Images/FMD_FRAMEWORK.jpeg)
-
-
-Key Features:
-
--**Enhanced Data Governance:** FMD ensures comprehensive data governance by maintaining detailed metadata, enabling better data quality, consistency, and compliance.
-
--**Scalability and Flexibility:** 
-The framework is designed to scale seamlessly with your organization's growth, adapting to evolving data needs without compromising performance.
-
--**Streamlined Data Integration:** FMD simplifies the integration of diverse data sources, providing a unified view of your data landscape.
-
--**Cost Efficiency:** By optimizing data processes and reducing redundancy, FMD helps organizations achieve significant cost savings.
-
 
 ## FMD_FRAMEWORK Deployment
-![FMD_Overviewe](/Images/FMD_Overview.png)
+![FMD Overview](/Images/FMD_Overview.png)
 
 ### Requirements
 
-The admin settings below needs to be enabled:
+The admin settings below need to be enabled:
 - Users can create Fabric items
 - SQL database (preview)​
 
@@ -35,8 +15,8 @@ The following steps need to be done:
 
 Download the three files 
 - FMD_deployment.json : Contains all definitions to create all artifacts for the FMD_FRAMEWORK (Input for the notebook below)
-- NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb : Creates all artifacts for the FMD_FRAMEWORK within Fabric Data Platform(baed on your configuration)
-- NB_FMD_DEPLOYMENT_UTILS.ipynb: Contains all definition to Creates all artifacts
+- NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb : Creates all artifacts for the FMD_FRAMEWORK within Fabric Data Platform (based on your configuration)
+- NB_FMD_DEPLOYMENT_UTILS.ipynb: Contains all definitions to create all artifacts
 to your local machine.
 
 or 
@@ -48,7 +28,7 @@ or
 
 ### 3. Create Connection
 
-Create the following two connections and Write down the Connection ID for later usage.:
+Create the following two connections and write down the Connection ID for later usage.:
 
 
 | | |
@@ -85,10 +65,15 @@ Open the notebook NB_FMD_DEPLOYMENT_MULTI_ENV and scroll to the third cell. This
 capacity_id = '075e5656-1234-5678-a36c8c0e8bca'
 Purpose: Unique identifier for the capacity to be used.
 
-1. Workspace Roles
+Make sure you have at least Contributor access to the capacity to add new workspace
+
+![Capacity access](/Images/FMD_Fabric_Experience.png)
+
+2. Workspace Roles
 Purpose: Defines roles (or keep empty []) to be added to the workspace. Each role includes:
 principal: The group or user to which the role is assigned.
-role: The role assigned to the principal (e.g., Member, Admin
+role: The role assigned to the principal (e.g., Member, Admin, Contributor or viewer)
+id = id of the group in Entra
 
 	Example with roles:
 
@@ -118,28 +103,28 @@ role: The role assigned to the principal (e.g., Member, Admin
 		workspace_roles = []
 		```
 
-1. Logging settings. 
+3. Logging settings. 
 Purpose: Defines the configuration for the logging items. This can be a different workspace or the same workspace as of the following items. 
 
 
-1. Configuration settings. 
+4. Configuration settings. 
 Purpose: Defines the configuration for the Configuration items. This can be a different workspace or the same workspace for the other items. 
 
 	
-1. Environments. 
+5. Environments. 
 Purpose: Defines configurations for different environments (development and production). Each environment includes:
-    - environment_name: Name of the environment.
-    - workspaces: Workspaces for data and code, each with:
+	- environment_name: Name of the environment.
+	- workspaces: Workspaces for data and code, each with:
 		- name: Name of the workspace.
 		- roles: Roles to be assigned.
 		- capacity_id: Capacity ID to be used.
 connections: Various connection identifiers for the environment.
-    - CON_FMD_FSQL (is created in a earlier stage): fill in the guid
-    - CON_FMD_FABRICPIPELINES (is created in a earlier stage): fill in the guid
-    - CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: None)
-    - CON_FMD_ASQL_02: optional connection. Used if you want to connect to an second Azure SQL database (default: None)
-    - CON_FMD_ADLS_02: optional connection. Used if you want to connect to an Azure Datalake storage (default: None)
-    - CON_FMD_ADF_PIPELINES: optional connection. Used if you want to run an Azure Datafactory Pipeline (default: None)
+	- CON_FMD_FSQL (is created in a earlier stage): fill in the guid
+	- CON_FMD_FABRICPIPELINES (is created in a earlier stage): fill in the guid
+	- CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: None)
+	- CON_FMD_ASQL_02: optional connection. Used if you want to connect to an second Azure SQL database (default: None)
+	- CON_FMD_ADLS_02: optional connection. Used if you want to connect to an Azure Datalake storage (default: None)
+	- CON_FMD_ADF_PIPELINES: optional connection. Used if you want to run an Azure Datafactory Pipeline (default: None)
 
 		```
 		environments = [
@@ -192,24 +177,6 @@ connections: Various connection identifiers for the environment.
 		]
 		```
 
-1. Deployment File
+6. Deployment File
 deployment_file = 'deployment/FMD_deployment.json'
 Purpose: Specifies the source file to read the deployment manifest from.
-
-**Remarks:**
-
-- Fabric SQL Database can fail. Mostly this will be caused of to many Fabric Databases in your tenant. Try to create the Fabric Database manually, you will directly see if this is the case. If not you can add the manual added database setting to the Deployment Notebook in cell 3.
-- In a trial capacity you can't create more than 3 databases.
-- In the deployment notebook you can receicve the following error
-![Fabric Experience](/Images/FMD_DATABASE_ERROR_NOTEBOOK.png)
-
-  You check this by creating the database manually
-![Fabric Database Error](/Images/FMD_DATABASE_ERROR.png)
-
-## Contributing
-
-Contributions are welcome! If you have suggestions or improvements, feel free to open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License.
