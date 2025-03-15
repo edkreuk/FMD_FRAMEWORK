@@ -85,10 +85,15 @@ Open the notebook NB_FMD_DEPLOYMENT_MULTI_ENV and scroll to the third cell. This
 capacity_id = '075e5656-1234-5678-a36c8c0e8bca'
 Purpose: Unique identifier for the capacity to be used.
 
+Make sure you have at least Contributor access to the capacity to add new workspace
+
+![Capacity access](/Images/!(/Images/FMD_Fabric_Experience.png).png) 
+
 1. Workspace Roles
 Purpose: Defines roles (or keep empty []) to be added to the workspace. Each role includes:
 principal: The group or user to which the role is assigned.
-role: The role assigned to the principal (e.g., Member, Admin
+role: The role assigned to the principal (e.g., Member, Admin, Contributor or viewwer)
+id = id of the group in Entra
 
 	Example with roles:
 
@@ -205,6 +210,13 @@ Purpose: Specifies the source file to read the deployment manifest from.
 
   You check this by creating the database manually
 ![Fabric Database Error](/Images/FMD_DATABASE_ERROR.png)
+
+**TEST PROCESS**
+
+Upload the file customer.csv to the file section of LH_DATA_LANDINGZONE in Development
+Create a table of the file called in_customer
+
+Once the table is created you can run the complete process to check if everything was deployed and configured correctly![Load FIle to table](/Images/FMD_load_file_to_table.png)
 
 ## Contributing
 
