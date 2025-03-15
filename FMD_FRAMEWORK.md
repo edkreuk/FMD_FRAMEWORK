@@ -23,7 +23,7 @@ By optimizing data processes and reducing redundancy, FMD helps organizations ac
 
 Click on the link below to get started
 
-![FMD Framework Deployment](/FMD_FRAMEWORK_DEPLOYMENT.md)
+![FMD Framework Deployment][fmdFrameworkDeployment]
 
 
 
@@ -54,3 +54,6 @@ Contributions are welcome! If you have suggestions or improvements, feel free to
 ## License
 
 This project is licensed under the MIT License.
+
+
+[fmdFrameworkDeployment]: /FMD_FRAMEWORK_DEPLOYMENT.md
