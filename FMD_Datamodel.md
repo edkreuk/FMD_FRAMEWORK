@@ -1,6 +1,6 @@
 # FMD Datamodel Documentation
 
-![FMD Metadata Overview](images/FMD_METADATA_OVERVIEW.png)
+![FMD Metadata Overview](/Images/FMD_METADATA_OVERVIEW.png)
 
 ## Tables
 
