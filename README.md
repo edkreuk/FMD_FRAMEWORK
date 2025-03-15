@@ -87,7 +87,7 @@ Purpose: Unique identifier for the capacity to be used.
 
 Make sure you have at least Contributor access to the capacity to add new workspace
 
-![Capacity access](/Images/!(/Images/FMD_Fabric_Experience.png).png) 
+![Capacity access](/Images/FMD_Fabric_Experience.png)
 
 1. Workspace Roles
 Purpose: Defines roles (or keep empty []) to be added to the workspace. Each role includes:
