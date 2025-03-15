@@ -4,6 +4,7 @@
 
 ## Tables
 
+
 ### Integration Schema
 
 #### Connection
@@ -83,6 +84,9 @@ LH_DATA_LANDINGZONE            |
 | IsIncrementalColumn | nvarchar(50)       | NULL                               |      In Incremental Loading enabled which column       |
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
+
+![LandingzoneEntity](/Images/FMD_LandingzoneEntity.png)
+
 #### BronzeLayerEntity
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
@@ -96,6 +100,10 @@ LH_DATA_LANDINGZONE            |
 | CleansingRules      | nvarchar(max)      | NULL                               |    Which cleansing rules should be applied. Check in documentation how this works         |
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
+
+![BronzeLayerEntity](/Images/FMD_BronzeLayerEntity.png)
+
+
 #### SilverLayerEntity
 | Column Name         | Data Type          | Constraints                        | Description |
 |---------------------|--------------------|------------------------------------|-------------|
@@ -108,6 +116,7 @@ LH_DATA_LANDINGZONE            |
 | CleansingRules      | nvarchar(max)      | NULL                               | Cleansing rules to be applied. Refer to documentation for details.                           |
 | IsActive            | bit                | NOT NULL, DEFAULT ((1))            |             |
 
+![SilverLayerEntity](/Images/FMD_SilverLayerEntity.png)
 ### Execution Schema
 
 #### LandingzoneEntityLastLoadValue
@@ -131,7 +140,7 @@ Table to store the processed LandingzoneEntities, so that we know which files we
 | IsProcessed             | bit                | NOT NULL                           |             |
 | LoadEndDateTime         | datetime           | NULL                               |             |
 
-## Stored Procedures
+## Stored Procedures for data integration
 
 ### [execution].[sp_UpsertLandingZoneEntityLastLoadValue]
 
@@ -140,26 +149,6 @@ This stored procedure inserts or updates the last load value for a given Landing
 ### [execution].[sp_UpsertPipelineLandingzoneEntity]
 
 This stored procedure inserts or updates the processed status of a LandingzoneEntity in the `PipelineLandingzoneEntity` table.
-
-### [integration].[sp_GetBronzeLayerEntity]
-
-This stored procedure retrieves the BronzeLayerEntityId for a given LandingzoneEntityId from the `BronzeLayerEntity` table.
-
-### [integration].[sp_GetDataSource]
-
-This stored procedure retrieves the DataSourceId for a given Name from the `DataSource` table.
-
-### [integration].[sp_GetLakehouse]
-
-This stored procedure retrieves the LakehouseId for a given WorkspaceGuid and Name from the `Lakehouse` table.
-
-### [integration].[sp_GetLandingzoneEntity]
-
-This stored procedure retrieves the LandingzoneEntityId for a given LakehouseId, SourceSchema, and SourceName from the `LandingzoneEntity` table.
-
-### [integration].[sp_GetSilverLayerEntity]
-
-This stored procedure retrieves the SilverLayerEntityId for a given BronzeLayerEntityId from the `SilverLayerEntity` table.
 
 ### [integration].[sp_UpsertBronzeLayerEntity]
 
@@ -193,7 +182,28 @@ This stored procedure inserts or updates a SilverLayerEntity in the `SilverLayer
 
 This stored procedure inserts or updates a Workspace in the `Workspace` table.
 
+## Stored Procedures for lookup data(Only used in Pipeline PL_TOOLING_POST_ASQL_TO_FMD )
+
 ### [integration].[sp_GetConnection]
 
 This stored procedure retrieves the ConnectionId for a given ConnectionGuid from the `Connection` table.
+### [integration].[sp_GetBronzeLayerEntity]
+
+This stored procedure retrieves the BronzeLayerEntityId for a given LandingzoneEntityId from the `BronzeLayerEntity` table.
+
+### [integration].[sp_GetDataSource]
+
+This stored procedure retrieves the DataSourceId for a given Name from the `DataSource` table.
+
+### [integration].[sp_GetLakehouse]
+
+This stored procedure retrieves the LakehouseId for a given WorkspaceGuid and Name from the `Lakehouse` table.
+
+### [integration].[sp_GetLandingzoneEntity]
+
+This stored procedure retrieves the LandingzoneEntityId for a given LakehouseId, SourceSchema, and SourceName from the `LandingzoneEntity` table.
+
+### [integration].[sp_GetSilverLayerEntity]
+
+This stored procedure retrieves the SilverLayerEntityId for a given BronzeLayerEntityId from the `SilverLayerEntity` table.
 
