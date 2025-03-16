@@ -119,6 +119,7 @@ Purpose: Defines configurations for different environments (development and prod
 		- roles: Roles to be assigned.
 		- capacity_id: Capacity ID to be used.
 connections: Various connection identifiers for the environment.
+If you create a connection afterwards, you can update the deployment notebook and execute it again.
 	- CON_FMD_FSQL (is created in a earlier stage): fill in the guid
 	- CON_FMD_FABRICPIPELINES (is created in a earlier stage): fill in the guid
 	- CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: None)
