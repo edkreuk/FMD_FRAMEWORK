@@ -26,14 +26,19 @@ Click on the link below to get started
 [FMD Framework Deployment][fmdFrameworkDeployment]
 
 
+**More detailed information**
 
 [FMD Framework DataModel][fmdDataModelLink]
+
+
+[FMD Framework Data Pipelines](/FMD_DATA_PIPELINES.md)
 
 **Remarks:**
 
 - Fabric SQL Database can fail. Mostly this will be caused by too many Fabric Databases in your tenant. Try to create the Fabric Database manually, you will directly see if this is the case. If not you can add the manual added database setting to the Deployment Notebook in cell 3.
 - In a trial capacity you can't create more than 3 databases.
 - In the deployment notebook you can receive the following error
+  
 ![Fabric Experience](/Images/FMD_DATABASE_ERROR_NOTEBOOK.png)
 
   You can check this by creating the database manually
@@ -46,6 +51,7 @@ Upload the file customer.csv to the file section of LH_DATA_LANDINGZONE in the D
 Create a table of the file called in_customer
 
 Once the table is created you can run the complete process to check if everything was deployed and configured correctly
+
 ![Load File to table](/Images/FMD_load_file_to_table.png)
 
 ## Contributing
