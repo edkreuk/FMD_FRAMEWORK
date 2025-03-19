@@ -182,7 +182,7 @@ If you create a connection afterwards, you can update the deployment notebook an
 deployment_file = 'deployment/FMD_deployment.json'
 Purpose: Specifies the source file to read the deployment manifest from.
 
-7. Data Cleansing  (Currently not supported yet)
+7. Data Cleansing  
 
 You can add data cleansing rules for the Bronze and Silver Layer
 
