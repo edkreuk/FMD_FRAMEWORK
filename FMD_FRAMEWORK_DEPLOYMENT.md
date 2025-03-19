@@ -181,3 +181,42 @@ If you create a connection afterwards, you can update the deployment notebook an
 6. Deployment File
 deployment_file = 'deployment/FMD_deployment.json'
 Purpose: Specifies the source file to read the deployment manifest from.
+
+7. Data Cleansing  
+
+You can add data cleansing rules for the Bronze and Silver Layer
+
+It is possible to perform cleansing functions on incoming data. For example, converting all text in a column to uppercase. This can be achieved by defining cleansing rules for a table. The cleansing_rules contains a piece of JSON as shown below. This is an array of one or more functions that need to be called.
+
+function: name of the function
+columns: semi-colon separated list of columns to which the function should be applied
+parameters: JSON string with the different parameters and their values
+
+Example:
+```json
+[
+	{"function": "to_upper",
+	 "columns": "TransactionTypeName"}, 
+	{"function": "custom_function_with_params",
+	 "columns": "TransactionTypeName;LastEditedBy",
+	 "parameters": {"param1" : "abc", "param2" : "123"}}
+]
+```
+
+## Custom functions
+
+Custom functions can be added in NB_FMD_DQ_CLEANSING . The function has the following structure.
+
+
+```python
+def <functioname> (df, columns, args):
+
+	print(args['<custom parameter name>']) # use of custom parameters
+
+	for column in columns: # apply function foreach column
+		df = df.<custom logic>
+
+	return df #always return dataframe.
+```
+
+
