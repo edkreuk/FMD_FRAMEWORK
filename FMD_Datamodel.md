@@ -37,7 +37,7 @@ Table to store all datasources, each datasource has a connection to one connecti
 |SQL Connection       |ASQL_01 ASQL_02     |
 |Datalake             |ADLS_01             |
 |Azure Data Factory   |ADF             |
-|OneLake              |ONELAKE_TABLES_01   |         
+|OneLake              |ONELAKE_TABLES_01  ONELAKE_FILES_01   |         
 
 #### Workspace
 Table to store workspaces. All workspaces are added by default during the initial setup.
@@ -77,6 +77,7 @@ Table to store the Landingzone entity
 LH_DATA_LANDINGZONE            |
 | SourceSchema        | nvarchar(100)      | NULL                               |   Schema of the Source table. Folder of theFile          |
 | SourceName          | nvarchar(200)      | NOT NULL                           |   Name of the table or File          |
+| SourceCustomSelect        | nvarchar(4000)      | NULL                               |   Optional value to add a custom select.         |
 | FileName            | nvarchar(200)      | NOT NULL                           |   How should the File be stored in the Landingzone advise SourceSchema_SourceTable         |
 | FileType            | nvarchar(20)       | NOT NULL                           |   csv/parquet          |
 | FilePath            | nvarchar(500)      | NOT NULL                           |   folder in the Lakehouse          |
