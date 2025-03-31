@@ -103,16 +103,14 @@ id = id of the group in Entra
 		workspace_roles = []
 		```
 
-3. Logging settings. 
-Purpose: Defines the configuration for the logging items. This can be a different workspace or the same workspace as of the following items. 
 
 
-4. Configuration settings. 
-Purpose: Defines the configuration for the Configuration items. This can be a different workspace or the same workspace for the other items. 
+3. Configuration settings. 
+Purpose: Defines the configuration for the Configuration and logging items. This can be a different workspace or the same workspace for the other items. 
 
 	
-5. Environments. 
-Purpose: Defines configurations for different environments (development and production). Each environment includes:
+4. Environments. 
+Purpose: Defines configurations for different environments (development and production as example). Each environment includes:
 	- environment_name: Name of the environment.
 	- workspaces: Workspaces for data and code, each with:
 		- name: Name of the workspace.
