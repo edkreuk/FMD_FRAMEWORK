@@ -123,11 +123,6 @@
     ],
     "items": [
         {
-            "displayName": "ENV_FMD",
-            "type": "Environment",
-            "org_id": "4c613d65-f566-4bf3-83be-7d8c773793cd"
-        },
-        {
             "definition": {
                 "parts": [
                     {
