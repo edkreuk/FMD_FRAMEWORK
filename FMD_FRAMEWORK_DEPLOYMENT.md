@@ -120,10 +120,11 @@ connections: Various connection identifiers for the environment.
 If you create a connection afterwards, you can update the deployment notebook and execute it again.
 	- CON_FMD_FSQL (is created in a earlier stage): fill in the guid
 	- CON_FMD_FABRICPIPELINES (is created in a earlier stage): fill in the guid
-	- CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: None)
-	- CON_FMD_ASQL_02: optional connection. Used if you want to connect to an second Azure SQL database (default: None)
-	- CON_FMD_ADLS_02: optional connection. Used if you want to connect to an Azure Datalake storage (default: None)
-	- CON_FMD_ADF_PIPELINES: optional connection. Used if you want to run an Azure Datafactory Pipeline (default: None)
+	- CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: '')
+	- CON_FMD_ADLS_01: optional connection. Used if you want to connect to an Azure Datalake storage (default: '')
+	- CON_FMD_ADF_PIPELINES: optional connection. Used if you want to run an Azure Datafactory Pipeline  (default: '')
+	- CON_FMD_FTP_01 : optional connection. Used if you want to connect to an FTP Server (default: '')
+    - CON_FMD_SFTP_01 : optional connection. Used if you want to connect to an SFTP Server (default: '')
 
 		```
 		environments = [
