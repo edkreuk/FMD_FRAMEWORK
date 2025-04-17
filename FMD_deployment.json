@@ -123,11 +123,6 @@
     ],
     "items": [
         {
-            "displayName": "ENV_FMD",
-            "type": "Environment",
-            "org_id": "4c613d65-f566-4bf3-83be-7d8c773793cd"
-        },
-        {
             "definition": {
                 "parts": [
                     {
@@ -566,6 +561,53 @@
             "type": "DataPipeline",
             "org_id": "c2abc979-06fa-483a-b117-db6cbdb7c7d1",
             "description": ""
+        },
+        {
+            "id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
+            "type": "Environment",
+            "displayName": "ENV_FMD",
+            "description": "Environment",
+            "workspaceId": "2bdaef03-9e79-46da-9b07-391e87b56416",
+            "properties": {
+                "$type": "EnvironmentArtifactPublicContent",
+                "publishDetails": {
+                    "state": "Success",
+                    "targetVersion": "356a7f45-bb22-42df-a370-9b5c59f952fb",
+                    "startTime": "2025-04-17T17:27:43.6960968Z",
+                    "endTime": "2025-04-17T17:27:44.1179718Z",
+                    "componentPublishInfo": {
+                        "sparkLibraries": {
+                            "state": "Success"
+                        },
+                        "sparkSettings": {
+                            "state": "Success"
+                        }
+                    }
+                }
+            },
+            "org_id": "4c613d65-f566-4bf3-83be-7d8c773793cd"
+        },
+        {
+            "instancePool": {
+                "name": "Starter Pool",
+                "type": "Workspace",
+                "id": "00000000-0000-0000-0000-000000000000"
+            },
+            "driverCores": 8,
+            "driverMemory": "56g",
+            "executorCores": 8,
+            "executorMemory": "56g",
+            "dynamicExecutorAllocation": {
+                "enabled": true,
+                "minExecutors": 1,
+                "maxExecutors": 2
+            },
+            "sparkProperties": {},
+            "runtimeVersion": "1.3",
+            "displayName": "ENV_FMD",
+            "type": "Environment",
+            "org_id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
+            "description": "Environment"
         }
     ]
 }
