@@ -2,57 +2,118 @@
 
 Fabric Metadata-Driven Framework (FMD)
 
-Efficient data management is a cornerstone of modern organizations, and leveraging the right tools can make all the difference. The Fabric Metadata-Driven Framework (FMD) is a cutting-edge solution designed to optimize data handling and utilization. This innovative framework harnesses the powerful capabilities of the Fabric SQL Database to build a robust, scalable, and flexible metadata-driven architecture.
+Efficient data management is a cornerstone of modern organizations, and leveraging the right tools can make all the difference. The Fabric Metadata-Driven Framework is a cutting-edge solution designed to optimize data handling and utilization. This innovative framework harnesses the powerful capabilities of the Fabric SQL Database to build a robust, scalable, and flexible metadata-driven architecture.
 
 ![FMD Framework Deployment](/Images/FMD_FRAMEWORK.jpeg)
 
+# Key Contributors
+- Erwin de Kreuk
+- Marco Hansma
 
 ## Key Features:
 
 -**Enhanced Data Governance:** 
-FMD ensures comprehensive data governance by maintaining detailed metadata, enabling better data quality, consistency, and compliance.
+Fabric Metadata-Driven Framework ensures comprehensive data governance by maintaining detailed metadata, enabling better data quality, consistency, and compliance.
 
 -**Scalability and Flexibility:** 
 The framework is designed to scale seamlessly with your organization's growth, adapting to evolving data needs without compromising performance.
 
 -**Streamlined Data Integration:** 
-FMD simplifies the integration of diverse data sources, providing a unified view of your data landscape.
+The framework simplifies the integration of diverse data sources, providing a unified view of your data landscape.
 
 -**Cost Efficiency:** 
-By optimizing data processes and reducing redundancy, FMD helps organizations achieve significant cost savings.
+By optimizing data processes and reducing redundancy, Fabric Metadata-Driven Framework helps organizations achieve significant cost savings.
 
-Click on the link below to get started
+## Metadata-driven Data Ingestion Framework Components
+
+![FMD Framework Deployment](/Images/FMD_TASKFLOW_OVERVIEW.png)
+
+### Getting Started
+
+To begin using the FMD Framework, refer to the deployment guide:
 
 [FMD Framework Deployment][fmdFrameworkDeployment]
 
+### Additional Resources
 
-**More detailed information**
+- **Data Model Details:** Learn more about the framework's data model and its components.  
+  [FMD Framework DataModel][fmdDataModelLink]
 
-[FMD Framework DataModel][fmdDataModelLink]
+- **Data Pipelines Overview:** Explore the data pipelines used within the framework.  
+  [FMD Framework Data Pipelines](/FMD_DATA_PIPELINES.md)
 
+## Supported Sources
 
-[FMD Framework Data Pipelines](/FMD_DATA_PIPELINES.md)
+The FMD Framework supports a wide range of data sources, enabling seamless integration and data ingestion. Below is the list of supported sources:
 
-**Remarks:**
+- **SQL Server**  
+  Connect and ingest data from on-premises or cloud-hosted SQL Server databases.
 
-- Fabric SQL Database can fail. Mostly this will be caused by too many Fabric Databases in your tenant. Try to create the Fabric Database manually, you will directly see if this is the case. If not you can add the manual added database setting to the Deployment Notebook in cell 3.
-- In a trial capacity you can't create more than 3 databases.
-- In the deployment notebook you can receive the following error
+- **Azure Data Lake Gen2**  
+  Leverage Azure Data Lake Gen2 for scalable and secure data storage and processing.
+
+- **SFTP**  
+  Securely transfer and ingest files using the SFTP protocol.
+
+- **FTP**  
+  Ingest data from legacy systems using the FTP protocol.
+
+- **Azure Data Factory**  
+  Utilize Azure Data Factory for orchestrating and automating data workflows.
+
+- **Onelake Tables**  
+  Integrate with Onelake Tables for unified data access and management.
+
+- **Onelake Files**  
+  Access and process files stored in Onelake for streamlined data operations.
+
+### Remarks
+
+- **Fabric SQL Database Limitations:**  
+  The Fabric SQL Database may encounter failures, often due to exceeding the allowed number of Fabric Databases in your tenant. To verify this, attempt to create the Fabric Database manually. This will immediately indicate if the issue is related to database limits.  
+
+- **Trial Capacity Restrictions:**  
+  Note that trial capacities are limited to a maximum of three databases. Ensure that your deployment does not exceed this limit.  
+
+- **Error Handling During Deployment:**  
+  During deployment, the notebook may display the following error. If this occurs, you can always re-run the notebook to resolve the issue.
   
 ![Fabric Experience](/Images/FMD_DATABASE_ERROR_NOTEBOOK.png)
 
   You can check this by creating the database manually
   
 ![Fabric Database Error](/Images/FMD_DATABASE_ERROR.png)
+### Test Process
 
-**TEST PROCESS**
+1. **Upload the File**  
+  Upload the `customer.csv` file to the **file section** of `LH_DATA_LANDINGZONE` in the **Development environment**.
 
-Upload the file customer.csv to the file section of LH_DATA_LANDINGZONE in the Development environment
-Create a table of the file called in_customer
+2. **Create a Table**  
+  Create a table from the uploaded file and name it `in_customer`.
 
-Once the table is created you can run the complete process to check if everything was deployed and configured correctly
+3. **Run the Process**  
+  Once the table is created, execute the complete process to verify that everything has been deployed and configured correctly.
 
 ![Load File to table](/Images/FMD_load_file_to_table.png)
+## Easily Configure and Load Data in the Framework
+
+### **PL_TOOLING_POST_ASQL_TO_FMD**
+
+The `PL_TOOLING_POST_ASQL_TO_FMD` tool assists in inserting metadata from one of your connections. Ensure that a SQL connection is created and inserted into the metadata-driven database.
+
+![PL_TOOLING_POST_ASQL_TO_FMD](/Images/PL_TOOLING_POST_ASQL_TO_FMD.png)
+
+### Parameters to be Set
+
+| **Parameter Name**        | **Description**                                   | **Example**                                   | 
+|---------------------------|---------------------------------------------------|-----------------------------------------------|
+| `ConnectionGuid`          | GUID of the connection                           | `cf673e6a-13f6-4ebb-9cbb-4ba4ab390818`       |  
+| `Data_WorkspaceGuid`      | Workspace where the Lakehouse is deployed        | `Pf7647b15-7df1-4db5-99cb-90eee61737a4`      |  
+| `DatasourceName`          | Name of the database                             | `WideWorldImporters`                         |  
+| `DatasourceNamespace`     | Prefix for tables/files                          | `wwi`                                        |  
+| `DatasourceType`          | Type depending on your connection                | `ASQL_01`                                    |  
+| `Tables`                  | List of tables to include                        | `('PurchaseOrders', 'PurchaseOrderLines', 'Orders', 'OrderLines', 'Invoices', 'InvoiceLines', 'BuyingGroups', 'CustomerCategories')` |
+
 
 ## Contributing
 

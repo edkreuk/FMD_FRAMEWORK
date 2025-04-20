@@ -13,8 +13,8 @@ The following steps need to be done:
 
 ### 1. Download Files
 
-Download the three files 
-- FMD_deployment.json : Contains all definitions to create all artifacts for the FMD_FRAMEWORK (Input for the notebook below)
+Download the 2 files 
+
 - NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb : Creates all artifacts for the FMD_FRAMEWORK within Fabric Data Platform (based on your configuration)
 - NB_FMD_DEPLOYMENT_UTILS.ipynb: Contains all definitions to create all artifacts
 to your local machine.
@@ -30,23 +30,22 @@ or
 
 Create the following two connections and write down the Connection ID for later usage.:
 
-
-| | |
-| -------------| ------------- |
-|Connection Name| CON_FMD_FABRICPIPELINES  |
-|Connection Type|  Fabric Data Pipelines|
-|Authentification|OAuth2|
-|-|-|
-|Connection Name| CON_FMD_FABRICSQL  |
-|Connection Type|  Fabric SQL database|
-|Authentification|OAuth2|
+## Required Connections
+|**Connection Name**|**Connection Type**  |**Authentification**  |
+|--|--|--|
+| CON_FMD_FABRICPIPELINES | Fabric Data Pipelines | OAuth2 |
+| CON_FMD_FABRICSQL | Fabric SQL database | OAuth2 |
 
 
-### 4. Create Workspace and Config Lakehouse
+If you want to use Azure Data Factory Pipelines, you have to creat this connection as well.
+|**Connection Name**|**Connection Type**  |**Authentification**  |
+|--|--|--|
+| CON_FMD_ADF_PIPELINES | Azure Data Factory | OAuth2 |
+
+
+### 4. Create Workspace for Configuration
 
 - Create a new workspace "FMD_FRAMEWORK_CONFIGURATION" (Name is up to you)
-
-
   
 - Import Notebooks (NB: Make sure your are in the Fabric Experience)
     - Import the notebook "NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb" into the workspace
