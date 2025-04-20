@@ -129,7 +129,7 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE.
 
 
 [fmdFrameworkDeployment]: /FMD_FRAMEWORK_DEPLOYMENT.md
-[fmdDataModelLink]: /FMD_Datamodel.md
+[fmdDataModelLink]: /FMD_DATA_MODEL.md
 [fmdDataLoggingLink]: /FMD_DATA_LOGGING.md
 [fmdDataPipelinesLink]: /FMD_DATA_PIPELINES.md
 
