@@ -42,7 +42,7 @@ To begin using the FMD Framework, refer to the deployment guide:
 - **Data Pipelines Overview:** Explore the data pipelines used within the framework.  
   [FMD Framework Data Pipelines](/FMD_DATA_PIPELINES.md)
 
-- **Pipelines Logging:** Logging and auditing information
+- **Pipelines Logging:** Logging and auditing information.
   [FMD_DATA_LOGGING](/FMD_DATA_LOGGING.md)
 
 ## Supported Sources
