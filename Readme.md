@@ -40,10 +40,11 @@ To begin using the FMD Framework, refer to the deployment guide:
   [FMD Framework DataModel][fmdDataModelLink]
 
 - **Data Pipelines Overview:** Explore the data pipelines used within the framework.  
-  [FMD Framework Data Pipelines](/FMD_DATA_PIPELINES.md)
+  [FMD Framework Data Pipelines][fmdDataPipelinesLink]
 
 - **Pipelines Logging:** Logging and auditing information.
-  [FMD_DATA_LOGGING](/FMD_DATA_LOGGING.md)
+  
+    [FMD Auditing and Logging][fmdDataLoggingLink]
 
 ## Supported Sources
 
@@ -129,3 +130,5 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE.
 
 [fmdFrameworkDeployment]: /FMD_FRAMEWORK_DEPLOYMENT.md
 [fmdDataModelLink]: /FMD_Datamodel.md
+[fmdDataLoggingLink]: /FMD_DATA_LOGGING.md
+[fmdDataPipelinesLink]: /FMD_DATA_PIPELINES
