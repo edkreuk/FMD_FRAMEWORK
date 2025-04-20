@@ -42,6 +42,9 @@ To begin using the FMD Framework, refer to the deployment guide:
 - **Data Pipelines Overview:** Explore the data pipelines used within the framework.  
   [FMD Framework Data Pipelines](/FMD_DATA_PIPELINES.md)
 
+- **Pipelines Logging:** Logging and auditing information
+  [FMD_DATA_LOGGING](/FMD_DATA_LOGGING.md)
+
 ## Supported Sources
 
 The FMD Framework supports a wide range of data sources, enabling seamless integration and data ingestion. Below is the list of supported sources:
