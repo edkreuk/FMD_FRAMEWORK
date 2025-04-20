@@ -99,7 +99,7 @@ The FMD Framework supports a wide range of data sources, enabling seamless integ
   Once the table is created, execute the complete process to verify that everything has been deployed and configured correctly.
 
 ![Load File to table](/Images/FMD_load_file_to_table.png)
-## Easily Configure and Load Data in the Framework
+## Easily Configure and Load Data into the Framework
 
 ### **PL_TOOLING_POST_ASQL_TO_FMD**
 
@@ -131,4 +131,4 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE.
 [fmdFrameworkDeployment]: /FMD_FRAMEWORK_DEPLOYMENT.md
 [fmdDataModelLink]: /FMD_Datamodel.md
 [fmdDataLoggingLink]: /FMD_DATA_LOGGING.md
-[fmdDataPipelinesLink]: /FMD_DATA_PIPELINES
+[fmdDataPipelinesLink]: /FMD_DATA_PIPELINES.md

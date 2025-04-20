@@ -6,179 +6,135 @@
 
 The admin settings below need to be enabled:
 - Users can create Fabric items
-- SQL database (preview)​
+- SQL database (preview)
 
+### Steps for Deployment
 
-The following steps need to be done:
+#### 1. Download Files
 
-### 1. Download Files
+Download the following files to your local machine:
+- `NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb`: Creates all artifacts for the FMD_FRAMEWORK within the Fabric Data Platform (based on your configuration).
+- `NB_FMD_DEPLOYMENT_UTILS.ipynb`: Contains all definitions to create all artifacts.
 
-Download the 2 files 
+Alternatively, clone the repository:
+```bash
+git clone https://github.com/edkreuk/FMD_FRAMEWORK.git
+```
 
-- NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb : Creates all artifacts for the FMD_FRAMEWORK within Fabric Data Platform (based on your configuration)
-- NB_FMD_DEPLOYMENT_UTILS.ipynb: Contains all definitions to create all artifacts
-to your local machine.
+#### 2. Create Connections
 
-or 
+Create the following connections and note their Connection IDs for later use:
 
-- Clone this repository:
-   ```bash
-   git clone https://github.com/edkreuk/FMD_FRAMEWORK.git
-   ```
+| **Connection Name**       | **Connection Type**       | **Authentication** |
+|----------------------------|---------------------------|---------------------|
+| CON_FMD_FABRICPIPELINES    | Fabric Data Pipelines     | OAuth2              |
+| CON_FMD_FABRICSQL          | Fabric SQL database       | OAuth2              |
 
-### 3. Create Connection
+If using Azure Data Factory Pipelines, create this additional connection:
 
-Create the following two connections and write down the Connection ID for later usage.:
+| **Connection Name**       | **Connection Type**       | **Authentication** |
+|----------------------------|---------------------------|---------------------|
+| CON_FMD_ADF_PIPELINES      | Azure Data Factory        | OAuth2              |
 
-## Required Connections
-|**Connection Name**|**Connection Type**  |**Authentification**  |
-|--|--|--|
-| CON_FMD_FABRICPIPELINES | Fabric Data Pipelines | OAuth2 |
-| CON_FMD_FABRICSQL | Fabric SQL database | OAuth2 |
+#### 3. Create Workspace for Configuration
 
-
-If you want to use Azure Data Factory Pipelines, you have to creat this connection as well.
-|**Connection Name**|**Connection Type**  |**Authentification**  |
-|--|--|--|
-| CON_FMD_ADF_PIPELINES | Azure Data Factory | OAuth2 |
-
-
-### 4. Create Workspace for Configuration
-
-- Create a new workspace "FMD_FRAMEWORK_CONFIGURATION" (Name is up to you)
-  
-- Import Notebooks (NB: Make sure your are in the Fabric Experience)
-    - Import the notebook "NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb" into the workspace
-    - Import the notebook "NB_FMD_DEPLOYMENT_UTILS.ipynb" into the workspace
+- Create a new workspace (e.g., `FMD_FRAMEWORK_CONFIGURATION`).
+- Import the notebooks into the workspace (ensure you are in the Fabric Experience):
+	- `NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb`
+	- `NB_FMD_DEPLOYMENT_UTILS.ipynb`
 
 ![Fabric Experience](/Images/FMD_Fabric_Experience.png)
 
-### 6. Notebook Configuration
+#### 4. Configure Deployment Settings
 
-Deployment Configuration Script
-This script is used to configure deployment settings for different environments (development and production) in a Fabric SQL Framework. Below is a detailed explanation of each section of the script.
+Open the notebook `NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb` and navigate to the third cell to configure deployment settings.
 
-Open the notebook NB_FMD_DEPLOYMENT_MULTI_ENV and scroll to the third cell. This is the deployment configuration.
+##### Key Configuration Details
 
-1. Capacity ID
-capacity_id = '075e5656-1234-5678-a36c8c0e8bca'
-Purpose: Unique identifier for the capacity to be used.
+1. **Capacity ID**  
+	 Define the unique identifier for the capacity to be used:
+	 ```python
+	 capacity_id = '075e5656-1234-5678-a36c8c0e8bca'
+	 ```
 
-Make sure you have at least Contributor access to the capacity to add new workspace
+2. **Workspace Roles**  
+	 Assign roles to workspaces:
+	 ```python
+	 workspace_roles = [
+			 {
+					 "principal": {
+							 "id": "00000000-0000-0000-0000-000000000000",
+							 "displayName": "sg-fabric-contributor",
+							 "type": "Group"
+					 },
+					 "role": "Member"
+			 },
+			 {
+					 "principal": {
+							 "id": "00000000-0000-0000-0000-000000000000",
+							 "displayName": "sg-fabric-admin",
+							 "type": "Group"
+					 },
+					 "role": "Admin"
+			 }
+	 ]
+	 ```
 
-![Capacity access](/Images/FMD_Fabric_Experience.png)
+```markdown
+	 Define settings for development and production environments:
+	 You can optionally add as many environments as needed. Each environment should include workspace configurations, roles, capacity IDs, and connection details. Below is an example structure for defining multiple environments:
+```
+	 ```python
+	 environments = [
+			 {
+					 'environment_name': 'development',
+					 'workspaces': {
+							 'data': {
+									 'name': 'FMD_FRAMEWORK_DATA (D)',
+									 'roles': workspace_roles,
+									 'capacity_id': capacity_id_dvlm
+							 },
+							 'code': {
+									 'name': 'FMD_FRAMEWORK_CODE (D)',
+									 'roles': workspace_roles,
+									 'capacity_id': capacity_id_dvlm
+							 }
+					 },
+					 'connections': {
+							 'CON_FMD_FSQL': '372237f9-709a-48f8-8fb2-ce06940c990e',
+							 'CON_FMD_ASQL_01': 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
+							 'CON_FMD_ADLS_01': 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
+							 'CON_FMD_FABRICPIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7'
+					 }
+			 },
+			 {
+					 'environment_name': 'production',
+					 'workspaces': {
+							 'data': {
+									 'name': 'FMD_FRAMEWORK_DATA (P)',
+									 'roles': workspace_roles,
+									 'capacity_id': capacity_id_prod
+							 },
+							 'code': {
+									 'name': 'FMD_FRAMEWORK_CODE (P)',
+									 'roles': workspace_roles,
+									 'capacity_id': capacity_id_prod
+							 }
+					 },
+					 'connections': {
+							 'CON_FMD_FSQL': '372237f9-709a-48f8-8fb2-ce06940c990e',
+							 'CON_FMD_ASQL_01': 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
+							 'CON_FMD_ADLS_01': 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
+							 'CON_FMD_FABRICPIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7'
+					 }
+			 }
+	 ]
+	 ```
 
-2. Workspace Roles
-Purpose: Defines roles (or keep empty []) to be added to the workspace. Each role includes:
-principal: The group or user to which the role is assigned.
-role: The role assigned to the principal (e.g., Member, Admin, Contributor or viewer)
-id = id of the group in Entra
-
-	Example with roles:
-
-		```
-		workspace_roles = [
-			{
-				"principal": {
-					"id": "00000000-0000-0000-0000-000000000000",
-					"displayName": "sg-fabric-contributor",
-					"type": "Group"
-				},
-				"role": "Member"
-			},
-			{
-				"principal": {
-					"id": "00000000-0000-0000-0000-000000000000",
-					"displayName": "sg-fabric-admin",
-					"type": "Group"
-				},
-				"role": "Admin"
-			}
-		]```
-		
-	Example without roles:
-
-		```
-		workspace_roles = []
-		```
+4. **Execute**  
+	 Execute the notebook to apply the settings.
 
 
-
-3. Configuration settings. 
-Purpose: Defines the configuration for the Configuration and logging items. This can be a different workspace or the same workspace for the other items. 
-
-	
-4. Environments. 
-Purpose: Defines configurations for different environments (development and production as example). Each environment includes:
-	- environment_name: Name of the environment.
-	- workspaces: Workspaces for data and code, each with:
-		- name: Name of the workspace.
-		- roles: Roles to be assigned.
-		- capacity_id: Capacity ID to be used.
-connections: Various connection identifiers for the environment.
-If you create a connection afterwards, you can update the deployment notebook and execute it again. All connection should start with CON_FMD, with this they will automatically added to the connections table
-	- CON_FMD_FSQL (is created in a earlier stage): fill in the guid
-	- CON_FMD_FABRICPIPELINES (is created in a earlier stage): fill in the guid
-	- CON_FMD_ASQL_01: Optional connection. Used if you want to connect to an Azure SQL database (default: '')
-	- CON_FMD_ADLS_01: optional connection. Used if you want to connect to an Azure Datalake storage (default: '')
-	- CON_FMD_ADF_PIPELINES: optional connection. Used if you want to run an Azure Datafactory Pipeline  (default: '')
-	- CON_FMD_FTP_01 : optional connection. Used if you want to connect to an FTP Server (default: '')
-    - CON_FMD_SFTP_01 : optional connection. Used if you want to connect to an SFTP Server (default: '')
-
-		```
-		environments = [
-			{
-				'environment_name' : 'development',
-				'workspaces': {
-					'data' : {
-						'name' : 'FMD_FRAMEWORK_DATA (D)',
-						'roles' : workspace_roles,
-						'capacity_id' : capacity_id_dvlm
-					},
-					'code' : {
-						'name' : 'FMD_FRAMEWORK_CODE (D)',
-						'roles' : workspace_roles,
-						'capacity_id' : capacity_id_dvlm
-					}
-				},
-				'connections' : {
-					'CON_FMD_FSQL' : '372237f9-709a-48f8-8fb2-ce06940c990e',
-					'CON_FMD_ASQL_01' : 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
-					'CON_FMD_ASQL_02' : '11a8e5fe-fbca-4822-9ba4-9162cf56e6dd',
-					'CON_FMD_ADLS_01' : 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
-					'CON_FMD_FABRICPIPELINES' : '6d8146c6-a438-47df-94e2-540c552eb6d7',
-					'CON_FMD_ADF_PIPELINES' : '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'
-				}
-			},
-			{
-				'environment_name' : 'production',
-				'workspaces': {
-					'data' : {
-						'name' : 'FMD_FRAMEWORK_DATA',
-						'roles' : workspace_roles,
-						'capacity_id' : capacity_id_prod
-					},
-					'code' : {
-						'name' : 'FMD_FRAMEWORK_CODE (prod)',
-						'roles' : workspace_roles,
-						'capacity_id' : capacity_id_prod
-					}
-				},
-				'connections' : {
-					'CON_FMD_FSQL' : '372237f9-709a-48f8-8fb2-ce06940c990e',
-					'CON_FMD_ASQL_01' : 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
-					'CON_FMD_ASQL_02' : '11a8e5fe-fbca-4822-9ba4-9162cf56e6dd',
-					'CON_FMD_ADLS_01' : 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
-					'CON_FMD_FABRICPIPELINES' : '6d8146c6-a438-47df-94e2-540c552eb6d7',
-					'CON_FMD_ADF_PIPELINES' : '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'
-				}
-			}
-		]
-		```
-
-6. Deployment File
-deployment_file = 'deployment/FMD_deployment.json'
-Purpose: Specifies the source file to read the deployment manifest from.
 
 **Data Cleansing**
 
@@ -217,4 +173,8 @@ def <functioname> (df, columns, args):
 	return df #always return dataframe.
 ```
 
+More data cleansing examples:
 
+[Data Cleansing Examples][fmdDataCleansingExamplesLink]
+
+[fmdDataCleansingExamplesLink]: /FMD_DATA_CLEANSING.MD
