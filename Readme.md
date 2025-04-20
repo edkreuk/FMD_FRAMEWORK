@@ -7,8 +7,8 @@ Efficient data management is a cornerstone of modern organizations, and leveragi
 ![FMD Framework Deployment](/Images/FMD_FRAMEWORK.jpeg)
 
 # Key Contributors
-- Erwin de Kreuk
-- Marco Hansma
+- [Erwin de Kreuk][ErwinLink]
+- [Marco Hansma][MarcoLink]
 
 ## Key Features:
 
@@ -132,3 +132,6 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE.
 [fmdDataModelLink]: /FMD_Datamodel.md
 [fmdDataLoggingLink]: /FMD_DATA_LOGGING.md
 [fmdDataPipelinesLink]: /FMD_DATA_PIPELINES.md
+
+[ErwinLink]:  https://www.linkedin.com/in/erwindekreuk/
+[MarcoLink]: https://www.linkedin.com/in/marcohansma/
