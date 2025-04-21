@@ -79,7 +79,7 @@ The Framework implements a structured approach to data organization using the Me
 - Stores validated data.
 - Does not include business-specific models or data.
 
-![FMD Lakehouse Overview](/Images/FMD_Lakehouse_OVERVIEW.png)
+![FMD Lakehouse Overview](/Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
 
 ### Getting Started
@@ -94,11 +94,16 @@ To begin using the FMD Framework, refer to the deployment guide:
   [FMD Framework DataModel][fmdDataModelLink]
 
 - **Data Pipelines Overview:** Explore the data pipelines used within the framework.  
+  
   [FMD Framework Data Pipelines][fmdDataPipelinesLink]
+
+- **Easily Configure and Load Data into the Framework:** Concept to easily extract metadata from you sql server into the Framework.  
+  
+  [FMD Configure and Load data][fmdDataLoadLink]
 
 - **Pipelines Logging:** Logging and auditing information.
   
-    [FMD Auditing and Logging][fmdDataLoggingLink]
+  [FMD Auditing and Logging][fmdDataLoggingLink]
 
 ## Supported Sources
 
@@ -153,24 +158,6 @@ The FMD Framework supports a wide range of data sources, enabling seamless integ
   Once the table is created, execute the complete process to verify that everything has been deployed and configured correctly.
 
 ![Load File to table](/Images/FMD_load_file_to_table.png)
-## Easily Configure and Load Data into the Framework
-
-### **PL_TOOLING_POST_ASQL_TO_FMD**
-
-The `PL_TOOLING_POST_ASQL_TO_FMD` tool assists in inserting metadata from one of your connections. Ensure that a SQL connection is created and inserted into the metadata-driven database.
-
-![PL_TOOLING_POST_ASQL_TO_FMD](/Images/PL_TOOLING_POST_ASQL_TO_FMD.png)
-
-### Parameters to be Set
-
-| **Parameter Name**        | **Description**                                   | **Example**                                   | 
-|---------------------------|---------------------------------------------------|-----------------------------------------------|
-| `ConnectionGuid`          | GUID of the connection                           | `cf673e6a-13f6-4ebb-9cbb-4ba4ab390818`       |  
-| `Data_WorkspaceGuid`      | Workspace where the Lakehouse is deployed        | `Pf7647b15-7df1-4db5-99cb-90eee61737a4`      |  
-| `DatasourceName`          | Name of the database                             | `WideWorldImporters`                         |  
-| `DatasourceNamespace`     | Prefix for tables/files                          | `wwi`                                        |  
-| `DatasourceType`          | Type depending on your connection                | `ASQL_01`                                    |  
-| `Tables`                  | List of tables to include                        | `('PurchaseOrders', 'PurchaseOrderLines', 'Orders', 'OrderLines', 'Invoices', 'InvoiceLines', 'BuyingGroups', 'CustomerCategories')` |
 
 
 ## Contributing
@@ -186,6 +173,8 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE.
 [fmdDataModelLink]: /FMD_DATA_MODEL.md
 [fmdDataLoggingLink]: /FMD_DATA_LOGGING.md
 [fmdDataPipelinesLink]: /FMD_DATA_PIPELINES.md
+[fmdDataLoadLink]: /FMD_LOAD_DATA.md
+
 
 [ErwinLink]:  https://www.linkedin.com/in/erwindekreuk/
 [MarcoLink]: https://www.linkedin.com/in/marcohansma/
