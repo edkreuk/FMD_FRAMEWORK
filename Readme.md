@@ -79,7 +79,7 @@ The Framework implements a structured approach to data organization using the Me
 - Stores validated data.
 - Does not include business-specific models or data.
 
-![FMD Lakehouse Overview](/Images/FMD_Lakehouse_OVERVIEW.png)
+![FMD Lakehouse Overview](/Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
 
 ### Getting Started
