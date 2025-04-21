@@ -28,6 +28,60 @@ By optimizing data processes and reducing redundancy, Fabric Metadata-Driven Fra
 
 ![FMD Framework Deployment](/Images/FMD_TASKFLOW_OVERVIEW.png)
 
+### Workspaces Structure
+
+The Framework deploys the following default Workspace Architecture to ensure a clear separation of data, code, and orchestration for enhanced security. This structure is designed to restrict access based on roles, ensuring that individuals who require access to data do not necessarily have access to code or orchestration components.
+
+#### Recommended Structure
+
+1. **Data Workspaces**  
+  Dedicated workspaces for managing and storing data:
+  - **Data Landing Zone**  
+  - **Bronze Layer**  
+  - **Silver Layer**  
+
+2. **Code Workspaces**  
+  Workspaces for managing code and development artifacts:
+  - **Data Pipelines**  
+  - **Notebooks**  
+  - **Spark Environments**  
+
+3. **Orchestration and Logging Workspaces**  
+  Workspaces for orchestration and monitoring:
+  - **Fabric SQL Database**  
+  - **Semantic Model for Auditing and Logging** *(Work in Progress)*  
+
+#### Additional Recommendation for Gold Layer  
+If a Gold Layer is added, it is advisable to create a separate workspace for reports. This ensures that users who need access to reports do not require access to the data workspace. This recommendation is based on practical experience from recent customer implementations.
+
+![FMD Workspace Overview](/Images/FMD_WORKSPACE_OVERVIEW.png)
+
+### Medallion Architecture
+
+The Framework implements a structured approach to data organization using the Medallion Architecture. This architecture is supported by the deployment of Lakehouses for the **Data Landing Zone**, **Bronze Layer**, and **Silver Layer**. All data pipelines and notebooks are orchestrated and executed based on this architecture.
+
+#### Data Landing Zone
+- Handles both structured and unstructured data.
+- Supports incremental data loads.
+- Stores raw data "as-is" in a datetime-based folder structure.
+- No schema is enforced at this stage.
+
+#### Bronze Layer
+- Deduplicates data.
+- Adds data types for better structure.
+- Data may still be inconsistent.
+- Primarily serves as a copy of the source data.
+- Schema is applied.
+
+#### Silver Layer
+- Maintains historical data.
+- Enforces data quality rules and performs data cleansing.
+- Stores validated data.
+- Does not include business-specific models or data.
+
+![FMD Lakehouse Overview](/Images/FMD_Lakehouse_OVERVIEW.png)
+
+
 ### Getting Started
 
 To begin using the FMD Framework, refer to the deployment guide:
