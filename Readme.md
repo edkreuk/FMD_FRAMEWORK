@@ -145,7 +145,7 @@ The FMD Framework supports a wide range of data sources, enabling seamless integ
   
 ![Fabric Experience](/Images/FMD_DATABASE_ERROR_NOTEBOOK.png)
 
-  You can check this by creating the database manually
+ Error creating Fabric Database, make sure you do not execute this on a trial license. You can check this by creating the database manually
   
 ![Fabric Database Error](/Images/FMD_DATABASE_ERROR.png)
 ### Test Process
