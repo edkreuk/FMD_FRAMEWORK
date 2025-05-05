@@ -30,6 +30,10 @@ By optimizing data processes and reducing redundancy, Fabric Metadata-Driven Fra
 
 ![FMD Framework Deployment](/Images/FMD_TASKFLOW_OVERVIEW.png)
 
+**Import Taskflow**
+
+If you want to have above taskflow within your workspace, navigate to right, click on import from Computer. Import the FMD_FABRIC_TASKFLOW.json from the Taskflow folder.next assign the correct Artifact to the Taskflow(see screenshot in the same folder)
+
 ### Workspaces Structure
 
 The Framework deploys the following default Workspace Architecture to ensure a clear separation of data, code, and orchestration for enhanced security. This structure is designed to restrict access based on roles, ensuring that individuals who require access to data do not necessarily have access to code or orchestration components.
