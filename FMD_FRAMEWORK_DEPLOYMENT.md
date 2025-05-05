@@ -8,6 +8,9 @@ The admin settings below need to be enabled:
 - Users can create Fabric items
 - SQL database (preview)
 
+Contributor role to a capacity or capacities
+
+
 ### Steps for Deployment
 
 #### 1. Download Files
