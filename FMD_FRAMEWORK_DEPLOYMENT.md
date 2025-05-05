@@ -29,7 +29,7 @@ Create the following connections and note their Connection IDs for later use:
 
 | **Connection Name**       | **Connection Type**       | **Authentication** |
 |----------------------------|---------------------------|---------------------|
-| CON_FMD_FABRICPIPELINES    | Fabric Data Pipelines     | OAuth2              |
+| CON_FMD_FABRIC_PIPELINES    | Fabric Data Pipelines     | OAuth2              |
 | CON_FMD_FABRICSQL          | Fabric SQL database       | OAuth2              |
 
 If using Azure Data Factory Pipelines, create this additional connection:
@@ -106,7 +106,7 @@ Open the notebook `NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb` and navigate to the third 
 							 'CON_FMD_FSQL': '372237f9-709a-48f8-8fb2-ce06940c990e',
 							 'CON_FMD_ASQL_01': 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
 							 'CON_FMD_ADLS_01': 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
-							 'CON_FMD_FABRICPIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7'
+							 'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7'
 					 }
 			 },
 			 {
@@ -127,7 +127,7 @@ Open the notebook `NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb` and navigate to the third 
 							 'CON_FMD_FSQL': '372237f9-709a-48f8-8fb2-ce06940c990e',
 							 'CON_FMD_ASQL_01': 'cf673e6a-13f6-4ebb-9cbb-4ba4ab390818',
 							 'CON_FMD_ADLS_01': 'a0581b6e-5e38-46eb-bab2-7f08e9a35c30',
-							 'CON_FMD_FABRICPIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7'
+							 'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7'
 					 }
 			 }
 	 ]
