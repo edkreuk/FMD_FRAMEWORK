@@ -8,6 +8,9 @@ The admin settings below need to be enabled:
 - Users can create Fabric items
 - SQL database (preview)
 
+Contributor role to a capacity or capacities
+
+
 ### Steps for Deployment
 
 #### 1. Download Files
@@ -81,7 +84,7 @@ Open the notebook `NB_FMD_DEPLOYMENT_MULTI_ENV.ipynb` and navigate to the third 
 	 ```
 
 3. **Environments**  
-	 Define settings for development and production environments:
+	 Define settings for development and production stages:
 	 You can optionally add as many environments as needed. Each environment should include workspace configurations, roles, capacity IDs, and connection details. Below is an example structure for defining multiple environments:
 	 
 	 ```python
