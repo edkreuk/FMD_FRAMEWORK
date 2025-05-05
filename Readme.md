@@ -32,7 +32,7 @@ By optimizing data processes and reducing redundancy, Fabric Metadata-Driven Fra
 
 **Import Taskflow**
 
-If you want to have above taskflow within your workspace, navigate to right, click on import from Computer. Import the FMD_FABRIC_TASKFLOW.json from the Taskflow folder.next assign the correct Artifact to the Taskflow(see screenshot in the same folder)
+If you want to have above taskflow within your workspace, navigate to right, click on import from Computer. Import the FMD_FABRIC_TASKFLOW.json from the Taskflow folder. Next assign the correct Artifact to the Taskflows(see screenshot in the same folder)
 
 ### Workspaces Structure
 
