@@ -1,11 +1,11 @@
 [     
-            {
+{
         "name": "workspace_data",
         "id": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
         "type": "Workspace"
     },
             {
-        "name": "workspace_code",
+        "name": "Workspace.code",
         "id": "2bdaef03-9e79-46da-9b07-391e87b56416",
         "type": "Workspace"
     },
