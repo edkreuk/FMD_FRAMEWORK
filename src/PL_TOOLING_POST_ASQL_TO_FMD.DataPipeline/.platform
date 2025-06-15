@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_TOOLING_POST_ASQL_TO_FMD"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "20cbc814-b94e-9c75-4cf3-c5bb3886877b"
+  }
+}

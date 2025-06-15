@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_FMD_LDZ_COMMAND_ONELAKE"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "36346796-f9dc-47b9-a248-c440a11c1aa0"
+  }
+}
