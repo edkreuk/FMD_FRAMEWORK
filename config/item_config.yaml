@@ -1,11 +1,8 @@
-workspace_data: 
-"40e27fdc-775a-4ee2-84d5-48893c92d7cc"
 
-          "name":workspace_config: 
-  "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
-        "name": "workspace_code",
-        "id": "2bdaef03-9e79-46da-9b07-391e87b56416",
-        
+  workspace_data: "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+  workspace_code: "2bdaef03-9e79-46da-9b07-391e87b56416"
+  workspace_config: "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+
 connections:
   pbi_connection :
     src: fuam pbi-service-api admin
