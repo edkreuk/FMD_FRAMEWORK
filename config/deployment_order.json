@@ -19,7 +19,17 @@
         "id": "0740d27f-3373-4302-aa9a-c402893b5a96",
         "type": "Notebook"
     },
-   {
+    {
+        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
+        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
+        "type": "Notebook"
+    },
+        {
+        "name": "PL_FMD_LDZ_COPY_FROM_ASQL_01.DataPipeline",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "type": "DataPipeline"
+    },
+     {
         "name": "LH_DATA_LANDINGZONE",
         "id": "01b832e3-2746-4e9c-b169-540b2741a638",
         "type": "Lakehouse"
