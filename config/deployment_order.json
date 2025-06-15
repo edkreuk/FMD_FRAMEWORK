@@ -1,4 +1,19 @@
-[
+[     
+            {
+        "name": "workspace_data",
+        "fmd_id": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
+        "type": "Workspace"
+    },
+            {
+        "name": "workspace_code",
+        "fmd_id": "2bdaef03-9e79-46da-9b07-391e87b56416",
+        "type": "Workspace"
+    },
+        {
+        "name": "workspace_config",
+        "fmd_id": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+        "type": "Workspace"
+    },
     {
         "name": "NB_FMD_DQ_CLEANSING.Notebook",
         "fmd_id": "0740d27f-3373-4302-aa9a-c402893b5a96",
