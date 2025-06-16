@@ -79,19 +79,21 @@
         "id": "bfe7a852-2306-4ea1-8605-0cd7473dadf8",
         "type": "DataPipeline"
     },
-    {
-        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
-        "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
-        "type": "DataPipeline"
-    },
+
     {
         "name": "PL_FMD_LOAD_BRONZE.DataPipeline",
         "id": "5d74cbab-2d1e-4b8a-a438-86cbab219dc9",
         "type": "DataPipeline"
     },
+
     {
         "name": "PL_FMD_LOAD_SILVER.DataPipeline",
         "id": "693d01c3-999c-4022-9da6-a94134c7e57e",
+        "type": "DataPipeline"
+    },
+        {
+        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
+        "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
         "type": "DataPipeline"
     },
     {
