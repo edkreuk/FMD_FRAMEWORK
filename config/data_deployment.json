@@ -1,16 +1,16 @@
 [
      {
-            "name": "LH_DATA_LANDINGZONE",
+            "name": "LH_DATA_LANDINGZONE.Lakehouse",
             "type": "Lakehouse",
             "id": "01b832e3-2746-4e9c-b169-540b2741a638"
         },
         {
-            "name": "LH_BRONZE_LAYER",
+            "name": "LH_BRONZE_LAYER.Lakehouse",
             "type": "Lakehouse",
             "id": "5b2306b4-122c-4269-b41f-b77aef342f48"
         },
         {
-            "name": "LH_SILVER_LAYER",
+            "name": "LH_SILVER_LAYER.Lakehouse",
             "type": "Lakehouse",
             "id": "50d7d4c9-7db0-4d4d-a324-31e18b536fe4"
         }
