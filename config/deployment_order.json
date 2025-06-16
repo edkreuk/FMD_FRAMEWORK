@@ -1,5 +1,4 @@
-[     
-
+[
     {
         "name": "NB_FMD_DQ_CLEANSING.Notebook",
         "id": "893b5a96-c402-aa9a-4302-33730740d27f",
@@ -7,96 +6,102 @@
     },
     {
         "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
-    "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
+        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
         "type": "Notebook"
-    },   
-     {
+    },
+    {
         "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
-    "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
+        "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
         "type": "Notebook"
     },
     {
         "name": "NB_FMD_LOAD_LANDING_BRONZE.Notebook",
-    "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
+        "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
         "type": "Notebook"
     },
-        {
-        "name": "PL_FMD_LDZ_COMMAND_ADSL.DataPipeline",
-     "id": "a5918d08-0395-45ba-9c8c-f53d78b465eb",
+    {
+        "name": "PL_FMD_LDZ_COMMAND_ADLS.DataPipeline",
+        "id": "a5918d08-0395-45ba-9c8c-f53d78b465eb",
         "type": "DataPipeline"
     },
-        {
+    {
         "name": "PL_FMD_LDZ_COMMAND_ASQL.DataPipeline",
-     "id": "5c592df9-8582-4572-9e4e-d6166ef575df",
+        "id": "5c592df9-8582-4572-9e4e-d6166ef575df",
         "type": "DataPipeline"
-    },{
+    },
+    {
         "name": "PL_FMD_LDZ_COMMAND_FTP.DataPipeline",
-     "id": "e3793389-17ee-b401-4669-ef22ffe790e1",
+        "id": "e3793389-17ee-b401-4669-ef22ffe790e1",
         "type": "DataPipeline"
-    },{
+    },
+    {
         "name": "PL_FMD_LDZ_COMMAND_SFTP.DataPipeline",
-     "id": "76f19233-94ef-a100-48dd-7f32bec279e3",
+        "id": "76f19233-94ef-a100-48dd-7f32bec279e3",
         "type": "DataPipeline"
-    },{
+    },
+    {
         "name": "PL_FMD_LDZ_COMMAND_ONELAKE.DataPipeline",
-     "id": "36346796-f9dc-47b9-a248-c440a11c1aa0",
+        "id": "36346796-f9dc-47b9-a248-c440a11c1aa0",
         "type": "DataPipeline"
     },
-     {
+    {
         "name": "PL_FMD_LDZ_COMMAND_ADF.DataPipeline",
-    "id": "bfe7a852-2306-4ea1-8605-0cd7473dadf8",
+        "id": "bfe7a852-2306-4ea1-8605-0cd7473dadf8",
         "type": "DataPipeline"
     },
-     {
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
-    "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
         "type": "DataPipeline"
     },
-     {
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_ASQL_01.DataPipeline",
-    "id": "456ec477-b392-4576-8070-ad5cf1fd5a30",
+        "id": "456ec477-b392-4576-8070-ad5cf1fd5a30",
         "type": "DataPipeline"
     },
-     {
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_FTP_01.DataPipeline",
-    "id": "4972831f-6320-ab73-46e2-336d0bc59199",
+        "id": "4972831f-6320-ab73-46e2-336d0bc59199",
         "type": "DataPipeline"
     },
-     {
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_SFTP_01.DataPipeline",
-    "id": "bdb7c7d1-db6c-b117-483a-06fac2abc979",
+        "id": "bdb7c7d1-db6c-b117-483a-06fac2abc979",
         "type": "DataPipeline"
     },
-     {
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE_FILES_01.DataPipeline",
-    "id": "d20eb24b-abeb-92d0-4c84-932ed3597147",
-        "type": "DataPipeline"},
-     {
-        "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE_TABLES_01.DataPipeline",
-    "id": "a7f32c61-f86b-4484-b2e2-366d839bcb42",
-        "type": "DataPipeline"},
-
-        
-     {
-        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
-    "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
+        "id": "d20eb24b-abeb-92d0-4c84-932ed3597147",
         "type": "DataPipeline"
     },
-     {
+    {
+        "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE_TABLES_01.DataPipeline",
+        "id": "a7f32c61-f86b-4484-b2e2-366d839bcb42",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
+        "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_FMD_LOAD_BRONZE.DataPipeline",
-    "id": "5d74cbab-2d1e-4b8a-a438-86cbab219dc9",
-        "type": "DataPipeline"},
-     {
+        "id": "5d74cbab-2d1e-4b8a-a438-86cbab219dc9",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_FMD_LOAD_SILVER.DataPipeline",
-    "id": "693d01c3-999c-4022-9da6-a94134c7e57e",
-        "type": "DataPipeline"}
-        ,
-     {
+        "id": "693d01c3-999c-4022-9da6-a94134c7e57e",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_FMD_LOAD_ALL.DataPipeline",
-    "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
-        "type": "DataPipeline"},
-     {
+        "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_TOOLING_POST_ASQL_TO_FMD.DataPipeline",
-    "id": "20cbc814-b94e-9c75-4cf3-c5bb3886877b",
-        "type": "DataPipeline"}
-     ]
+        "id": "20cbc814-b94e-9c75-4cf3-c5bb3886877b",
+        "type": "DataPipeline"
+    }
+]
