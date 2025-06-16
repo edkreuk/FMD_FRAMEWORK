@@ -20,36 +20,6 @@
         "type": "Notebook"
     },
     {
-        "name": "PL_FMD_LDZ_COMMAND_ADLS.DataPipeline",
-        "id": "a5918d08-0395-45ba-9c8c-f53d78b465eb",
-        "type": "DataPipeline"
-    },
-    {
-        "name": "PL_FMD_LDZ_COMMAND_ASQL.DataPipeline",
-        "id": "5c592df9-8582-4572-9e4e-d6166ef575df",
-        "type": "DataPipeline"
-    },
-    {
-        "name": "PL_FMD_LDZ_COMMAND_FTP.DataPipeline",
-        "id": "e3793389-17ee-b401-4669-ef22ffe790e1",
-        "type": "DataPipeline"
-    },
-    {
-        "name": "PL_FMD_LDZ_COMMAND_SFTP.DataPipeline",
-        "id": "76f19233-94ef-a100-48dd-7f32bec279e3",
-        "type": "DataPipeline"
-    },
-    {
-        "name": "PL_FMD_LDZ_COMMAND_ONELAKE.DataPipeline",
-        "id": "36346796-f9dc-47b9-a248-c440a11c1aa0",
-        "type": "DataPipeline"
-    },
-    {
-        "name": "PL_FMD_LDZ_COMMAND_ADF.DataPipeline",
-        "id": "bfe7a852-2306-4ea1-8605-0cd7473dadf8",
-        "type": "DataPipeline"
-    },
-    {
         "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
         "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
         "type": "DataPipeline"
@@ -77,6 +47,36 @@
     {
         "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE_TABLES_01.DataPipeline",
         "id": "a7f32c61-f86b-4484-b2e2-366d839bcb42",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_ADLS.DataPipeline",
+        "id": "a5918d08-0395-45ba-9c8c-f53d78b465eb",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_ASQL.DataPipeline",
+        "id": "5c592df9-8582-4572-9e4e-d6166ef575df",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_FTP.DataPipeline",
+        "id": "e3793389-17ee-b401-4669-ef22ffe790e1",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_SFTP.DataPipeline",
+        "id": "76f19233-94ef-a100-48dd-7f32bec279e3",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_ONELAKE.DataPipeline",
+        "id": "36346796-f9dc-47b9-a248-c440a11c1aa0",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_ADF.DataPipeline",
+        "id": "bfe7a852-2306-4ea1-8605-0cd7473dadf8",
         "type": "DataPipeline"
     },
     {
