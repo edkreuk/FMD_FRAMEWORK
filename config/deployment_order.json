@@ -1,19 +1,5 @@
 [     
-{
-        "name": "workspace_data",
-        "id": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
-        "type": "Workspace"
-    },
-            {
-        "name": "Workspace.code",
-        "id": "2bdaef03-9e79-46da-9b07-391e87b56416",
-        "type": "Workspace"
-    },
-        {
-        "name": "workspace_config",
-        "id": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
-        "type": "Workspace"
-    },
+
     {
         "name": "NB_FMD_DQ_CLEANSING.Notebook",
         "id": "0740d27f-3373-4302-aa9a-c402893b5a96",
@@ -30,19 +16,26 @@
         "type": "DataPipeline"
     },
      {
-        "name": "LH_DATA_LANDINGZONE",
-        "id": "01b832e3-2746-4e9c-b169-540b2741a638",
-        "type": "Lakehouse"
+        "name": "PL_FMD_LDZ_COMMAND_ADF.DataPipeline",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "type": "DataPipeline"
     },
-    {
-        "name": "LH_BRONZE_LAYER",
-        "id": "5b2306b4-122c-4269-b41f-b77aef342f48",
-        "type": "Lakehouse"
+     {
+        "name": "PL_FMD_LDZ_COMMAND_ADLS.DataPipeline",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "type": "DataPipeline"
     },
-    {
-        "name": "LH_SILVER_LAYER",
-        "id": "50d7d4c9-7db0-4d4d-a324-31e18b536fe4",
-        "type": "Lakehouse"
-    }
-]
-
+     {
+        "name": "PL_FMD_LDZ_COMMAND_ASQL.DataPipeline",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "type": "DataPipeline"
+    },
+     {
+        "name": "PL_FMD_LDZ_COPY_FROM_ASQL_01.DataPipeline",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "type": "DataPipeline"
+    },
+     {
+        "name": "PL_FMD_LDZ_COPY_FROM_ADLS.DataPipeline",
+        "id": "740e290a-ea29-474f-a3d6-91768f5466ea"}
+     ]
