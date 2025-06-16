@@ -71,7 +71,7 @@
 
         "type": "DataPipeline"},
 
-        ,
+        
      {
         "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
 
