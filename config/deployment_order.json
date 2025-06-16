@@ -30,11 +30,11 @@
      "id": "5c592df9-8582-4572-9e4e-d6166ef575df",
         "type": "DataPipeline"
     },{
-        "name": "PL_FMD_LDZ_COMMAND_FTP_01.DataPipeline",
+        "name": "PL_FMD_LDZ_COMMAND_FTP.DataPipeline",
      "id": "e3793389-17ee-b401-4669-ef22ffe790e1",
         "type": "DataPipeline"
     },{
-        "name": "PL_FMD_LDZ_COMMAND_SFTP_01.DataPipeline",
+        "name": "PL_FMD_LDZ_COMMAND_SFTP.DataPipeline",
      "id": "76f19233-94ef-a100-48dd-7f32bec279e3",
         "type": "DataPipeline"
     },{
@@ -48,7 +48,7 @@
         "type": "DataPipeline"
     },
      {
-        "name": "PL_FMD_LDZ_COPY_FROM_ADLS_)1.DataPipeline",
+        "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
     "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
         "type": "DataPipeline"
     },
