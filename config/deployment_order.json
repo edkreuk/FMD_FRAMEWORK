@@ -2,40 +2,96 @@
 
     {
         "name": "NB_FMD_DQ_CLEANSING.Notebook",
-        "id": "0740d27f-3373-4302-aa9a-c402893b5a96",
+
         "type": "Notebook"
     },
     {
         "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
-        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
+
+        "type": "Notebook"
+    },   
+     {
+        "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
+
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_LOAD_LANDING_BRONZE.Notebook",
+
         "type": "Notebook"
     },
         {
-        "name": "PL_FMD_LDZ_COPY_FROM_ASQL_01.DataPipeline",
-        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "name": "PL_FMD_LDZ_COPY_FROM_ASQL.DataPipeline",
+ 
+        "type": "DataPipeline"
+    },{
+        "name": "PL_FMD_LDZ_COPY_FROM_FTP.DataPipeline",
+ 
+        "type": "DataPipeline"
+    },{
+        "name": "PL_FMD_LDZ_COPY_FROM_SFTP.DataPipeline",
+ 
+        "type": "DataPipeline"
+    },{
+        "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE.DataPipeline",
+ 
         "type": "DataPipeline"
     },
      {
         "name": "PL_FMD_LDZ_COMMAND_ADF.DataPipeline",
-        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+
         "type": "DataPipeline"
     },
      {
-        "name": "PL_FMD_LDZ_COMMAND_ADLS.DataPipeline",
-        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "name": "PL_FMD_LDZ_COMMAND_ADLS_01.DataPipeline",
+
         "type": "DataPipeline"
     },
      {
-        "name": "PL_FMD_LDZ_COMMAND_ASQL.DataPipeline",
-        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "name": "PL_FMD_LDZ_COMMAND_ASQL_01.DataPipeline",
+
         "type": "DataPipeline"
     },
      {
-        "name": "PL_FMD_LDZ_COPY_FROM_ASQL_01.DataPipeline",
-        "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
+        "name": "PL_FMD_LDZ_COPY_FROM_FTP_01.DataPipeline",
+
         "type": "DataPipeline"
     },
      {
-        "name": "PL_FMD_LDZ_COPY_FROM_ADLS.DataPipeline",
-        "id": "740e290a-ea29-474f-a3d6-91768f5466ea"}
+        "name": "PL_FMD_LDZ_COPY_FROM_SFTP_01.DataPipeline",
+
+        "type": "DataPipeline"
+    },
+     {
+        "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE_FILES_01.DataPipeline",
+
+        "type": "DataPipeline"},
+     {
+        "name": "PL_FMD_LDZ_COPY_FROM_ONELAKE_TABLES_01.DataPipeline",
+
+        "type": "DataPipeline"},
+
+        ,
+     {
+        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
+
+        "type": "DataPipeline"
+    },
+     {
+        "name": "PL_FMD_LOAD_BRONZE.DataPipeline",
+
+        "type": "DataPipeline"},
+     {
+        "name": "PL_FMD_LOAD_SILVER.DataPipeline",
+
+        "type": "DataPipeline"}
+        ,
+     {
+        "name": "PL_FMD_LOAD_ALL.DataPipeline",
+
+        "type": "DataPipeline"},
+     {
+        "name": "PL_TOOLING_POST_ASQL_TO_FMD.DataPipeline",
+
+        "type": "DataPipeline"}
      ]

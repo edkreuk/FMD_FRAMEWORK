@@ -12,6 +12,3 @@ lakehouses:
   - LH_DATA_LANDINGZONE.Lakehouse
   - LH_BRONZE_LAYER.Lakehouse
   - LH_SILVER_LAYER.Lakehouse
-
-
-    
