@@ -12,3 +12,8 @@ lakehouses:
   - LH_DATA_LANDINGZONE.Lakehouse
   - LH_BRONZE_LAYER.Lakehouse
   - LH_SILVER_LAYER.Lakehouse
+
+database: 
+    displayName: "SQL_FMD_FRAMEWORK"
+    id: "075e5656-613d-41f4-89ed-63f6837c0ff6"
+    endpoint: "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.datawarehouse.fabric.microsoft.com"
