@@ -8,10 +8,6 @@ connections:
         CON_FMD_FABRIC_PIPELINES: "6d8146c6-a438-47df-94e2-540c552eb6d7"
         CON_FMD_ADF_PIPELINES: "02e107b8-e97e-4b00-a28c-668cf9ce3d9a"
 
-lakehouses:
-  LH_DATA_LANDINGZONE: "01b832e3-2746-4e9c-b169-540b2741a638"
-  LH_BRONZE_LAYER: "5b2306b4-122c-4269-b41f-b77aef342f48"
-  LH_SILVER_LAYER:  "50d7d4c9-7db0-4d4d-a324-31e18b536fe4"
 
 database: 
     displayName: "SQL_FMD_FRAMEWORK"
