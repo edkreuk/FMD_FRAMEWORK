@@ -25,6 +25,11 @@
         "type": "DataPipeline"
     },
     {
+        "name": "PL_FMD_LDZ_COPY_FROM_ADF.DataPipeline",
+        "id": "bfe7a852-2306-4ea1-8605-0cd7473dadf8",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_ASQL_01.DataPipeline",
         "id": "456ec477-b392-4576-8070-ad5cf1fd5a30",
         "type": "DataPipeline"
