@@ -1,4 +1,4 @@
-[        { "Lakehouse":[
+[        { "Lakehouse":
      {
             "name": "LH_DATA_LANDINGZONE.Lakehouse",
             "type": "Lakehouse",
@@ -25,5 +25,5 @@
             "type": "SQLEndpoint",
             "id": "b6c9a8ce-8888-4dd2-9c3e-ce98279ad8ef"
         } 
-    ]}
+    }
 ]
