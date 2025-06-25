@@ -13,5 +13,16 @@
             "name": "LH_SILVER_LAYER.Lakehouse",
             "type": "Lakehouse",
             "id": "50d7d4c9-7db0-4d4d-a324-31e18b536fe4"
+        },
+        {
+            "name": "SQL_FMD_FRAMEWORK",
+            "type": "SQLDatabase",
+            "id": "075e5656-613d-41f4-89ed-63f6837c0ff6",
+            "endpoint": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.datawarehouse.fabric.microsoft.com"
+        },
+        {
+            "name": "SQL_FMD_FRAMEWORK",
+            "type": "SQLEndpoint",
+            "id": "b6c9a8ce-8888-4dd2-9c3e-ce98279ad8ef"
         }
 ]
