@@ -145,6 +145,105 @@ starttime = datetime.now()
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# CELL ********************
+
+nb_name = 'NB_FMD_DQ_CLEANSING'
+nb_exists = False
+
+try:
+    notebookutils.notebook.get(nb_name)
+    nb_exists = True
+except:
+    nb_exists = False
+
+print("=" * 50)
+print(f"Notebook Name : {nb_name}")
+print(f"Exists        : {nb_exists}")
+print("=" * 50)
+
+if not nb_exists:
+    print(f"Creating       : Running...")
+    import requests
+    import sempy.fabric as fabric
+    import json
+    import base64
+    
+    access_token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerbi/api')
+    workspace_id = fabric.get_notebook_workspace_id()
+    url = f"https://api.fabric.microsoft.com/v1/workspaces/{workspace_id}/notebooks"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+
+    cell_code = """
+    # implementeer hier custom cleansing functions
+
+    #def <functienaam> (df, columns, args):
+    #    print(args['<custom parameter name>']) # use of custom parameters
+    #    for column in columns: # apply function foreach column
+    #        df = df.<custom logic>
+    #    return df #always return dataframe.
+    """
+
+    notebook_json = {
+        "nbformat": 4,
+        "nbformat_minor": 5,
+        "cells": [
+            {
+                "cell_type": "code",
+                "source": cell_code.strip().splitlines(keepends=True),
+                "execution_count": None,
+                "outputs": [],
+                "metadata": {}
+            }
+        ],
+        "metadata": {
+            "language_info": {
+                "name": "python"
+            }
+        }
+    }
+
+    notebook_str = json.dumps(notebook_json)
+    notebook_bytes = notebook_str.encode('utf-8')
+    notebook_base64 = base64.b64encode(notebook_bytes).decode('utf-8')
+
+    payload = {
+        "displayName": nb_name,
+        "description": f"An automatic generated description for {nb_name}",
+        "type": "Notebook",
+        "definition": {
+            "format": "ipynb",
+            "parts": [
+                {
+                    "path": "notebook-content.ipynb",
+                    "payload": notebook_base64,
+                    "payloadType": "InlineBase64"
+                }
+            ]
+        }
+    }
+    
+    response = requests.post(url, headers=headers, json=payload)
+
+    if response.status_code == 201 or 202:
+        print(f"Created        : Successful")
+        print("=" * 50)
+    else:
+        print(f"Created                      : Error")
+        print(f"Failed to create notebook    : {response.status_code}")
+        print(response.text)
+        print("=" * 50)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ## Define Notebooks settings
