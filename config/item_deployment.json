@@ -1,9 +1,5 @@
 [
-    {
-        "name": "NB_FMD_DQ_CLEANSING.Notebook",
-        "id": "893b5a96-c402-aa9a-4302-33730740d27f",
-        "type": "Notebook"
-    },
+ 
     {
         "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
         "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
