@@ -211,7 +211,7 @@
           "secureOutput": false
         },
         "name": "SP_START_AUDIT_PIPELINE",
-        "description": "Start of the Audit Record",
+        "description": "Start of the Audit Record and log in database",
         "dependsOn": []
       },
       {
