@@ -96,11 +96,7 @@
         "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
         "type": "Notebook"
     },
-    {
-        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
-        "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
-        "type": "DataPipeline"
-    },
+
     {
         "name": "PL_FMD_LOAD_ALL.DataPipeline",
         "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
