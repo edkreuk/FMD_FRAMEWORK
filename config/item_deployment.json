@@ -1,19 +1,5 @@
 [
-  {
-        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
-        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
-        "type": "Notebook"
-    },
-    {
-        "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
-        "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
-        "type": "Notebook"
-    },
-    {
-        "name": "NB_FMD_LOAD_LANDING_BRONZE.Notebook",
-        "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
-        "type": "Notebook"
-    },
+ 
     {
         "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
         "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
@@ -95,8 +81,26 @@
         "id": "20cbc814-b94e-9c75-4cf3-c5bb3886877b",
         "type": "DataPipeline"
     },
-   
-
+    {
+        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
+        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
+        "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_LOAD_LANDING_BRONZE.Notebook",
+        "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
+        "type": "Notebook"
+    },
+    {
+        "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
+        "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
+        "type": "DataPipeline"
+    },
     {
         "name": "PL_FMD_LOAD_ALL.DataPipeline",
         "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
