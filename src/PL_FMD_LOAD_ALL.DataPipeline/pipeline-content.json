@@ -34,7 +34,7 @@
           {
             "activity": "PL_FMD_LOAD_LANDINGZONE",
             "dependencyConditions": [
-              "Succeeded"
+              "Completed"
             ]
           }
         ]
