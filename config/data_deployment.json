@@ -2,13 +2,13 @@
         {
             "name": "SQL_FMD_FRAMEWORK",
             "type": "SQLDatabase",
-            "id": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+            "id": "075e5656-613d-41f4-89ed-63f6837c0ff6",
+            "endpoint": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com"
            },
         {
             "name": "SQL_FMD_FRAMEWORK",
             "type": "SQLEndpoint",
-            "id": "b6c9a8ce-8888-4dd2-9c3e-ce98279ad8ef",
-            "endpoint": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com"
+            "id": "b6c9a8ce-8888-4dd2-9c3e-ce98279ad8ef"
         } 
     
 ]
