@@ -324,11 +324,12 @@
               },
               "type": "string"
             },
-            "log_client_id_secret_name": {
-              "type": "string"
-            },
-            "log_client_secret_secret_name": {
-              "type": "string"
+            "schema_enabled": {
+              "value": {
+                "value": "@pipeline().parameters.Lakehouse_schema_enabled",
+                "type": "Expression"
+              },
+              "type": "bool"
             }
           },
           "sessionTag": "fmd_framework"
@@ -487,6 +488,9 @@
     "parameters": {
       "key_vault_name": {
         "type": "string"
+      },
+      "Lakehouse_schema_enabled": {
+        "type": "bool"
       }
     }
   }

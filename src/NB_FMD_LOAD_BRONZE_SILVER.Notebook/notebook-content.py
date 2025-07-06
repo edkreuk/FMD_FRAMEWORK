@@ -37,10 +37,7 @@ CleansingRules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-
-log_database = ''
-log_client_id_secret_name = ""
-log_client_secret_secret_name = ""
+schema_enabled = ''
 
 # METADATA ********************
 
@@ -115,12 +112,20 @@ spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
 # CELL ********************
 
 #Set SourceFile and target Location
-source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}_{SourceSchema}_{SourceName}"
-print(source_changes_data_path)
+if schema_enabled == True:
+    source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}/{SourceSchema}_{SourceName}"
+    print(source_changes_data_path)
 
-#Beware 
-target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}_{TargetSchema}_{TargetName}"
-print(target_data_path)
+    #Beware 
+    target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}/{TargetSchema}_{TargetName}"
+    print(target_data_path)
+elif schema_enabled  != True:
+    source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}_{SourceSchema}_{SourceName}"
+    print(source_changes_data_path)
+
+    #Beware 
+    target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}_{TargetSchema}_{TargetName}"
+    print(target_data_path)
 
 
 # METADATA ********************

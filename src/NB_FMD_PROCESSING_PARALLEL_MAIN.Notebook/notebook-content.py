@@ -51,12 +51,7 @@ notebook_entities = ""
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-log_workspace_guid= ''
-logwarehouse_guid = ''
-logwarehouse_endpoint = ''
-log_database = ''
-log_client_id_secret_name = ""
-log_client_secret_secret_name = ""
+schema_enabled =''
 
 # METADATA ********************
 
@@ -178,7 +173,7 @@ if not nb_exists:
     }
 
     cell_code = """
-    # implementeer hier custom cleansing functions
+    # Implement custom cleanings fucntion here
 
     #def <functienaam> (df, columns, args):
     #    print(args['<custom parameter name>']) # use of custom parameters
@@ -280,12 +275,7 @@ for i, item in enumerate( path_data):
     item["params"]["NotebookExecutionId"] = NotebookExecutionId
     item["params"]["useRootDefaultLakehouse"] = useRootDefaultLakehouse
     item["params"]["driver"] = driver
-    item["params"]["log_workspace_guid"] = log_workspace_guid
-    item["params"]["logwarehouse_endpoint"] = logwarehouse_endpoint
-    item["params"]["logwarehouse_guid"] = logwarehouse_guid
-    item["params"]["log_database"] = log_database
-    item["params"]["log_client_id_secret_name"] = log_client_id_secret_name
-    item["params"]["log_client_secret_secret_name"] = log_client_secret_secret_name
+    item["params"]["schema_enabled"] = schema_enabled
 
 
 
