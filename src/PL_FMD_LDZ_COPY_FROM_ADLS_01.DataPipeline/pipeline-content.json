@@ -88,7 +88,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "1388f30d_5062_48c3_aa76_b0c2bdc545fd",
+                      "name": "",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
