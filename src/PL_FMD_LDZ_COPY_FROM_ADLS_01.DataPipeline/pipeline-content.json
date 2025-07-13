@@ -88,7 +88,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "",
+                      "name": "source_datalandingzone",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
