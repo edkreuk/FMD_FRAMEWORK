@@ -130,6 +130,11 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 			 }
 	 ]
 	 ```
+4. **Lakehouse enabled**  
+	 Set True if you want to use schema's
+	 
+5. **Load demo data**  
+	 Set True if you want to load demo data for testing
 
 4. **Run the deployment**  
 	 Execute the notebook to apply your configuration and deploy the framework.
