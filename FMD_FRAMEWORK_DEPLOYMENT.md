@@ -17,15 +17,11 @@ Before you begin, ensure the following admin settings are enabled:
 
 #### 1. Download deployment assets
 
-Download the deployment notebook to your local machine:
+Download the deployment notebook from the setup folder to your local machine:
 
 - `NB_SETUP_FMD.ipynb` – Automates artifact creation for FMD_FRAMEWORK in Fabric, based on your configuration.
 
-Alternatively, clone the repository:
 
-```bash
-git clone https://github.com/edkreuk/FMD_FRAMEWORK.git
-```
 
 #### 2. Create required connections
 
