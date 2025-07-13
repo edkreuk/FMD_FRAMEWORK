@@ -14,11 +14,7 @@
         "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
         "type": "Notebook"
     },
-     {
-        "name": "VAR_FMD.VariableLibrary",
-        "id": "582c746d-d11d-960f-45fb-0f57937b1bf2",
-        "type": "VariableLibrary"
-    },
+
     {
         "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
         "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
