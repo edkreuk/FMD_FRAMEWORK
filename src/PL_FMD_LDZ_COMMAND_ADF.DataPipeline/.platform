@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_FMD_LDZ_COMMAND_ADF"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "28c5f888-0efc-4b60-b568-c82f47680680"
+  }
+}

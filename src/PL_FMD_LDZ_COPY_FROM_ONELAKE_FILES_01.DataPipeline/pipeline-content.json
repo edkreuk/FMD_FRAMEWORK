@@ -1,0 +1,897 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "FE_ENTITY",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "LK_GET_ENTITIES",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@activity('LK_GET_ENTITIES').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "CP_source_datalandingzone",
+              "type": "Copy",
+              "dependsOn": [
+                {
+                  "activity": "SP_START_AUDIT_PIPELINE_CP",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "storeSettings": {
+                    "type": "LakehouseReadSettings",
+                    "recursive": true
+                  },
+                  "formatSettings": {
+                    "type": "BinaryReadSettings"
+                  },
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "LH_DATA_LANDINGZONE",
+                      "properties": {
+                        "annotations": [],
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
+                          "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
+                          "rootFolder": "Files"
+                        }
+                      }
+                    },
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "fileName": {
+                          "value": "@item().SourceName",
+                          "type": "Expression"
+                        },
+                        "folderPath": {
+                          "value": "@item().SourceSchema",
+                          "type": "Expression"
+                        }
+                      }
+                    }
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings",
+                    "copyBehavior": "PreserveHierarchy"
+                  },
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "1388f30d_5062_48c3_aa76_b0c2bdc545fd",
+                      "properties": {
+                        "annotations": [],
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "workspaceId": "@item().WorkspaceGuid",
+                          "artifactId": "@item().TargetLakehouseGuid",
+                          "rootFolder": "Files"
+                        }
+                      }
+                    },
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "fileName": {
+                          "value": "@item().TargetFileName",
+                          "type": "Expression"
+                        },
+                        "folderPath": {
+                          "value": "@item().TargetFilePath",
+                          "type": "Expression"
+                        }
+                      }
+                    }
+                  }
+                },
+                "enableStaging": false,
+                "skipErrorFile": {
+                  "dataInconsistency": false
+                },
+                "validateDataConsistency": true
+              }
+            },
+            {
+              "name": "SP_START_AUDIT_PIPELINE_CP",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": {
+                  "value": "[logging].[sp_AuditPipeline]",
+                  "type": "Expression"
+                },
+                "storedProcedureParameters": {
+                  "LogData": {
+                    "value": {
+                      "value": "{ \"Action\" : \"Start\" }",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "LogType": {
+                    "value": "StartCopyActivity",
+                    "type": "String"
+                  },
+                  "PipelineGuid": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineParameters": {
+                    "value": {
+                      "value": "@item().SourceName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineParentRunGuid": {
+                    "value": {
+                      "value": "@pipeline()?.TriggeredByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "PipelineRunGuid": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "TriggerGuid": {
+                    "value": {
+                      "value": "@pipeline().TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "TriggerTime": {
+                    "value": {
+                      "value": "@pipeline().TriggerTime",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "WorkspaceGuid": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "EntityLayer": {
+                    "value": "Landingzone",
+                    "type": "String"
+                  },
+                  "EntityId": {
+                    "value": "@item().EntityId",
+                    "type": "Int32"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "SQL_FMD_FRAMEWORK",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  },
+                  "externalReferences": {
+                    "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                  }
+                }
+              }
+            },
+            {
+              "name": "SP_END_AUDIT_PIPELINE_CP",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "SP_UPDATE_PROCESS",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                },
+                {
+                  "activity": "SP_UPDATE_LASTLOADVALIE",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": {
+                  "value": "[logging].[sp_AuditPipeline]",
+                  "type": "Expression"
+                },
+                "storedProcedureParameters": {
+                  "LogData": {
+                    "value": {
+                      "value": "{    \"Action\" : \"End\",    \"CopyOutput\" : @{activity('CP_source_datalandingzone').output},    }",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "LogType": {
+                    "value": "EndCopyActivity",
+                    "type": "String"
+                  },
+                  "PipelineGuid": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineParameters": {
+                    "value": {
+                      "value": "@item().SourceName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineParentRunGuid": {
+                    "value": {
+                      "value": "@pipeline()?.TriggeredByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "PipelineRunGuid": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "TriggerGuid": {
+                    "value": {
+                      "value": "@pipeline().TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "TriggerTime": {
+                    "value": {
+                      "value": "@pipeline().TriggerTime",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "WorkspaceGuid": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "EntityLayer": {
+                    "value": "Landingzone",
+                    "type": "String"
+                  },
+                  "EntityId": {
+                    "value": "@item().EntityId",
+                    "type": "Int32"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "SQL_FMD_FRAMEWORK",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  },
+                  "externalReferences": {
+                    "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                  }
+                }
+              }
+            },
+            {
+              "name": "SP_FAIL_AUDIT_PIPELINE_CP",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "CP_source_datalandingzone",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": {
+                  "value": "[logging].[sp_AuditPipeline]",
+                  "type": "Expression"
+                },
+                "storedProcedureParameters": {
+                  "LogData": {
+                    "value": {
+                      "value": "{    \"Action\" : \"Error\",     \"Message\" : @{activity('CP_source_datalandingzone').error}}",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "LogType": {
+                    "value": "FailCopyActivity",
+                    "type": "String"
+                  },
+                  "PipelineGuid": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineParameters": {
+                    "value": {
+                      "value": "@item().SourceName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineParentRunGuid": {
+                    "value": {
+                      "value": "@pipeline()?.TriggeredByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "PipelineRunGuid": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "TriggerGuid": {
+                    "value": {
+                      "value": "@pipeline().TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "TriggerTime": {
+                    "value": {
+                      "value": "@pipeline().TriggerTime",
+                      "type": "Expression"
+                    },
+                    "type": "DateTime"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "WorkspaceGuid": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "Guid"
+                  },
+                  "EntityLayer": {
+                    "value": "Landingzone",
+                    "type": "String"
+                  },
+                  "EntityId": {
+                    "value": "@item().EntityId",
+                    "type": "Int32"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "SQL_FMD_FRAMEWORK",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  },
+                  "externalReferences": {
+                    "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                  }
+                }
+              }
+            },
+            {
+              "name": "SP_UPDATE_PROCESS",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "CP_source_datalandingzone",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[execution].[sp_UpsertPipelineLandingzoneEntity]",
+                "storedProcedureParameters": {
+                  "Filename": {
+                    "value": {
+                      "value": "@item().TargetFileName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "FilePath": {
+                    "value": {
+                      "value": "@item().TargetFilePath",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "IsProcessed": {
+                    "value": "False",
+                    "type": "Boolean"
+                  },
+                  "LandingzoneEntityId": {
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
+                    "type": "Int64"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "SQL_FMD_FRAMEWORK",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  },
+                  "externalReferences": {
+                    "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                  }
+                }
+              }
+            },
+            {
+              "name": "SP_UPDATE_LASTLOADVALIE",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "CP_source_datalandingzone",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[execution].[sp_UpsertLandingZoneEntityLastLoadValue]",
+                "storedProcedureParameters": {
+                  "LandingzoneEntityId": {
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
+                    "type": "Int64"
+                  },
+                  "LastLoadValue": {
+                    "value": {
+                      "value": "@utcNow()",
+                      "type": "Expression"
+                    },
+                    "type": "Datetime"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "SQL_FMD_FRAMEWORK",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  },
+                  "externalReferences": {
+                    "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "SP_START_AUDIT_PIPELINE",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[logging].[sp_AuditPipeline]",
+          "storedProcedureParameters": {
+            "LogData": {
+              "value": {
+                "value": "{ \"Action\" : \"Start\" }",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "LogType": {
+              "value": "StartPipeline",
+              "type": "String"
+            },
+            "PipelineGuid": {
+              "value": {
+                "value": "@pipeline().Pipeline",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "PipelineName": {
+              "value": {
+                "value": "@pipeline().PipelineName",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "PipelineParameters": {
+              "value": null,
+              "type": "String"
+            },
+            "PipelineParentRunGuid": {
+              "value": {
+                "value": "@pipeline()?.TriggeredByPipelineRunId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "PipelineRunGuid": {
+              "value": {
+                "value": "@pipeline().RunId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "TriggerGuid": {
+              "value": {
+                "value": "@pipeline().TriggerId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "TriggerTime": {
+              "value": {
+                "value": "@pipeline().TriggerTime",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            },
+            "TriggerType": {
+              "value": {
+                "value": "@pipeline().TriggerType",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "WorkspaceGuid": {
+              "value": {
+                "value": "@pipeline().DataFactory",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "EntityLayer": {
+              "value": "Landingzone",
+              "type": "String"
+            },
+            "EntityId": {
+              "value": null,
+              "type": "Int32"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "SQL_FMD_FRAMEWORK",
+          "properties": {
+            "annotations": [],
+            "type": "FabricSqlDatabase",
+            "typeProperties": {
+              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+            },
+            "externalReferences": {
+              "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+            }
+          }
+        }
+      },
+      {
+        "name": "SP_END_AUDIT_PIPELINE",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "FE_ENTITY",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[logging].[sp_AuditPipeline]",
+          "storedProcedureParameters": {
+            "LogData": {
+              "value": {
+                "value": "{    \"Action\" : \"End\"}",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "LogType": {
+              "value": "EndPipeline",
+              "type": "String"
+            },
+            "PipelineGuid": {
+              "value": {
+                "value": "@pipeline().Pipeline",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "PipelineName": {
+              "value": {
+                "value": "@pipeline().PipelineName",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "PipelineParameters": {
+              "value": null,
+              "type": "String"
+            },
+            "PipelineParentRunGuid": {
+              "value": {
+                "value": "@pipeline()?.TriggeredByPipelineRunId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "PipelineRunGuid": {
+              "value": {
+                "value": "@pipeline().RunId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "TriggerGuid": {
+              "value": {
+                "value": "@pipeline().TriggerId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "TriggerTime": {
+              "value": {
+                "value": "@pipeline().TriggerTime",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            },
+            "TriggerType": {
+              "value": {
+                "value": "@pipeline().TriggerType",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "WorkspaceGuid": {
+              "value": {
+                "value": "@pipeline().DataFactory",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "EntityLayer": {
+              "value": "Landingzone",
+              "type": "String"
+            },
+            "EntityId": {
+              "value": null,
+              "type": "Int32"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "SQL_FMD_FRAMEWORK",
+          "properties": {
+            "annotations": [],
+            "type": "FabricSqlDatabase",
+            "typeProperties": {
+              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+            },
+            "externalReferences": {
+              "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+            }
+          }
+        }
+      },
+      {
+        "name": "LK_GET_ENTITIES",
+        "description": "Will run all the Entities with the Type ONELAKE_FILES_01 assigned in the integration.DataSource",
+        "type": "Lookup",
+        "dependsOn": [
+          {
+            "activity": "SP_START_AUDIT_PIPELINE",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderQuery": {
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ONELAKE_FILES_01'",
+              "type": "Expression"
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": false,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "key_vault_name": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
+  "variables": [
+    {
+      "name": "Data_WorkspaceGuid",
+      "note": "",
+      "type": "String",
+      "value": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+    }
+  ]
+}

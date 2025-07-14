@@ -1,6 +1,20 @@
-**Data Cleansing Examples**
+---
+title: Data cleansing examples for the FMD Framework
+description: Learn how to define data cleansing operations using metadata-driven JSON for the Fabric Metadata-Driven (FMD) Framework.
+ms.service: fabric
+ms.topic: how-to
+ms.date: 07/2025
+author: edkreuk
+---
 
-### Removing Duplicates
+# Data cleansing examples for the FMD Framework
+
+This article provides sample metadata-driven JSON configurations for common data cleansing operations in the Fabric Metadata-Driven (FMD) Framework. Use these examples to define cleansing steps in your data pipelines.
+
+## Remove duplicates
+
+Removes duplicate records based on the specified column.
+
 ```json
 [
     {
@@ -10,7 +24,10 @@
 ]
 ```
 
-### Trimming Whitespace
+## Trim whitespace
+
+Removes leading and trailing whitespace from the specified column.
+
 ```json
 [
     {
@@ -20,7 +37,10 @@
 ]
 ```
 
-### Replacing Null Values
+## Replace null values
+
+Replaces null values in the specified column with a defined replacement value.
+
 ```json
 [
     {
@@ -33,7 +53,10 @@
 ]
 ```
 
-### Standardizing Date Formats
+## Standardize date formats
+
+Converts date values in the specified column to a standard format.
+
 ```json
 [
     {
@@ -46,7 +69,10 @@
 ]
 ```
 
-### Converting Data Types
+## Convert data types
+
+Converts the data type of the specified column.
+
 ```json
 [
     {
@@ -59,12 +85,13 @@
 ]
 ```
 
-### Removing Special Characters
+## Remove special characters
+
+Removes special characters from the specified column.
+
 ```json
 [
     {
         "function": "remove_special_characters",
         "columns": "CustomerName"
     }
-]
-```

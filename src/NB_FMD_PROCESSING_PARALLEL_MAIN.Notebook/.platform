@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "NB_FMD_PROCESSING_PARALLEL_MAIN",
+    "description": "Main Notebook to start processes for Bronze and Silver"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bf2101e2-a101-b8df-43bf-5f6ba130a279"
+  }
+}

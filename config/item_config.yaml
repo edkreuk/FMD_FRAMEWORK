@@ -1,0 +1,16 @@
+workspaces:
+  workspace_data: "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+  workspace_code: "2bdaef03-9e79-46da-9b07-391e87b56416"
+  workspace_config: "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+
+connections: 
+        CON_FMD_FABRIC_SQL: "372237f9-709a-48f8-8fb2-ce06940c990e"
+        CON_FMD_FABRIC_PIPELINES: "6d8146c6-a438-47df-94e2-540c552eb6d7"
+        CON_FMD_ADF_PIPELINES: "02e107b8-e97e-4b00-a28c-668cf9ce3d9a"
+
+
+database: 
+    displayName: "SQL_FMD_FRAMEWORK"
+    id: "075e5656-613d-41f4-89ed-63f6837c0ff6"
+    endpoint: "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.datawarehouse.fabric.microsoft.com"
+

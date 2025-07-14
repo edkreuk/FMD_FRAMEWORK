@@ -1,0 +1,1108 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "LKP_ENTITIES",
+        "type": "Lookup",
+        "dependsOn": [
+          {
+            "activity": "Copy metadata",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "DelimitedTextSource",
+            "storeSettings": {
+              "type": "LakehouseReadSettings",
+              "recursive": true,
+              "enablePartitionDiscovery": false
+            },
+            "formatSettings": {
+              "type": "DelimitedTextReadSettings"
+            }
+          },
+          "firstRowOnly": false,
+          "datasetSettings": {
+            "annotations": [],
+            "linkedService": {
+              "name": "LH_DATA_LANDINGZONE",
+              "properties": {
+                "annotations": [],
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
+                  "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
+                  "rootFolder": "Files"
+                }
+              }
+            },
+            "type": "DelimitedText",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "fileName": {
+                  "value": "@{pipeline().parameters.DatasourceName}.json",
+                  "type": "Expression"
+                },
+                "folderPath": "metadata"
+              },
+              "columnDelimiter": ",",
+              "escapeChar": "\\",
+              "firstRowAsHeader": true,
+              "quoteChar": "\""
+            },
+            "schema": []
+          }
+        }
+      },
+      {
+        "name": "ForEach LZE",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "LKP_ENTITIES",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "LKP LH DATA LANDINGZONE",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "LKP LH BRONZE LAYER",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "LKP LH SILVER LAYER",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "LKP_INSERT_DATASOURCE",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@json(activity('LKP_ENTITIES').output.value[0]['metadata'])",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "LKP_INSERT_DLZ",
+              "type": "Lookup",
+              "dependsOn": [
+                {
+                  "activity": "LKP_EXISTING_LDZ",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderStoredProcedureName": "[integration].[sp_UpsertLandingzoneEntity]",
+                  "storedProcedureParameters": {
+                    "DataSourceId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_INSERT_DATASOURCE').output.firstRow.DataSourceId",
+                        "type": "Expression"
+                      }
+                    },
+                    "FileName": {
+                      "type": "String",
+                      "value": {
+                        "value": "@concat(item().sourceSchema,'_',item().sourceName)",
+                        "type": "Expression"
+                      }
+                    },
+                    "FilePath": {
+                      "type": "String",
+                      "value": {
+                        "value": "fmd",
+                        "type": "Expression"
+                      }
+                    },
+                    "FileType": {
+                      "type": "String",
+                      "value": "parquet"
+                    },
+                    "IsActive": {
+                      "type": "Boolean",
+                      "value": "True"
+                    },
+                    "IsIncremental": {
+                      "type": "Boolean",
+                      "value": "False"
+                    },
+                    "IsIncrementalColumn": {
+                      "type": "String",
+                      "value": null
+                    },
+                    "LakehouseId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP LH DATA LANDINGZONE').output.firstRow.LakehouseId\n\n",
+                        "type": "Expression"
+                      }
+                    },
+                    "LandingzoneEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_EXISTING_LDZ').output.firstRow.LandingzoneEntityId",
+                        "type": "Expression"
+                      }
+                    },
+                    "SourceName": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().sourceName",
+                        "type": "Expression"
+                      }
+                    },
+                    "SourceSchema": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().sourceSchema",
+                        "type": "Expression"
+                      }
+                    },
+                    "SourceCustomSelect": {
+                      "type": "String",
+                      "value": null
+                    }
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "connectionSettings": {
+                    "name": "SQL_FMD_FRAMEWORK",
+                    "properties": {
+                      "annotations": [],
+                      "type": "FabricSqlDatabase",
+                      "typeProperties": {
+                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                      },
+                      "externalReferences": {
+                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                      }
+                    }
+                  },
+                  "type": "FabricSqlDatabaseTable",
+                  "schema": [],
+                  "typeProperties": {}
+                }
+              }
+            },
+            {
+              "name": "LKP_EXISTING_LDZ",
+              "type": "Lookup",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderStoredProcedureName": "[integration].[sp_GetLandingzoneEntity]",
+                  "storedProcedureParameters": {
+                    "LakehouseId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP LH DATA LANDINGZONE').output.firstRow.LakehouseId",
+                        "type": "Expression"
+                      }
+                    },
+                    "SourceName": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().SourceName",
+                        "type": "Expression"
+                      }
+                    },
+                    "SourceSchema": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().SourceSchema",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "connectionSettings": {
+                    "name": "SQL_FMD_FRAMEWORK",
+                    "properties": {
+                      "annotations": [],
+                      "type": "FabricSqlDatabase",
+                      "typeProperties": {
+                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                      },
+                      "externalReferences": {
+                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                      }
+                    }
+                  },
+                  "type": "FabricSqlDatabaseTable",
+                  "schema": [],
+                  "typeProperties": {}
+                }
+              }
+            },
+            {
+              "name": "LKP_EXISTING_BRZ",
+              "type": "Lookup",
+              "dependsOn": [
+                {
+                  "activity": "LKP_INSERT_DLZ",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderStoredProcedureName": "[integration].[sp_GetBronzeLayerEntity]",
+                  "storedProcedureParameters": {
+                    "LandingzoneEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_EXISTING_LDZ').output.firstRow.LandingzoneEntityId",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "connectionSettings": {
+                    "name": "SQL_FMD_FRAMEWORK",
+                    "properties": {
+                      "annotations": [],
+                      "type": "FabricSqlDatabase",
+                      "typeProperties": {
+                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                      },
+                      "externalReferences": {
+                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                      }
+                    }
+                  },
+                  "type": "FabricSqlDatabaseTable",
+                  "schema": [],
+                  "typeProperties": {}
+                }
+              }
+            },
+            {
+              "name": "LKP_INSERT_BRZ",
+              "type": "Lookup",
+              "dependsOn": [
+                {
+                  "activity": "LKP_EXISTING_BRZ",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderStoredProcedureName": "[integration].[sp_UpsertBronzeLayerEntity]",
+                  "storedProcedureParameters": {
+                    "BronzeLayerEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_EXISTING_BRZ').output.firstRow.BronzeLayerEntityId",
+                        "type": "Expression"
+                      }
+                    },
+                    "FileType": {
+                      "type": "String",
+                      "value": "Delta"
+                    },
+                    "IsActive": {
+                      "type": "Boolean",
+                      "value": "True"
+                    },
+                    "LakehouseId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP LH BRONZE LAYER').output.firstRow.LakehouseId",
+                        "type": "Expression"
+                      }
+                    },
+                    "LandingzoneEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_INSERT_DLZ').output.firstRow.LandingzoneEntityId",
+                        "type": "Expression"
+                      }
+                    },
+                    "Name": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().SourceName",
+                        "type": "Expression"
+                      }
+                    },
+                    "PrimaryKeys": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().PrimaryKeys",
+                        "type": "Expression"
+                      }
+                    },
+                    "Schema": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().SourceSchema",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "connectionSettings": {
+                    "name": "SQL_FMD_FRAMEWORK",
+                    "properties": {
+                      "annotations": [],
+                      "type": "FabricSqlDatabase",
+                      "typeProperties": {
+                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                      },
+                      "externalReferences": {
+                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                      }
+                    }
+                  },
+                  "type": "FabricSqlDatabaseTable",
+                  "schema": [],
+                  "typeProperties": {}
+                }
+              }
+            },
+            {
+              "name": "LKP_EXISTING_SLV",
+              "type": "Lookup",
+              "dependsOn": [
+                {
+                  "activity": "LKP_INSERT_BRZ",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderStoredProcedureName": "[integration].[sp_GetSilverLayerEntity]",
+                  "storedProcedureParameters": {
+                    "BronzeLayerEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_EXISTING_BRZ').output.firstRow.BronzeLayerEntityId",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "connectionSettings": {
+                    "name": "SQL_FMD_FRAMEWORK",
+                    "properties": {
+                      "annotations": [],
+                      "type": "FabricSqlDatabase",
+                      "typeProperties": {
+                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                      },
+                      "externalReferences": {
+                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                      }
+                    }
+                  },
+                  "type": "FabricSqlDatabaseTable",
+                  "schema": [],
+                  "typeProperties": {}
+                }
+              }
+            },
+            {
+              "name": "LKP_INSERT_SLV",
+              "type": "Lookup",
+              "dependsOn": [
+                {
+                  "activity": "LKP_EXISTING_SLV",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderStoredProcedureName": "[integration].[sp_UpsertSilverLayerEntity]",
+                  "storedProcedureParameters": {
+                    "BronzeLayerEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_INSERT_BRZ').output.firstRow.BronzeLayerEntityId",
+                        "type": "Expression"
+                      }
+                    },
+                    "FileType": {
+                      "type": "String",
+                      "value": "delta"
+                    },
+                    "IsActive": {
+                      "type": "Boolean",
+                      "value": "True"
+                    },
+                    "LakehouseId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP LH SILVER LAYER').output.firstRow.LakehouseId",
+                        "type": "Expression"
+                      }
+                    },
+                    "Name": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().SourceName",
+                        "type": "Expression"
+                      }
+                    },
+                    "Schema": {
+                      "type": "String",
+                      "value": {
+                        "value": "@item().SourceSchema",
+                        "type": "Expression"
+                      }
+                    },
+                    "SilverLayerEntityId": {
+                      "type": "Int32",
+                      "value": {
+                        "value": "@activity('LKP_EXISTING_SLV').output.firstRow.SilverLayerEntityId",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "connectionSettings": {
+                    "name": "SQL_FMD_FRAMEWORK",
+                    "properties": {
+                      "annotations": [],
+                      "type": "FabricSqlDatabase",
+                      "typeProperties": {
+                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                      },
+                      "externalReferences": {
+                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                      }
+                    }
+                  },
+                  "type": "FabricSqlDatabaseTable",
+                  "schema": [],
+                  "typeProperties": {}
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "LKP LH DATA LANDINGZONE",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[integration].[sp_GetLakehouse]",
+            "storedProcedureParameters": {
+              "Name": {
+                "type": "String",
+                "value": "LH_DATA_LANDINGZONE"
+              },
+              "WorkspaceGuid": {
+                "type": "Guid",
+                "value": {
+                  "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": true,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      },
+      {
+        "name": "Copy metadata",
+        "type": "Copy",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": {
+              "value": "with CTE (metadata) AS (\nSELECT \n    sourceName = t.name\n,   sourceSchema = schema_name(t.[schema_id])\n,   columnMappings=(SELECT SourceColumn = c.[name]\n                        ,TargetColumn = c.[name] \n                        ,DataTypeOverride = CASE c.system_type_id \n                                                WHEN 127 then 0 \n                                                WHEN 104 then 1\n                                                WHEN 173 then 2\n                                                WHEN 165 then 2\n                                                WHEN 40 then 3\n                                                WHEN 61 then 4\n                                                WHEN 42 then 5\n                                                WHEN 43 then 6\n                                                WHEN 106 then 8\n                                                WHEN 108 then 8\n                                                WHEN 62 then 10\n                                                WHEN 59 then 10\n                                                WHEN 56 then 12\n                                                WHEN 58  then 17\n                                                WHEN 52 then 18\n                                                WHEN 239 then 19\n                                                WHEN 99  then 19\n                                                WHEN 231 then 19\n                                                WHEN 35  then 19\n                                                WHEN 167 then 19\n                                                WHEN 175 then 19\n                                                WHEN 48 THEN 20\n                                            END\n                    FROM SYS.COLUMNS AS C \n                    WHERE T.[OBJECT_ID] = C.[OBJECT_ID] for json auto\n                    )\n,   primaryKeys = ( SELECT top 1000000 primaryKeys =STRING_AGG(c.[name],',') WITHIN GROUP (ORDER BY  ic.key_ordinal ASC)\n                    FROM SYS.indexes i \n                    join sys.index_columns ic on i.[object_id] = ic.[object_id] and i.is_primary_key = 1 and i.index_id = ic.index_id \n                    join sys.columns c on c.[object_id] = ic.[object_id] and c.column_id = ic.column_id\n                    where i.[object_id] = t.object_id\n                    group by i.[object_id]\n                  )\nFROM SYS.tables AS T where T.Name in  @{pipeline().parameters.Tables}\nfor json auto\n)\nselect metadata from cte",
+              "type": "Expression"
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [],
+              "typeProperties": {
+                "database": {
+                  "value": "@pipeline().parameters.DatasourceName",
+                  "type": "Expression"
+                }
+              },
+              "externalReferences": {
+                "connection": "@pipeline().parameters.ConnectionGuid"
+              }
+            }
+          },
+          "sink": {
+            "type": "DelimitedTextSink",
+            "storeSettings": {
+              "type": "LakehouseWriteSettings"
+            },
+            "formatSettings": {
+              "type": "DelimitedTextWriteSettings",
+              "quoteAllText": true,
+              "fileExtension": ".txt"
+            },
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "LH_DATA_LANDINGZONE",
+                "properties": {
+                  "annotations": [],
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
+                    "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
+                    "rootFolder": "Files"
+                  }
+                }
+              },
+              "type": "DelimitedText",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "fileName": {
+                    "value": "@{pipeline().parameters.DatasourceName}.json",
+                    "type": "Expression"
+                  },
+                  "folderPath": "metadata"
+                },
+                "columnDelimiter": ",",
+                "escapeChar": "\\",
+                "firstRowAsHeader": true,
+                "quoteChar": "\""
+              },
+              "schema": []
+            }
+          },
+          "enableStaging": false,
+          "translator": {
+            "type": "TabularTranslator",
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      },
+      {
+        "name": "LKP LH BRONZE LAYER",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[integration].[sp_GetLakehouse]",
+            "storedProcedureParameters": {
+              "Name": {
+                "type": "String",
+                "value": "LH_BRONZE_LAYER"
+              },
+              "WorkspaceGuid": {
+                "type": "Guid",
+                "value": {
+                  "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": true,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      },
+      {
+        "name": "LKP LH SILVER LAYER",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[integration].[sp_GetLakehouse]",
+            "storedProcedureParameters": {
+              "Name": {
+                "type": "String",
+                "value": "LH_SILVER_LAYER"
+              },
+              "WorkspaceGuid": {
+                "type": "Guid",
+                "value": {
+                  "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": true,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      },
+      {
+        "name": "LKP DATASOURCE",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[integration].[sp_GetDataSource]",
+            "storedProcedureParameters": {
+              "Name": {
+                "type": "String",
+                "value": {
+                  "value": "@pipeline().parameters.DatasourceName",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": true,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      },
+      {
+        "name": "LKP_INSERT_DATASOURCE",
+        "type": "Lookup",
+        "dependsOn": [
+          {
+            "activity": "LKP DATASOURCE",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "LKP CONNECTION",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[integration].[sp_UpsertDataSource]",
+            "storedProcedureParameters": {
+              "Namespace": {
+                "type": "String",
+                "value": {
+                  "value": "@pipeline().parameters.DatasourceNamespace",
+                  "type": "Expression"
+                }
+              },
+              "ConnectionId": {
+                "type": "Int32",
+                "value": {
+                  "value": "@activity('LKP CONNECTION').output.firstRow.ConnectionId",
+                  "type": "Expression"
+                }
+              },
+              "DataSourceId": {
+                "type": "Int32",
+                "value": {
+                  "value": "@activity('LKP DATASOURCE').output.firstRow.DataSourceId",
+                  "type": "Expression"
+                }
+              },
+              "Description": {
+                "type": "String",
+                "value": {
+                  "value": "@pipeline().parameters.DatasourceName",
+                  "type": "Expression"
+                }
+              },
+              "IsActive": {
+                "type": "Boolean",
+                "value": "True"
+              },
+              "Name": {
+                "type": "String",
+                "value": {
+                  "value": "@pipeline().parameters.DatasourceName",
+                  "type": "Expression"
+                }
+              },
+              "Type": {
+                "type": "String",
+                "value": {
+                  "value": "@pipeline().parameters.DatasourceType",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      },
+      {
+        "name": "LKP CONNECTION",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderStoredProcedureName": "[integration].[sp_GetConnection]",
+            "storedProcedureParameters": {
+              "ConnectionGuid": {
+                "type": "Guid",
+                "value": {
+                  "value": "@pipeline().parameters.ConnectionGuid",
+                  "type": "Expression"
+                }
+              }
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": true,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "ConnectionGuid": {
+        "type": "string",
+        "defaultValue": "cf673e6a-13f6-4ebb-9cbb-4ba4ab390818"
+      },
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      },
+      "DatasourceName": {
+        "type": "string",
+        "defaultValue": "WideWorldImporters"
+      },
+      "DatasourceNamespace": {
+        "type": "string",
+        "defaultValue": "wwi"
+      },
+      "DatasourceType": {
+        "type": "string",
+        "defaultValue": "ASQL_01"
+      },
+      "Tables": {
+        "type": "string",
+        "defaultValue": "('PurchaseOrders' ,'PurchaseOrderLines' ,'Orders' ,'OrderLines' ,'Invoices' ,'InvoiceLines' ,'BuyingGroups' ,'CustomerCategories')"
+      }
+    },
+    "variables": {
+      "env": {
+        "type": "String"
+      },
+      "workspace": {
+        "type": "String"
+      },
+      "DataSourceName": {
+        "type": "String",
+        "defaultValue": "WideworldImporters"
+      },
+      "test": {
+        "type": "Array"
+      }
+    }
+  }
+}
