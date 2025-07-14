@@ -241,7 +241,11 @@ else:
         "CopyOutput":{
             "Total Runtime": TotalRuntime,
             "TargetSchema": TargetSchema,
-            "TargetName" : TargetName
+            "TargetName" : TargetName,
+            "EntityId" : SilverLayerEntityId,
+            "StartTime" : start_audit_time,
+            "EndTime" : end_audit_time
+
         }
         }
 
