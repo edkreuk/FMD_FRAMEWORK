@@ -92,8 +92,9 @@ To get started:
 
 - [FMD Framework Data Model](./FMD_DATA_MODEL.md)
 - [FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)
-- [Configure and Load Data](./FMD_LOAD_DATA.md)
+- [Configure and Load Bulk Data](./FMD_LOAD_BULK_DATA.md)
 - [Auditing and Logging](./FMD_DATA_LOGGING.md)
+- [Data Cleansing](./FMD_DATA_CLEANSING.md)
 
 ## Troubleshooting
 
