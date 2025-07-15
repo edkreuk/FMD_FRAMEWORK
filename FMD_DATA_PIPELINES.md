@@ -23,6 +23,10 @@ The FMD Data Pipelines framework automates data ingestion, transformation, and m
 
 Coordinates the execution of the Landingzone, Bronze, and Silver pipelines. Use this pipeline to initiate a complete data load across all layers.
 
+Parameters:
+key_vault_name: No Function yet, for later purposes
+Lakehouse_schema_enabled: If Deployed with Lakehouse_schema_enabled = True, then leave it like this other wise change to False
+
 ![PL_FMD_LOAD_ALL](/Images/PL_FMD_LOAD_ALL.png)
 
 ### PL_FMD_LOAD_LANDINGZONE

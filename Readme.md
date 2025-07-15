@@ -105,13 +105,7 @@ To get started:
 
 ![Fabric Database Error](./Images/FMD_DATABASE_ERROR.png)
 
-## Test Process
 
-1. **Upload** `customer.csv` to the file section of `LH_DATA_LANDINGZONE` in the Development environment.
-2. **Create Table**: Generate a table named `in_customer` from the uploaded file. IN case you use schema enabled lakehouse dbo.in_customer
-3. **Run Process**: Execute the process to validate deployment.
-
-![Load File to table](./Images/FMD_load_file_to_table.png)
 
 ## Contributing
 
