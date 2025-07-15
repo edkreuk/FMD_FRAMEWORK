@@ -1,10 +1,9 @@
 ---
-title: FMD Data Pipelines overview
-description: Learn about the architecture, key pipelines, and configuration of the Fabric Metadata-Driven (FMD) Framework data pipelines.
-ms.service: fabric
-ms.topic: overview
-ms.date: 07/2025
-author: edkreuk
+Title: FMD Data Pipelines overview
+Description: Learn about the architecture, key pipelines, and configuration of the Fabric Metadata-Driven (FMD) Framework data pipelines.
+Topic: overview
+Date: 07/2025
+Author: edkreuk
 ---
 
 # FMD Data Pipelines overview

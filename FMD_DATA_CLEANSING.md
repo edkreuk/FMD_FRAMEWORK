@@ -1,10 +1,9 @@
 ---
-title: Data cleansing examples for the FMD Framework
-description: Learn how to define data cleansing operations using metadata-driven JSON for the Fabric Metadata-Driven (FMD) Framework.
-ms.service: fabric
-ms.topic: how-to
-ms.date: 07/2025
-author: edkreuk
+Title: Data cleansing examples for the FMD Framework
+Description: Learn how to define data cleansing operations using metadata-driven JSON for the Fabric Metadata-Driven (FMD) Framework.
+Topic: how-to
+Date: 07/2025
+Author: edkreuk
 ---
 
 # Data cleansing examples for the FMD Framework
