@@ -1,10 +1,8 @@
 ---
-title: Fabric Metadata-Driven (FMD) Framework Overview
-description: Discover the architecture, components, and deployment guidance for the Fabric Metadata-Driven (FMD) Framework on Fabric SQL Database.
-ms.service: fabric
-ms.topic: overview
-ms.date: 07/2025
-author: edkreuk
+Title: Fabric Metadata-Driven (FMD) Framework Overview
+Description: Discover the architecture, components, and deployment guidance for the Fabric Metadata-Driven (FMD) Framework on Fabric SQL Database.
+Date: 07/2025
+Author: edkreuk
 ---
 
 # Fabric Metadata-Driven (FMD) Framework Overview

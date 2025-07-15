@@ -1,10 +1,9 @@
 ---
-title: FMD Data Model reference
-description: Learn about the metadata tables and schema used by the Fabric Metadata-Driven (FMD) Framework.
-ms.service: fabric
-ms.topic: reference
-ms.date: 07/2025
-author: edkreuk
+Title: FMD Data Model reference
+Description: Learn about the metadata tables and schema used by the Fabric Metadata-Driven (FMD) Framework.
+Topic: reference
+Date: 07/2025
+Author: edkreuk
 ---
 
 # FMD Data Model reference
