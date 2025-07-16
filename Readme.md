@@ -16,8 +16,12 @@ The FMD Framework enables organizations to streamline data operations by leverag
 > [!TIP]
 > The FMD Framework is designed for rapid deployment and extensibility. You can use it out-of-the-box or customize it to meet your organization's evolving data needs.
 
-![FMD Framework Deployment](./Images/FMD_FRAMEWORK.jpeg)
 
+<img src="./Images/FMD_FRAMEWORK.jpeg" alt="FMD Framework Deployment" width="400"/> 
+
+## Video with the Data Factory Team
+
+[![Watch the FMD Framework overview](https://img.youtube.com/vi/UzqSFajSvtY/0.jpg)](https://www.youtube.com/watch?v=UzqSFajSvtY&t=829s)
 ## Key features
 
 - **Comprehensive data governance:** Maintain detailed metadata for improved data quality, consistency, and compliance.
