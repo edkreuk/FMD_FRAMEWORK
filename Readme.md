@@ -5,11 +5,11 @@ Date: 07/2025
 Author: edkreuk
 ---
 
-# Fabric Metadata-Driven (FMD) Framework Overview
+# Fabric Metadata-Driven (FMD) Framework overview
 
-The **Fabric Metadata-Driven (FMD) Framework** is a scalable, extensible solution for managing, integrating, and governing data using a metadata-driven approach on Fabric SQL Database. This article provides an overview of the FMD Framework, including its architecture, core components, workspace structure, supported data sources, and guidance for deployment and troubleshooting.
+The Fabric Metadata-Driven (FMD) Framework is a scalable, extensible solution for managing, integrating, and governing data using a metadata-driven approach on Fabric SQL Database. This article provides an overview of the FMD Framework, including its architecture, core components, workspace structure, supported data sources, and deployment guidance.
 
-## What is the FMD Framework?
+## Overview
 
 The FMD Framework enables organizations to streamline data operations by leveraging metadata to drive dynamic data pipelines and parameterized notebooks. Built on Fabric SQL Database, the framework supports secure, flexible, and modern data management at scale.
 
@@ -18,67 +18,60 @@ The FMD Framework enables organizations to streamline data operations by leverag
 
 ![FMD Framework Deployment](./Images/FMD_FRAMEWORK.jpeg)
 
-## Key Features
+## Key features
 
-- **Comprehensive Data Governance**  
-  Maintain detailed metadata for improved data quality, consistency, and compliance.
+- **Comprehensive data governance:** Maintain detailed metadata for improved data quality, consistency, and compliance.
+- **Scalability and flexibility:** Seamlessly scale with organizational growth and adapt to changing data requirements.
+- **Streamlined data integration:** Integrate diverse data sources for a unified data landscape.
+- **Cost efficiency:** Optimize data processes and reduce redundancy to achieve cost savings.
 
-- **Scalability and Flexibility**  
-  Seamlessly scale with organizational growth and adapt to changing data requirements.
+## Architecture and components
 
-- **Streamlined Data Integration**  
-  Integrate diverse data sources for a unified data landscape.
+The FMD Framework uses a modular architecture that separates data, code, and orchestration for enhanced security and manageability.
 
-- **Cost Efficiency**  
-  Optimize data processes and reduce redundancy to achieve cost savings.
+### Workspace architecture
 
-## Architecture and Components
+The recommended workspace structure ensures clear separation of responsibilities and access control.
 
-The FMD Framework is organized around a modular architecture that separates data, code, and orchestration for enhanced security and manageability.
-
-### Workspace Architecture
-
-The recommended workspace structure ensures clear separation of responsibilities and access control:
-
-| Workspace Type                | Purpose                                      | Examples                        |
-|-------------------------------|----------------------------------------------|----------------------------------|
-| **Data Workspaces**           | Manage and store data                        | Data Landing Zone, Bronze, Silver|
-| **Code Workspaces**           | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark |
-| **Orchestration & Logging**   | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing    |
+| Workspace type              | Purpose                                      | Examples                        |
+|-----------------------------|----------------------------------------------|----------------------------------|
+| Data workspaces             | Manage and store data                        | Data Landing Zone, Bronze, Silver|
+| Code workspaces             | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark |
+| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing    |
 
 > [!NOTE]
 > For organizations with a Gold Layer, create a separate workspace for reports to restrict access appropriately.
 
 ![FMD Workspace Overview](./Images/FMD_WORKSPACE_OVERVIEW.png)
 
-### Medallion Architecture
+### Medallion architecture
 
 The framework implements the Medallion Architecture using Lakehouses:
 
-- **Data Landing Zone**: Stores raw, unstructured, and structured data with incremental loads and no enforced schema.
-- **Bronze Layer**: Deduplicates and structures data, applying schema for consistency.
-- **Silver Layer**: Maintains historical, validated data with enforced quality rules.
+- **Data Landing Zone:** Stores raw, unstructured, and structured data with incremental loads and no enforced schema.
+- **Bronze layer:** Deduplicates and structures data, applying schema for consistency.
+- **Silver layer:** Maintains historical, validated data with enforced quality rules.
 
 ![FMD Lakehouse Overview](./Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
-### Taskflow Import
+### Taskflow import
 
 To deploy the default taskflow:
 
 1. Import `FMD_FABRIC_TASKFLOW.json` from the Taskflow folder into your workspace.
 2. Assign the correct artifacts to the taskflows as shown in the documentation.
 
-## Supported Data Sources
+## Supported data sources
 
 The FMD Framework supports integration with the following sources:
 
-- **SQL Server** (on-premises or cloud)
-- **Azure Data Lake Gen2**
-- **SFTP / FTP**
-- **Azure Data Factory**
-- **Onelake Tables and Files**
+- SQL Server (on-premises or cloud)
+- Azure Data Lake Gen2
+- SFTP / FTP
+- Azure Data Factory
+- Onelake tables and files
 
-## Deployment and Getting Started
+## Deployment and getting started
 
 To get started:
 
@@ -86,29 +79,34 @@ To get started:
 2. Import the taskflow and configure your workspaces as recommended.
 3. Refer to additional resources for data model, pipelines, and logging.
 
-## Additional Resources
+## Additional resources
 
-- [FMD Framework Data Model](./FMD_DATA_MODEL.md)
+- [FMD Data Model reference](./FMD_DATA_MODEL.md)
 - [FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)
-- [Configure and Load Bulk Data](./FMD_LOAD_BULK_DATA.md)
-- [Auditing and Logging](./FMD_DATA_LOGGING.md)
-- [Data Cleansing](./FMD_DATA_CLEANSING.md)
+- [Configure and load demo data](./FMD_LOAD_BULK_DATA.md)
+- [Auditing and logging](./FMD_DATA_LOGGING.md)
+- [Data cleansing](./FMD_DATA_CLEANSING.md)
 
 ## Troubleshooting
 
-- **Fabric SQL Database Limitations**:  
-  If deployment fails, verify that you have not exceeded the allowed number of Fabric Databases in your tenant. Trial capacities are limited to three databases.
+- **Fabric SQL Database limitations:**  
+  If deployment fails, verify that you haven't exceeded the allowed number of Fabric Databases in your tenant. Trial capacities are limited to three databases.
 
-- **Error Handling**:  
-  If you encounter errors during deployment (e.g., database creation failures), re-run the notebook or manually create the database to diagnose the issue.
+- **Error handling:**  
+  If you encounter errors during deployment (for example, database creation failures), re-run the notebook or manually create the database to diagnose the issue.
 
 ![Fabric Database Error](./Images/FMD_DATABASE_ERROR.png)
 
-
-
 ## Contributing
 
-We welcome contributions! To suggest improvements, open an issue or submit a pull request.
+We welcome contributions! To suggest improvements, open an issue or submit a pull request.  
+If opening a pull request, please follow these steps:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push to the feature branch.
+5. Create a pull request and add documentation on what you have changed.
 
 ## License
 

@@ -22,9 +22,9 @@ The FMD Data Pipelines framework automates data ingestion, transformation, and m
 
 Coordinates the execution of the Landingzone, Bronze, and Silver pipelines. Use this pipeline to initiate a complete data load across all layers.
 
-Parameters:
-key_vault_name: No Function yet, for later purposes
-Lakehouse_schema_enabled: If Deployed with Lakehouse_schema_enabled = True, then leave it like this other wise change to False
+**Parameters:**
+- `key_vault_name`: Reserved for future use.
+- `Lakehouse_schema_enabled`: Set to `True` if deployed with schema support; otherwise, set to `False`.
 
 ![PL_FMD_LOAD_ALL](/Images/PL_FMD_LOAD_ALL.png)
 
@@ -42,11 +42,27 @@ Executes copy pipelines for data ingestion from Azure SQL sources. Enhances moni
 
 ### PL_FMD_LDZ_COPY_FROM_ASQL_01
 
-Manages the copy activity for data ingestion. Determines which objects require processing, checks the last load value in the source, and performs either a full or incremental data copy.
-
-After the copy activity completes, the framework updates the last load value and records the filename. This ensures successful execution and enables further processing in the Bronze layer.
+Manages the copy activity for data ingestion. Determines which objects require processing, checks the last load value in the source, and performs either a full or incremental data copy. After the copy activity completes, the framework updates the last load value and records the filename. This ensures successful execution and enables further processing in the Bronze layer.
 
 ![Pipeline Overview PL_FMD_LDZ_COPY_FROM_ASQL_01](/Images/PL_FMD_LDZ_COPY_FROM_ASQL_01.png)
+
+### PL_FMD_LDZ_COPY_FROM_ADF
+
+Manages the copy activity for data ingestion from Azure Data Factory pipelines. Ensure you build ADF pipelines that write data back to OneLake. All parameters in this pipeline are passed to the ADF pipelines. After the copy activity completes, the framework updates the last load value and records the filename, enabling further processing in the Bronze layer.
+
+![Pipeline Overview PL_FMD_LDZ_COPY_FROM_ADF](/Images/PL_FMD_LDZ_COPY_FROM_ADF.png)
+
+### PL_FMD_LOAD_BRONZE
+
+Manages the execution of `NB_FMD_LOAD_LANDING_BRONZE` through `NB_FMD_PROCESSING_PARALLEL_MAIN`. This notebook receives all entities to be processed, handles parallel processing, and manages retries. The default timeout is set to 7200 seconds, with 2 retries.
+
+![Pipeline Overview PL_FMD_LOAD_BRONZE ](/images/PL_FMD_LOAD_BRONZE.png)
+
+### PL_FMD_LOAD_SILVER
+
+Manages the execution of `NB_FMD_LOAD_BRONZE_SILVER` through `NB_FMD_PROCESSING_PARALLEL_MAIN`. The process is identical to `PL_FMD_LOAD_BRONZE` but loads different metadata for the Silver layer.
+
+![Pipeline Overview PL_FMD_LOAD_SILVER ](/images/PL_FMD_LOAD_SILVER.png)
 
 ## Pipeline configuration
 
