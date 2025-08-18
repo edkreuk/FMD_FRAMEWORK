@@ -107,4 +107,9 @@
         "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
         "type": "DataPipeline"
     }
+    {
+        "name": "VAR_FMD.VariableLibrary",
+        "id": "937b1bf2-0f57-45fb-960f-d11d582c746d",
+        "type": "VariableLibrary"
+    }
 ]
