@@ -6,11 +6,11 @@
         "typeProperties": {
           "parameters": {
             "key_vault_name": {
-              "value": "@pipeline().parameters.key_vault_name",
+              "value": "@pipeline().libraryVariables.key_vault_name",
               "type": "Expression"
             },
             "Lakehouse_schema_enabled": {
-              "value": "@pipeline().parameters.Lakehouse_schema_enabled",
+              "value": "@pipeline().libraryVariables.Lakehouse_schema_enabled",
               "type": "Expression"
             }
           },
@@ -44,7 +44,7 @@
         "typeProperties": {
           "parameters": {
             "key_vault_name": {
-              "value": "@pipeline().parameters.key_vault_name",
+              "value": "@pipeline().libraryVariables.key_vault_name",
               "type": "Expression"
             },
             "Lakehouse_schema_enabled": {
@@ -544,7 +544,7 @@
         "typeProperties": {
           "parameters": {
             "key_vault_name": {
-              "value": "@pipeline().parameters.key_vault_name",
+              "value": "@pipeline().libraryVariables.key_vault_name",
               "type": "Expression"
             }
           },
@@ -699,6 +699,18 @@
       "Lakehouse_schema_enabled": {
         "type": "bool",
         "defaultValue": true
+      }
+    },
+    "libraryVariables": {
+      "key_vault_name": {
+        "type": "String",
+        "variableName": "key_vault_name",
+        "libraryName": "VAR_FMD"
+      },
+      "Lakehouse_schema_enabled": {
+        "type": "Bool",
+        "variableName": "Lakehouse_schema_enabled",
+        "libraryName": "VAR_FMD"
       }
     }
   }

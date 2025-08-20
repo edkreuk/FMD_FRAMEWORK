@@ -3,6 +3,7 @@
     "activities": [
       {
         "name": "FE_ENTITY",
+        "description": "",
         "type": "ForEach",
         "dependsOn": [
           {
@@ -19,7 +20,8 @@
           },
           "activities": [
             {
-              "name": "CP_source_datalandingzone",
+              "name": "CP_SOURCE_datalandingzone",
+              "description": "",
               "type": "Copy",
               "dependsOn": [
                 {
@@ -42,13 +44,13 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "b9345d14_13c0_4873_9405_a58999516234",
+                      "name": "LH_DATA_LANDINGZONE",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
                         "typeProperties": {
-                          "workspaceId": "@pipeline().libraryVariables.ONELAKE_TABLES_WS_CONNECTION",
-                          "artifactId": "@pipeline().libraryVariables.ONELAKE_TABLES_LH_CONNECTION",
+                          "workspaceId": "6bcefeee-d830-4ce9-b800-1c1168f49b1e",
+                          "artifactId": "881b1a73-755b-45ff-9a7b-b1bfc147c579",
                           "rootFolder": "Tables"
                         }
                       }
@@ -56,6 +58,7 @@
                     "type": "LakehouseTable",
                     "schema": [],
                     "typeProperties": {
+                      "schema": "",
                       "table": {
                         "value": "@concat(item().SourceSchema,'_',item().SourceName)",
                         "type": "Expression"
@@ -373,7 +376,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "CP_SOURCE_datalandingzone",
                   "dependencyConditions": [
                     "Failed"
                   ]
@@ -499,7 +502,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "CP_SOURCE_datalandingzone",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
@@ -562,7 +565,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "CP_SOURCE_datalandingzone",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
@@ -898,18 +901,6 @@
     "parameters": {
       "key_vault_name": {
         "type": "string"
-      }
-    },
-    "libraryVariables": {
-      "ONELAKE_TABLES_LH_CONNECTION": {
-        "type": "String",
-        "variableName": "ONELAKE_TABLES_LH_CONNECTION",
-        "libraryName": "VAR_FMD"
-      },
-      "ONELAKE_TABLES_WS_CONNECTION": {
-        "type": "String",
-        "variableName": "ONELAKE_TABLES_WS_CONNECTION",
-        "libraryName": "VAR_FMD"
       }
     }
   }
