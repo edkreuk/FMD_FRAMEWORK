@@ -48,7 +48,7 @@
               "type": "Expression"
             },
             "Lakehouse_schema_enabled": {
-              "value": "@pipeline().parameters.Lakehouse_schema_enabled",
+              "value": "@pipeline().libraryVariables.Lakehouse_schema_enabled",
               "type": "Expression"
             }
           },
@@ -691,16 +691,6 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string",
-        "defaultValue": "demoekeuwdvlmvaultoxgn01"
-      },
-      "Lakehouse_schema_enabled": {
-        "type": "bool",
-        "defaultValue": true
-      }
-    },
     "libraryVariables": {
       "key_vault_name": {
         "type": "String",
