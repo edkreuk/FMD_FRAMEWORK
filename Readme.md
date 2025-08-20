@@ -58,6 +58,16 @@ The framework implements the Medallion Architecture using Lakehouses:
 
 ![FMD Lakehouse Overview](./Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
+### Variable Library
+
+The Variable Library centralizes the management of variables used throughout the FMD Framework. It is integrated with the `PL_LOAD_ALL` process, allowing parameters to be passed dynamically during execution.
+
+**Currently supported variables:**
+- `key_vault_name`
+- `Lakehouse_schema_enabled`
+
+Additional variables will be supported in future releases.
+
 ### Taskflow import
 
 To deploy the default taskflow:
