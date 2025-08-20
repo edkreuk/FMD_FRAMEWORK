@@ -6,6 +6,30 @@
       "note": "",
       "type": "String",
       "value": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+    },
+    {
+      "name": "ONELAKE_TABLES_LH_CONNECTION",
+      "note": "",
+      "type": "String",
+      "value": "01b832e3-2746-4e9c-b169-540b2741a638"
+    },
+    {
+      "name": "ONELAKE_FILE_LH_CONNECTION",
+      "note": "",
+      "type": "String",
+      "value": "01b832e3-2746-4e9c-b169-540b2741a638"
+    },
+    {
+      "name": "ONELAKE_TABLES_WS_CONNECTION",
+      "note": "",
+      "type": "String",
+      "value": "fdc-775a-4ee2-84d5-48893c92d7cc"
+    },
+    {
+      "name": "ONELAKE_FILES_WS_CONNECTION",
+      "note": "",
+      "type": "String",
+      "value": "fdc-775a-4ee2-84d5-48893c92d7cc"
     }
   ]
 }

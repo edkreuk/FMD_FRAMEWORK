@@ -42,13 +42,13 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "LH_DATA_LANDINGZONE",
+                      "name": "b9345d14_13c0_4873_9405_a58999516234",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
                         "typeProperties": {
-                          "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
-                          "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
+                          "workspaceId": "@pipeline().libraryVariables.ONELAKE_TABLES_WS_CONNECTION",
+                          "artifactId": "@pipeline().libraryVariables.ONELAKE_TABLES_LH_CONNECTION",
                           "rootFolder": "Tables"
                         }
                       }
@@ -213,7 +213,10 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": "@item().EntityId",
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
                     "type": "Int32"
                   }
                 }
@@ -342,7 +345,10 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": "@item().EntityId",
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
                     "type": "Int32"
                   }
                 }
@@ -465,7 +471,10 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": "@item().EntityId",
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
                     "type": "Int32"
                   }
                 }
@@ -889,6 +898,18 @@
     "parameters": {
       "key_vault_name": {
         "type": "string"
+      }
+    },
+    "libraryVariables": {
+      "ONELAKE_TABLES_LH_CONNECTION": {
+        "type": "String",
+        "variableName": "ONELAKE_TABLES_LH_CONNECTION",
+        "libraryName": "VAR_FMD"
+      },
+      "ONELAKE_TABLES_WS_CONNECTION": {
+        "type": "String",
+        "variableName": "ONELAKE_TABLES_WS_CONNECTION",
+        "libraryName": "VAR_FMD"
       }
     }
   }
