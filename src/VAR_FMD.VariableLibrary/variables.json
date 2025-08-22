@@ -6,6 +6,18 @@
       "note": "",
       "type": "String",
       "value": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+    },
+    {
+      "name": "key_vault_name",
+      "note": "",
+      "type": "String",
+      "value": "keyvaultname"
+    },
+    {
+      "name": "Lakehouse_schema_enabled",
+      "note": "",
+      "type": "Boolean",
+      "value": true
     }
   ]
 }

@@ -3,6 +3,7 @@
     "activities": [
       {
         "name": "FE_ENTITY",
+        "description": "",
         "type": "ForEach",
         "dependsOn": [
           {
@@ -19,7 +20,8 @@
           },
           "activities": [
             {
-              "name": "CP_source_datalandingzone",
+              "name": "CP_SOURCE_datalandingzone",
+              "description": "",
               "type": "Copy",
               "dependsOn": [
                 {
@@ -47,8 +49,8 @@
                         "annotations": [],
                         "type": "Lakehouse",
                         "typeProperties": {
-                          "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
-                          "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
+                          "workspaceId": "6bcefeee-d830-4ce9-b800-1c1168f49b1e",
+                          "artifactId": "881b1a73-755b-45ff-9a7b-b1bfc147c579",
                           "rootFolder": "Tables"
                         }
                       }
@@ -56,6 +58,7 @@
                     "type": "LakehouseTable",
                     "schema": [],
                     "typeProperties": {
+                      "schema": "",
                       "table": {
                         "value": "@concat(item().SourceSchema,'_',item().SourceName)",
                         "type": "Expression"
@@ -213,7 +216,10 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": "@item().EntityId",
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
                     "type": "Int32"
                   }
                 }
@@ -342,7 +348,10 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": "@item().EntityId",
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
                     "type": "Int32"
                   }
                 }
@@ -367,7 +376,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "CP_SOURCE_datalandingzone",
                   "dependencyConditions": [
                     "Failed"
                   ]
@@ -465,7 +474,10 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": "@item().EntityId",
+                    "value": {
+                      "value": "@item().EntityId",
+                      "type": "Expression"
+                    },
                     "type": "Int32"
                   }
                 }
@@ -490,7 +502,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "CP_SOURCE_datalandingzone",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
@@ -553,7 +565,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "CP_SOURCE_datalandingzone",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
