@@ -91,7 +91,7 @@ start_audit_time = datetime.datetime.now()
 
 #Make sure you have enabled V-Order
 
-spark.conf.set("sprk.sql.parquet.vorder.enabled", "true")
+spark.conf.set("spark.sql.parquet.vorder.enabled", "true")
 
 spark.conf.set("spark.sql.parquet.int96RebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.int96RebaseModeInWrite", "CORRECTED")
@@ -446,9 +446,6 @@ merge = deltaTable.alias('original') \
                 "RecordModifiedDate": current_timestamp(),
                 "RecordEndDate": lit('9999-12-31').cast('timestamp'),
                 "IsDeleted": lit(0)})
-
-# Execute the merge operation
-merge.execute()
 
 # Execute the merge operation
 merge.execute()
