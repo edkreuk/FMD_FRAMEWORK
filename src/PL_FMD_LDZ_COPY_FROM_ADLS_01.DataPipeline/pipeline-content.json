@@ -82,8 +82,8 @@
                   },
                   "formatSettings": {
                     "type": "DelimitedTextWriteSettings",
-                    "quoteAllText": true,
-                    "fileExtension": ".txt"
+                    "fileExtension": ".txt",
+                    "quoteAllText": true
                   },
                   "datasetSettings": {
                     "annotations": [],
@@ -145,7 +145,7 @@
               },
               "typeProperties": {
                 "storedProcedureName": {
-                  "value": "[logging].[sp_AuditPipeline]",
+                  "value": "[logging].[sp_AuditCopyActivity]",
                   "type": "Expression"
                 },
                 "storedProcedureParameters": {
@@ -167,14 +167,14 @@
                     },
                     "type": "Guid"
                   },
-                  "PipelineName": {
+                  "CopyActivityName": {
                     "value": {
                       "value": "@pipeline().PipelineName",
                       "type": "Expression"
                     },
                     "type": "String"
                   },
-                  "PipelineParameters": {
+                  "CopyActivityParameters": {
                     "value": {
                       "value": "@item().SourceName",
                       "type": "Expression"
@@ -277,7 +277,7 @@
               },
               "typeProperties": {
                 "storedProcedureName": {
-                  "value": "[logging].[sp_AuditPipeline]",
+                  "value": "[logging].[sp_AuditCopyActivity]",
                   "type": "Expression"
                 },
                 "storedProcedureParameters": {
@@ -299,14 +299,14 @@
                     },
                     "type": "Guid"
                   },
-                  "PipelineName": {
+                  "CopyActivityName": {
                     "value": {
                       "value": "@pipeline().PipelineName",
                       "type": "Expression"
                     },
                     "type": "String"
                   },
-                  "PipelineParameters": {
+                  "CopyActivityParameters": {
                     "value": {
                       "value": "@item().SourceName",
                       "type": "Expression"
@@ -403,7 +403,7 @@
               },
               "typeProperties": {
                 "storedProcedureName": {
-                  "value": "[logging].[sp_AuditPipeline]",
+                  "value": "[logging].[sp_AuditCopyActivity]",
                   "type": "Expression"
                 },
                 "storedProcedureParameters": {
@@ -415,7 +415,7 @@
                     "type": "String"
                   },
                   "LogType": {
-                    "value": "FailCopyActivity",
+                    "value": "FailedCopyActivity",
                     "type": "String"
                   },
                   "PipelineGuid": {
@@ -425,14 +425,14 @@
                     },
                     "type": "Guid"
                   },
-                  "PipelineName": {
+                  "CopyActivityName": {
                     "value": {
                       "value": "@pipeline().PipelineName",
                       "type": "Expression"
                     },
                     "type": "String"
                   },
-                  "PipelineParameters": {
+                  "CopyActivityParameters": {
                     "value": {
                       "value": "@item().SourceName",
                       "type": "Expression"
@@ -905,6 +905,123 @@
             "typeProperties": {
               "schema": "execution",
               "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
+      },
+      {
+        "name": "SP_FAIL_AUDIT_PIPELINE",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "FE_ENTITY",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[logging].[sp_AuditPipeline]",
+          "storedProcedureParameters": {
+            "LogData": {
+              "value": {
+                "value": "{    \"Action\" : \"Failed\"}",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "LogType": {
+              "value": "FailedPipeline",
+              "type": "String"
+            },
+            "PipelineGuid": {
+              "value": {
+                "value": "@pipeline().Pipeline",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "PipelineName": {
+              "value": {
+                "value": "@pipeline().PipelineName",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "PipelineParameters": {
+              "value": null,
+              "type": "String"
+            },
+            "PipelineParentRunGuid": {
+              "value": {
+                "value": "@pipeline()?.TriggeredByPipelineRunId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "PipelineRunGuid": {
+              "value": {
+                "value": "@pipeline().RunId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "TriggerGuid": {
+              "value": {
+                "value": "@pipeline().TriggerId",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "TriggerTime": {
+              "value": {
+                "value": "@pipeline().TriggerTime",
+                "type": "Expression"
+              },
+              "type": "DateTime"
+            },
+            "TriggerType": {
+              "value": {
+                "value": "@pipeline().TriggerType",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "WorkspaceGuid": {
+              "value": {
+                "value": "@pipeline().DataFactory",
+                "type": "Expression"
+              },
+              "type": "Guid"
+            },
+            "EntityLayer": {
+              "value": "Landingzone",
+              "type": "String"
+            },
+            "EntityId": {
+              "value": null,
+              "type": "Int32"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "SQL_FMD_FRAMEWORK",
+          "properties": {
+            "annotations": [],
+            "type": "FabricSqlDatabase",
+            "typeProperties": {
+              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+            },
+            "externalReferences": {
+              "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
             }
           }
         }

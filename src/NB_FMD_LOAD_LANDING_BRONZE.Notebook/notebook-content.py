@@ -50,8 +50,11 @@ cleansing_rules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-
+connstring=''
+database=''
 schema_enabled = ''
+EntityLayer='Bronze'
+result_data=''
 
 # METADATA ********************
 
@@ -74,6 +77,8 @@ from pyspark.sql.types import *
 from delta.tables import *
 from notebookutils import mssparkutils
 import uuid
+import struct
+import pyodbc
 
 # METADATA ********************
 
@@ -90,6 +95,163 @@ import uuid
 
 start_audit_time = datetime.datetime.now()
 
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerbi/api')
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ## Execution Logic
+
+# CELL ********************
+
+def build_exec_statement(proc_name, **params):
+    param_strs = []
+    for key, value in params.items():
+        if value is not None:
+            if isinstance(value, str):
+                param_strs.append(f"@{key}='{value}'")
+            else:
+                param_strs.append(f"@{key}={value}")
+    
+    if param_strs:
+        return f"EXEC {proc_name}, " + ", ".join(param_strs)
+    else:
+        return f"EXEC {proc_name}"
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+def execute_with_logging(exec_statement, driver, connstring, database, **params):
+
+    # Get token for Azure SQL authentication
+    token = notebookutils.credentials.getToken('https://analysis.windows.net/powerbi/api').encode("UTF-16-LE")
+    token_struct = struct.pack(f'<I{len(token)}s', len(token), token)
+
+    # Build connection
+    conn = pyodbc.connect(
+        f"DRIVER={driver};SERVER={connstring};PORT=1433;DATABASE={database};",
+        attrs_before={1256: token_struct},
+        timeout=12
+    )
+
+    exec_statement = build_exec_statement(exec_statement, **params)
+
+    start_time = datetime.datetime.utcnow()
+    status = "Success"
+    error_message = None
+
+    try:
+        with conn.cursor() as cursor:
+            # Warm-up query
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+            conn.timeout = 10
+
+
+            # Build EXEC statement dynamically
+
+            print(f"Executing: {exec_statement}")
+
+            cursor.execute(exec_statement)
+            cursor.commit()
+
+    except pyodbc.OperationalError as e:
+        print(e) 
+    except Exception as e:
+        status = "Failed"
+        error_message = str(e)
+        print(f"Error: {error_message}")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ## Define Stored Procedures for Logging
+
+# CELL ********************
+
+# Ensure TriggerTime is formatted correctly
+TriggerTime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+notebook_name=  notebookutils.runtime.context['currentNotebookName']
+
+
+UpsertPipelineLandingzoneEntity = (
+    f"[execution].[sp_UpsertPipelineLandingzoneEntity] "
+    f"@Filename = \"{SourceFileName}\", "
+    f"@FilePath = \"{SourceFilePath}\", "
+    f"@IsProcessed = \"True\", "
+    f"@LandingzoneEntityId = \"{LandingzoneEntityId}\""
+)
+
+InsertPipelineBronzeLayerEntity = (
+    f"[execution].[sp_UpsertPipelineBronzeLayerEntity] "
+    f"@SchemaName = \"{TargetSchema}\", "
+    f"@TableName = \"{TargetName}\", "
+    f"@IsProcessed = \"False\", "
+    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
+)
+
+StartNotebookActivity = (
+    f"[logging].[sp_AuditNotebook] "
+    f"@NotebookGuid = \"{NotebookExecutionId}\", "
+    f"@NotebookName = \"{notebook_name}\", "
+    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
+    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
+    f"@NotebookParameters = \"{TargetName}\", "
+    f"@TriggerType = \"{TriggerType}\", "
+    f"@TriggerGuid = \"{TriggerGuid}\", "
+    f"@TriggerTime = \"{TriggerTime}\", "
+    f"@LogData = '{{\"Action\":\"Start\"}}', "
+    f"@LogType = \"StartNotebookActivity\", "
+    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
+    f"@EntityId = \"{BronzeLayerEntityId}\", "
+    f"@EntityLayer = \"{EntityLayer}\""
+)
+
+EndNotebookActivity = (
+    f"[logging].[sp_AuditNotebook] "
+    f"@NotebookGuid = \"{NotebookExecutionId}\", "
+    f"@NotebookName = \"{notebook_name}\", "
+    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
+    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
+    f"@NotebookParameters = \"{TargetName}\", "
+    f"@TriggerType = \"{TriggerType}\", "
+    f"@TriggerGuid = \"{TriggerGuid}\", "
+    f"@TriggerTime = \"{TriggerTime}\", "
+    f"@LogType = \"EndNotebookActivity\", "
+    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
+    f"@EntityId = \"{BronzeLayerEntityId}\", "
+    f"@EntityLayer = \"{EntityLayer}\""
+)
+
 # METADATA ********************
 
 # META {
@@ -103,7 +265,18 @@ start_audit_time = datetime.datetime.now()
 
 # CELL ********************
 
-#Make sure you have disabled V-Order
+execute_with_logging(StartNotebookActivity, driver, connstring, database)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+#Make sure you have disabled V-Order, Bronze we want to load fast
 
 spark.conf.set("sprk.sql.parquet.vorder.enabled", "false")
 
@@ -308,21 +481,29 @@ else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
     TotalRuntime = str((datetime.datetime.now() - start_audit_time)) 
-
+    TotalRuntime = str((datetime.datetime.now() - start_audit_time)) 
+    end_audit_time =  str(datetime.datetime.now())
+    start_audit_time =str(start_audit_time)
     # Your data
     result_data = {
-        "CopyOutput":{
+        "Action" : "End", "CopyOutput":{
             "Total Runtime": TotalRuntime,
             "TargetSchema": TargetSchema,
             "TargetName" : TargetName,
             "SourceFilePath" : SourceFilePath,
             "SourceFileName" : SourceFileName,
-            "LandingzoneEntityId" : EntityId
+            "LandingzoneEntityId" : LandingzoneEntityId,
+            "EntityId" : BronzeLayerEntityId,
+            "StartTime" : start_audit_time,
+            "EndTime" : end_audit_time
+
         }
         }
 
-
-    mssparkutils.notebook.exit(result_data)
+    execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+    execute_with_logging(InsertPipelineBronzeLayerEntity, driver, connstring, database)
+    execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    notebookutils.notebook.exit(result_data)
 
 # METADATA ********************
 
@@ -373,7 +554,7 @@ end_audit_time =  str(datetime.datetime.now())
 start_audit_time =str(start_audit_time)
 # Your data
 result_data = {
-    "CopyOutput":{
+    "Action" : "End", "CopyOutput":{
         "Total Runtime": TotalRuntime,
         "TargetSchema": TargetSchema,
         "TargetName" : TargetName,
@@ -388,7 +569,29 @@ result_data = {
     }
 
 
-mssparkutils.notebook.exit(result_data)
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+execute_with_logging(InsertPipelineBronzeLayerEntity, driver, connstring, database)
+execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+notebookutils.notebook.exit(result_data)
 
 # METADATA ********************
 
