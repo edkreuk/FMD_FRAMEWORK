@@ -60,7 +60,11 @@ The framework implements the Medallion Architecture using Lakehouses:
 
 ### Variable Library
 
-The Variable Library centralizes the management of variables used throughout the FMD Framework. It is integrated with the `PL_LOAD_ALL` process, allowing parameters to be passed dynamically during execution.
+The Variable Library centralizes the management of variables used throughout the FMD Framework. It is integrated with the `PL_LOAD_ALL` process, allowing Variables(parameters) to be passed dynamically during execution.
+
+### Parameters in PL_LOAD_ALL pipeline
+
+Parameters are added for the ConnectionString and Database name for the SQL_FMD_FRAMEWORK. These parameters are necassary for the build in logging. Parameters are updated according your environment during the execution on the Setup Notebook.
 
 **Currently supported variables:**
 - `key_vault_name`

@@ -12,6 +12,14 @@
             "Lakehouse_schema_enabled": {
               "value": "@pipeline().libraryVariables.Lakehouse_schema_enabled",
               "type": "Expression"
+            },
+            "FMD_DATABASE": {
+              "value": "@pipeline().parameters.FMD_DATABASE",
+              "type": "Expression"
+            },
+            "FMD_CONNECTION": {
+              "value": "@pipeline().parameters.FMD_CONNECTION",
+              "type": "Expression"
             }
           },
           "waitOnCompletion": true,
@@ -49,6 +57,14 @@
             },
             "Lakehouse_schema_enabled": {
               "value": "@pipeline().libraryVariables.Lakehouse_schema_enabled",
+              "type": "Expression"
+            },
+            "FMD_DATABASE": {
+              "value": "@pipeline().parameters.FMD_DATABASE",
+              "type": "Expression"
+            },
+            "FMD_CONNECTION": {
+              "value": "@pipeline().parameters.FMD_CONNECTION",
               "type": "Expression"
             }
           },
@@ -201,7 +217,7 @@
               "type": "String"
             },
             "LogType": {
-              "value": "EndPipeline",
+              "value": "FailedPipeline",
               "type": "String"
             },
             "PipelineGuid": {
@@ -318,7 +334,7 @@
               "type": "String"
             },
             "LogType": {
-              "value": "EndPipeline",
+              "value": "FailedPipeline",
               "type": "String"
             },
             "PipelineGuid": {
@@ -586,7 +602,7 @@
               "type": "String"
             },
             "LogType": {
-              "value": "EndPipeline",
+              "value": "FailedPipeline",
               "type": "String"
             },
             "PipelineGuid": {
@@ -691,6 +707,16 @@
         ]
       }
     ],
+    "parameters": {
+      "FMD_CONNECTION": {
+        "type": "string",
+        "defaultValue": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com"
+      },
+      "FMD_DATABASE": {
+        "type": "string",
+        "defaultValue": "SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6"
+      }
+    },
     "libraryVariables": {
       "key_vault_name": {
         "type": "String",

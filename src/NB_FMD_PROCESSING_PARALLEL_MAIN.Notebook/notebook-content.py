@@ -51,6 +51,8 @@ notebook_entities = ""
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
+connstring=''
+database=''
 schema_enabled =''
 
 # METADATA ********************
@@ -267,15 +269,22 @@ for i, item in enumerate( path_data):
     schema_table = "".join(item['params']['TargetName'].split('_')[:2])
     item["notebook_activity_id"] = f"{data_source}_{schema_table}"
     item["params"]["PipelineGuid"] = PipelineGuid
+    item["params"]["PipelineName"] = PipelineName
     item["params"]["TriggerGuid"] = TriggerGuid
     item["params"]["TriggerType"] = TriggerType
     item["params"]["TriggerTime"] = TriggerTime
     item["params"]["WorkspaceGuid"] = WorkspaceGuid  
     item["params"]["PipelineParentRunGuid"] = PipelineParentRunGuid
+    item["params"]["PipelineRunGuid"] = PipelineRunGuid
     item["params"]["NotebookExecutionId"] = NotebookExecutionId
     item["params"]["useRootDefaultLakehouse"] = useRootDefaultLakehouse
     item["params"]["driver"] = driver
+    item["params"]["connstring"] = connstring
+    item["params"]["database"] = database
     item["params"]["schema_enabled"] = schema_enabled
+
+
+
 
 
 
