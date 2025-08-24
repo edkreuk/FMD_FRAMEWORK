@@ -28,8 +28,8 @@ INNER JOIN [integration].[BronzeLayerEntity] BLE
     ON SLE.BronzeLayerEntityId = BLE.BronzeLayerEntityId
 INNER JOIN [integration].[LandingzoneEntity] LZE
     ON LZE.LandingzoneEntityId = BLE.LandingzoneEntityId
-INNER JOIN [execution].[LandingzoneEntityLastLoadValue] LZELV
-    ON LZE.LandingzoneEntityId = LZELV.LandingzoneEntityId
+INNER JOIN [execution].[PipelineBronzeLayerEntity] PBLE
+    ON BLE.[BronzeLayerEntityId] = PBLE.[BronzeLayerEntityId]
 INNER JOIN [integration].[DataSource] DS
     ON DS.[DataSourceId] = LZE.[DataSourceId]
 INNER JOIN [integration].[Lakehouse] BLH

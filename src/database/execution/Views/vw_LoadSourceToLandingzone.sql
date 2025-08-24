@@ -1,5 +1,6 @@
 
-    CREATE     VIEW [execution].[vw_LoadSourceToLandingzone]
+
+    CREATE VIEW [execution].[vw_LoadSourceToLandingzone]
     AS
     SELECT 
     LZE.[LandingzoneEntityId] AS [EntityId],
@@ -37,7 +38,7 @@
         WHEN LZE.[IsIncremental] = 1 THEN 
             'SELECT * FROM ' + QUOTENAME(ISNULL(CASE WHEN LZE.[SourceSchema] != '' THEN LZE.[SourceSchema] END, 'Unknown')) + '.' + QUOTENAME(LZE.[SourceName]) + 
             CASE WHEN ISNULL(LZE.[IsIncrementalColumn], '') <> '' AND TRY_CONVERT(VARCHAR, [LoadValue]) IS NOT NULL THEN 
-                ' WHERE ' + LZE.[IsIncrementalColumn] + ' >= ''' + TRY_CONVERT(VARCHAR, ISNULL([LoadValue], '1900-01-01')) + '''' 
+                ' WHERE ' + LZE.[IsIncrementalColumn] + ' > ''' + TRY_CONVERT(VARCHAR, ISNULL([LoadValue], '1900-01-01')) + '''' 
             ELSE ''
             END
         WHEN ISNULL(LZE.[IsIncremental], 0) = 0 THEN 
