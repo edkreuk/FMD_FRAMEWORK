@@ -9,12 +9,6 @@
             "name": "SQL_FMD_FRAMEWORK",
             "type": "SQLEndpoint",
             "id": "b6c9a8ce-8888-4dd2-9c3e-ce98279ad8ef"
-        } ,
-
-        {
-            "name": "SQL_FMD_FRAMEWORK",
-            "type": "DatabaseName",
-            "id": "SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6"
         } 
     
 ]
