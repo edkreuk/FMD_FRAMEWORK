@@ -1,7 +1,7 @@
 
 
 
-    CREATE    PROCEDURE [execution].[sp_UpsertPipelineBronzeLayerEntity] (
+    CREATE PROCEDURE [execution].[sp_UpsertPipelineBronzeLayerEntity] (
         @BronzeLayerEntityId BIGINT,
         @SchemaName NVARCHAR(300),
         @TableName NVARCHAR(300),
@@ -18,6 +18,7 @@
             WHERE PLE.[BronzeLayerEntityId] = @BronzeLayerEntityId
                 AND PLE.[SchemaName] = @SchemaName
                 AND PLE.[TableName] = @TableName
+                AND PLE.[IsProcessed] = 0
         )
         BEGIN
             INSERT INTO [execution].[PipelineBronzeLayerEntity] (

@@ -44,6 +44,7 @@ WHERE 1 = 1
     AND LZE.IsActive = 1
     AND BLE.IsActive = 1
     AND SLE.IsActive = 1
+        AND PBLE.[IsProcessed] = 0
 
 GO
 
