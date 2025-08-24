@@ -1,8 +1,8 @@
 [{
     "queries_schemas": [
         "\n    IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'logging')\n    BEGIN\n        EXEC('CREATE SCHEMA [logging];');\n    END\n    ",
-        "\n    IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'execution')\n    BEGIN\n        EXEC('CREATE SCHEMA [logging];');\n    END\n    ",
-        "\n    IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'logging')\n    BEGIN\n        EXEC('CREATE SCHEMA [logging];');\n    END\n    "
+        "\n    IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'execution')\n    BEGIN\n        EXEC('CREATE SCHEMA [execution];');\n    END\n    ",
+        "\n    IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'integration')\n    BEGIN\n        EXEC('CREATE SCHEMA [integration];');\n    END\n    "
     ],
     "queries_logging": [
         "\n    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'PipelineExecution' AND schema_id = SCHEMA_ID('logging'))\n    BEGIN\n        CREATE TABLE [logging].[PipelineExecution](\n            [WorkspaceGuid] [uniqueidentifier] NULL,\n            [PipelineRunGuid] [uniqueidentifier] NULL,\n            [PipelineParentRunGuid] [uniqueidentifier] NULL,\n            [PipelineGuid] [uniqueidentifier] NULL,\n            [PipelineName] [varchar](100) NULL,\n            [PipelineParameters] [varchar](8000) NULL,\n            [EntityId] [int] NULL,\n            [EntityLayer] [varchar](50) NULL,\n            [TriggerType] [varchar](50) NULL,\n            [TriggerGuid] [uniqueidentifier] NULL,\n            [TriggerTime] [datetime2](6) NULL,\n            [LogType] [varchar](50) NULL,\n            [LogDateTime] [datetime2](6) NULL,\n            [LogData] [varchar](8000) NULL\n        ) ON [PRIMARY]\n    END\n    ",
