@@ -710,7 +710,7 @@
     "parameters": {
       "FMD_CONNECTION": {
         "type": "string",
-        "defaultValue": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com,1433"
+        "defaultValue": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com"
       },
       "FMD_DATABASE": {
         "type": "string",
