@@ -13,6 +13,11 @@
             "name": "LH_SILVER_LAYER.Lakehouse",
             "type": "Lakehouse",
             "id": "50d7d4c9-7db0-4d4d-a324-31e18b536fe4"
+        },        {
+            "name": "LH_GOLD_LAYER.Lakehouse",
+            "type": "Lakehouse",
+            "id": "1772e343-0684-4765-a1ff-78f7b855b60c"
         }
+
     
 ]
