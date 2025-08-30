@@ -67,8 +67,17 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 - **Workspace roles**  
   Assign security roles to workspaces:
 
+
+You need to create workspace roles for the different workspaces:
+
+workspace_roles_code
+workspace_roles_data
+workspace_roles_golf
+workspace_roles_reporting
+
+Check the example below
   ```python
-  workspace_roles = [
+  workspace_roles_data = [
       {
           "principal": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -98,12 +107,22 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
           'workspaces': {
               'data': {
                   'name': 'FMD_FRAMEWORK_DATA (D)',
-                  'roles': workspace_roles,
+                  'roles': workspace_roles_data,
                   'capacity_name': capacity_name_dvlm
               },
               'code': {
                   'name': 'FMD_FRAMEWORK_CODE (D)',
-                  'roles': workspace_roles,
+                  'roles': workspace_roles_code,
+                  'capacity_name': capacity_name_dvlm
+              },
+              'gold': {
+                  'name': 'FMD_FRAMEWORK_GOLD (D)',
+                  'roles': workspace_roles_gold,
+                  'capacity_name': capacity_name_dvlm
+              },
+              'reporting': {
+                  'name': 'FMD_FRAMEWORK_REPORTING (D)',
+                  'roles': workspace_roles_reporting,
                   'capacity_name': capacity_name_dvlm
               }
           },
@@ -116,14 +135,24 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
       {
           'environment_name': 'production',
           'workspaces': {
-              'data': {
+               'data': {
                   'name': 'FMD_FRAMEWORK_DATA (P)',
-                  'roles': workspace_roles,
+                  'roles': workspace_roles_data,
                   'capacity_name': capacity_name_prod
               },
               'code': {
                   'name': 'FMD_FRAMEWORK_CODE (P)',
-                  'roles': workspace_roles,
+                  'roles': workspace_roles_code,
+                  'capacity_name': capacity_name_prod
+              },
+              'gold': {
+                  'name': 'FMD_FRAMEWORK_GOLD (P)',
+                  'roles': workspace_roles_gold,
+                  'capacity_name': capacity_name_prod
+              },
+              'reporting': {
+                  'name': 'FMD_FRAMEWORK_REPORTING (P)',
+                  'roles': workspace_roles_reporting,
                   'capacity_name': capacity_name_prod
               }
           },
