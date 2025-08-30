@@ -41,7 +41,9 @@ The recommended workspace structure ensures clear separation of responsibilities
 |-----------------------------|----------------------------------------------|----------------------------------|
 | Data workspaces             | Manage and store data                        | Data Landing Zone, Bronze, Silver|
 | Code workspaces             | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark |
-| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing    |
+| Gold workspaces             | Manage and store data                        | Gold and Semantic Model          |
+| Reporting workspaces        | Create reports for end users                 | Reports                           |
+| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing  and logging   |
 
 > [!NOTE]
 > For organizations with a Gold Layer, create a separate workspace for reports to restrict access appropriately.
@@ -55,6 +57,7 @@ The framework implements the Medallion Architecture using Lakehouses:
 - **Data Landing Zone:** Stores raw, unstructured, and structured data with incremental loads and no enforced schema.
 - **Bronze layer:** Deduplicates and structures data, applying schema for consistency.
 - **Silver layer:** Maintains historical, validated data with enforced quality rules.
+- **Gold layer:** Maintains Dimensions and Facts
 
 ![FMD Lakehouse Overview](./Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
@@ -99,7 +102,7 @@ To get started:
 
 ## Additional resources
 
-- [FMD Data Model reference](./FMD_DATA_MODEL.md)
+- [FMD Data Model reference](./FMD_METADATA_MODEL.md)
 - [FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)
 - [Configure and load demo data](./FMD_LOAD_BULK_DATA.md)
 - [Auditing and logging](./FMD_DATA_LOGGING.md)
