@@ -49,8 +49,8 @@
                         "annotations": [],
                         "type": "Lakehouse",
                         "typeProperties": {
-                          "workspaceId": "6bcefeee-d830-4ce9-b800-1c1168f49b1e",
-                          "artifactId": "881b1a73-755b-45ff-9a7b-b1bfc147c579",
+                        "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
+                        "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
                           "rootFolder": "Tables"
                         }
                       }
