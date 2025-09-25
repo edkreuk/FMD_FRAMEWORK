@@ -57,7 +57,8 @@ INNER JOIN [integration].[Connection] C
 LEFT JOIN [execution].[LandingzoneEntityLastLoadValue] LZELV
     ON LZELV.[LandingzoneEntityId] = LZE.[LandingzoneEntityId]
 WHERE 1 = 1
+    AND C.[IsActive] = 1
+    AND DS.[IsActive] = 1
     AND LZE.[IsActive] = 1
-
 GO
 
