@@ -57,14 +57,25 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 
 #### Key configuration parameters
 
-- **Capacity ID**  
-  Specify the unique identifier for the capacity:
+**Domain settings**
+
+Define the name for the Main Domain, and you can add 1 or mire sub domains
+
+```python
+# Framework and domain settings
+FrameworkName = 'DEMO'  # max 6 characters, no spaces
+domain_name = 'FMD'
+sub_domain_names = ['FINANCE', 'HR']
+```
+
+- **Capacity settings**  
+  Specify the unique name for the capacity:
 
   ```python
   capacity_name = 'Name of your capacity'
   ```
 
-- **Workspace roles**  
+- **Workspace roles settings**  
   Assign security roles to workspaces:
 
 
@@ -72,8 +83,8 @@ You need to create workspace roles for the different workspaces:
 
 workspace_roles_code
 workspace_roles_data
-workspace_roles_golf
-workspace_roles_reporting
+workspace_roles_configuration
+
 
 Check the example below
   ```python
@@ -97,7 +108,7 @@ Check the example below
   ]
   ```
 
-- **Environment configuration**  
+- **Environment(Stage) settings**  
   Define settings for each environment (for example, development and production). You can add multiple environments as needed. Each environment should include workspace configurations, roles, capacity IDs, and connection details.
 
   ```python
@@ -113,16 +124,6 @@ Check the example below
               'code': {
                   'name': 'FMD_FRAMEWORK_CODE (D)',
                   'roles': workspace_roles_code,
-                  'capacity_name': capacity_name_dvlm
-              },
-              'gold': {
-                  'name': 'FMD_FRAMEWORK_GOLD (D)',
-                  'roles': workspace_roles_gold,
-                  'capacity_name': capacity_name_dvlm
-              },
-              'reporting': {
-                  'name': 'FMD_FRAMEWORK_REPORTING (D)',
-                  'roles': workspace_roles_reporting,
                   'capacity_name': capacity_name_dvlm
               }
           },
@@ -144,16 +145,6 @@ Check the example below
                   'name': 'FMD_FRAMEWORK_CODE (P)',
                   'roles': workspace_roles_code,
                   'capacity_name': capacity_name_prod
-              },
-              'gold': {
-                  'name': 'FMD_FRAMEWORK_GOLD (P)',
-                  'roles': workspace_roles_gold,
-                  'capacity_name': capacity_name_prod
-              },
-              'reporting': {
-                  'name': 'FMD_FRAMEWORK_REPORTING (P)',
-                  'roles': workspace_roles_reporting,
-                  'capacity_name': capacity_name_prod
               }
           },
           'connections': {
@@ -164,6 +155,42 @@ Check the example below
       }
   ]
   ```
+- **Domain Settings** 
+
+Define settings for environment you want to deploy in your sub domain
+  ```python
+domain_deployment = [
+    {
+        'environment_name': 'development',  # Name of target environment
+        'environment_short': 'D',           # Short of target environment
+        'workspaces': {
+            'gold': {
+                'roles': workspace_roles_data,       # Roles to assign to the workspace
+                'capacity_name': capacity_name_dvlm
+            },
+            'reporting': {
+                'roles': workspace_roles_reporting, # Roles to assign to the workspace
+                'capacity_name': capacity_name_dvlm
+            }
+        }
+    },
+    {
+        'environment_name': 'production',   # Name of target environment
+        'environment_short': 'P',           # Short of target environment
+        'workspaces': {
+            'gold': {
+                'roles': workspace_roles_gold,       # Roles to assign to the workspace
+                'capacity_name': capacity_name_prod
+            },
+            'reporting': {
+                'roles': workspace_roles_reporting,  # Roles to assign to the workspace
+                'capacity_name': capacity_name_prod
+            }
+        }
+    }
+]
+```
+![Domain and Sb Domain Overview](./Images/FMD_DOMAIN_OVERVIEW.png)
 
 - **Lakehouse schema enabled**  
   Set to `True` if you want to use schemas.
