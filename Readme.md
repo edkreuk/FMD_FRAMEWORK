@@ -100,13 +100,21 @@ To get started:
 2. Import the taskflow and configure your workspaces as recommended.
 3. Refer to additional resources for data model, pipelines, and logging.
 
+## Data Cleansing
+
+Check the Readme below to get started on how to implement and configure Data Cleansing functions
+
+- [Data cleansing](./FMD_DATA_CLEANSING.md)
+
 ## Additional resources
 
 - [FMD Data Model reference](./FMD_METADATA_MODEL.md)
 - [FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)
 - [Configure and load demo data](./FMD_LOAD_BULK_DATA.md)
 - [Auditing and logging](./FMD_DATA_LOGGING.md)
-- [Data cleansing](./FMD_DATA_CLEANSING.md)
+
+
+
 
 ## Troubleshooting
 

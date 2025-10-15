@@ -57,25 +57,42 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 
 #### Key configuration parameters
 
+**Configuration and Parameters**
+
+> [!NOTE]
+> Fabric Administrator Role is required to create domain. Otherwise disable creation of Domains in next step
+
+
+Define the name for the Main Domain, and you can add 1 or mire sub domains
+
+```python
+
+FrameworkName = 'DEMO'              # max 6 characters, no spaces
+assign_icons = True                 #Leave on True if you "want to assign the default icons to the workspaces, set on false if you  have already assigned your own
+
+load_demo_data_data= True           # Set to True if you want to load the demo data, otherwise set to False
+lakehouse_schema_enabled = True     # Set to True if you want to use the lakehouse schema, otherwise set to False
+```
+
+**Capacity settings**  
+  Specify the unique name for the capacity:
+
+  ```python
+  capacity_name_dvlm = 'Name of your capacity'
+  ```
+
 **Domain settings**
 
 Define the name for the Main Domain, and you can add 1 or mire sub domains
 
 ```python
-# Framework and domain settings
-FrameworkName = 'DEMO'  # max 6 characters, no spaces
-domain_name = 'FMD'
-sub_domain_names = ['FINANCE', 'HR']
+create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
+domain_name='FMD'                                   # Main Domain
+sub_domain_names= ['FINANCE','SALES']               # Create business domains(sub)
+domain_contributor_role = {"type": "Contributors","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group/user can add or remove workspaces to this domain
 ```
 
-- **Capacity settings**  
-  Specify the unique name for the capacity:
-
-  ```python
-  capacity_name = 'Name of your capacity'
-  ```
-
-- **Workspace roles settings**  
+**Workspace roles settings**  
   Assign security roles to workspaces:
 
 
@@ -92,7 +109,6 @@ Check the example below
       {
           "principal": {
               "id": "00000000-0000-0000-0000-000000000000",
-              "displayName": "sg-fabric-contributor",
               "type": "Group"
           },
           "role": "Member"
@@ -100,15 +116,28 @@ Check the example below
       {
           "principal": {
               "id": "00000000-0000-0000-0000-000000000000",
-              "displayName": "sg-fabric-admin",
               "type": "Group"
           },
           "role": "Admin"
       }
   ]
   ```
+**Configuration settings  (Fabric Database)**  
+    Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necassary.
 
-- **Environment(Stage) settings**  
+  
+```python
+configuration = {
+                    'workspace': {
+                        'name' : FrameworkName + ' CONFIG FMD',             # Name of target workspace
+                        'roles' : workspace_roles_data,                     # Roles to assign to the workspace
+                        'capacity_name' : capacity_name_config              # Name of target capacity for the configuration workspace
+                    },
+                       'DatabaseName' : 'SQL_'+FrameworkName+'_FRAMEWORK'   # Name of target configuration SQL Database
+}
+  ```
+
+**Workspace configuration**  
   Define settings for each environment (for example, development and production). You can add multiple environments as needed. Each environment should include workspace configurations, roles, capacity IDs, and connection details.
 
   ```python
@@ -155,56 +184,46 @@ Check the example below
       }
   ]
   ```
-- **Domain Settings** 
+**Domain Settings** 
 
-Define settings for environment you want to deploy in your sub domain
+Define settings for every sub domain. Every sub domain is automaticaly assigned to the main domain.
   ```python
 domain_deployment = [
-    {
-        'environment_name': 'development',  # Name of target environment
-        'environment_short': 'D',           # Short of target environment
-        'workspaces': {
-            'gold': {
-                'roles': workspace_roles_data,       # Roles to assign to the workspace
-                'capacity_name': capacity_name_dvlm
-            },
-            'reporting': {
-                'roles': workspace_roles_reporting, # Roles to assign to the workspace
-                'capacity_name': capacity_name_dvlm
-            }
-        }
-    },
-    {
-        'environment_name': 'production',   # Name of target environment
-        'environment_short': 'P',           # Short of target environment
-        'workspaces': {
-            'gold': {
-                'roles': workspace_roles_gold,       # Roles to assign to the workspace
-                'capacity_name': capacity_name_prod
-            },
-            'reporting': {
-                'roles': workspace_roles_reporting,  # Roles to assign to the workspace
-                'capacity_name': capacity_name_prod
-            }
-        }
-    }
-]
+                    {
+                        'environment_name' : 'development',                 # Name of target environment
+                        'environment_short' : 'D',                          # Short of target environment
+                        'workspaces': {
+                         
+                            'gold' : {
+                                'roles' : workspace_roles_data,             # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_dvlm        # Name of target code workspace for development
+                            },
+                                'reporting' : {
+                                 'roles' : workspace_roles_reporting,       # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_dvlm        # Name of target code workspace for development
+                            }
+                        }
+                    },
+                    {
+                        'environment_name' : 'production',                  # Name of target environment
+                        'environment_short' : 'P',                          # Short of target environment
+                        'workspaces': {
+                         
+                            'gold' : {
+                                'roles' : workspace_roles_gold,             # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_prod        # Name of target code workspace for development
+                            },
+                            'reporting' : {
+                                'roles' : workspace_roles_reporting,        # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_prod        # Name of target code workspace for development
+                            }
+                        }
+                    }
+                ]
 ```
 ![Domain and Sb Domain Overview](./Images/FMD_DOMAIN_OVERVIEW.png)
 
-- **Lakehouse schema enabled**  
-  Set to `True` if you want to use schemas.
 
-- **Load demo data**  
-  Set to `True` if you want to load demo data for testing.
-
-### 5. Test process
-
-1. **Upload** `customer.csv` to the file section of `LH_DATA_LANDINGZONE` in the development environment.
-2. **Create table:** Generate a table named `in_customer` from the uploaded file. If you use schema-enabled lakehouse, use `dbo.in_customer`.
-3. **Run process:** Execute the process to validate deployment.
-
-![Load File to table](./Images/FMD_load_file_to_table.png)
 
 ### 6. Run the deployment
 
@@ -212,6 +231,15 @@ Execute the notebook to apply your configuration and deploy the framework.
 
 ---
 
+### Load Demo data
+
+When load_demo_data_data= True, you have to upload a csv file(which is available in this repo). With this you can easliy test if every pipeline and the full process is working
+
+1. **Upload** `customer.csv` to the file section of `LH_DATA_LANDINGZONE` in the development environment.
+2. **Create table:** Generate a table named `in_customer` from the uploaded file. If you use schema-enabled lakehouse, use `dbo.in_customer`.
+3. **Run process:** Execute the process to validate deployment.
+
+![Load File to table](./Images/FMD_load_file_to_table.png)
 ## Data cleansing
 
 You can define data cleansing rules for the Bronze and Silver layers. Cleansing rules are specified as a JSON array, where each object defines a function, target columns, and optional parameters.
@@ -229,21 +257,7 @@ You can define data cleansing rules for the Bronze and Silver layers. Cleansing 
 ]
 ```
 
-### Add custom cleansing functions
 
-Custom functions can be added in `NB_FMD_DQ_CLEANSING`. Each function should use the following structure:
-
-```python
-def <function_name>(df, columns, args):
-    # Access custom parameters
-    print(args['<custom parameter name>'])
-
-    # Apply logic to each column
-    for column in columns:
-        df = df.<custom logic>
-
-    return df  # Always return the DataFrame
-```
 
 For more examples, see [Data Cleansing Examples](./FMD_DATA_CLEANSING.md).
 
