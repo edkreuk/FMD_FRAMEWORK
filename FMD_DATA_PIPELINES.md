@@ -56,19 +56,19 @@ Manages the copy activity for data ingestion from Azure Data Factory pipelines. 
 
 Manages the execution of `NB_FMD_LOAD_LANDING_BRONZE` through `NB_FMD_PROCESSING_PARALLEL_MAIN`. This notebook receives all entities to be processed, handles parallel processing, and manages retries. The default timeout is set to 7200 seconds, with 2 retries.
 
-![Pipeline Overview PL_FMD_LOAD_BRONZE ](/images/PL_FMD_LOAD_BRONZE.png)
+![Pipeline Overview PL_FMD_LOAD_BRONZE ](/Images/PL_FMD_LOAD_BRONZE.png)
 
 ### PL_FMD_LOAD_SILVER
 
 Manages the execution of `NB_FMD_LOAD_BRONZE_SILVER` through `NB_FMD_PROCESSING_PARALLEL_MAIN`. The process is identical to `PL_FMD_LOAD_BRONZE` but loads different metadata for the Silver layer.
 
-![Pipeline Overview PL_FMD_LOAD_SILVER ](/images/PL_FMD_LOAD_SILVER.png)
+![Pipeline Overview PL_FMD_LOAD_SILVER ](/Images/PL_FMD_LOAD_SILVER.png)
 
 ## Pipeline configuration
 
 Each pipeline logs a record at the start, end, and upon failure. All copy and lookup activities are parameterized using the `connectionGuid` parameter, which references your connection as defined in the `integration.connections` table.
 
-> [!NOTE]
+> **Note:**  
 > Verify the appropriate `connectionType` and `datasourceType` for your specific connection. For example, the connection type may be `Sql`, with datasource types such as `ASQL_01` and `ASQL_02`. This configuration supports efficient handling of high data volumes by splitting them based on the datasource.
 
 The FMD Framework is designed for extensibility, allowing you to accommodate new requirements or data sources as needed.

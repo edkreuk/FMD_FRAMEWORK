@@ -54,10 +54,12 @@ The recommended workspace structure ensures clear separation of responsibilities
 
 The framework implements the Medallion Architecture using Lakehouses:
 
-- **Data Landing Zone:** Stores raw, unstructured, and structured data with incremental loads and no enforced schema.
-- **Bronze layer:** Deduplicates and structures data, applying schema for consistency.
-- **Silver layer:** Maintains historical, validated data with enforced quality rules.
-- **Gold layer:** Stores curated, business-ready data for analytics, including dimensions and facts tables.
+| Layer | Description |
+|----------|-------------|
+| **Data Landing Zone:** | Stores raw, unstructured, and structured data with incremental loads and no enforced schema. |
+| **Bronze layer:** | Deduplicates and structures data, applying schema for consistency. |
+| **Silver layer:** | Maintains historical, validated data with enforced quality rules. |
+| **Gold layer:** | Stores curated, business-ready data for analytics, including dimensions and facts tables. |
 
 ![FMD Lakehouse Overview](./Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
@@ -65,7 +67,7 @@ The framework implements the Medallion Architecture using Lakehouses:
 
 The Variable Library centralizes the management of variables used throughout the FMD Framework. It is integrated with the `PL_LOAD_ALL` process, allowing Variables(parameters) to be passed dynamically during execution.
 
-### Parameters in PL_LOAD_ALL pipeline
+#### Parameters in PL_LOAD_ALL pipeline
 
 Parameters are added for the ConnectionString and Database name for the SQL_FMD_FRAMEWORK. These parameters are necessary for the built-in logging. Parameters are updated according to your environment during execution of the Setup Notebook.
 
@@ -108,13 +110,13 @@ Check the Readme below to get started on how to implement and configure Data Cle
 
 ## Additional resources
 
-- [FMD Data Model reference](./FMD_METADATA_MODEL.md)
-- [FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)
-- [Configure and load demo data](./FMD_LOAD_BULK_DATA.md)
-- [Auditing and logging](./FMD_DATA_LOGGING.md)
 
-
-
+| Resource | Description |
+|----------|-------------|
+| **[FMD Data Model reference](./FMD_METADATA_MODEL.md)** | Overview of the data model used in the FMD Framework |
+| **[FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)** | Guide to configuring data pipelines in the FMD Framework |
+| **[Configure and load demo data](./FMD_LOAD_BULK_DATA.md)** | Instructions for loading demo data into the FMD Framework |
+| **[Auditing and logging](./FMD_DATA_LOGGING.md)** | Information on auditing and logging within the FMD Framework |
 
 ## Troubleshooting
 
