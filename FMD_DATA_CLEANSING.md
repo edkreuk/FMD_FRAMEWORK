@@ -6,8 +6,9 @@ Date: 07/2025
 Author: edkreuk
 ---
 
+## Data cleansing
 
-## Data cleansing in the  FMD Framework
+Data cleansing is an essential step in the deployment process to ensure that ingested data is standardized, accurate, and ready for downstream analytics. The FMD Framework allows you to define custom cleansing rules for the Bronze and Silver layers, helping automate data quality improvements during pipeline execution.
 
 You can define data cleansing rules for the Bronze and Silver layers. Cleansing rules are specified as a JSON array, where each object defines a function, target columns, and optional parameters.
 

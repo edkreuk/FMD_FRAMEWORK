@@ -248,15 +248,9 @@ domain_deployment = [
                             }
                         }
                     }
-## Data cleansing
+```
 
-Data cleansing is an essential step in the deployment process to ensure that ingested data is standardized, accurate, and ready for downstream analytics. The FMD Framework allows you to define custom cleansing rules for the Bronze and Silver layers, helping automate data quality improvements during pipeline execution.
-
-You can define data cleansing rules for the Bronze and Silver layers. Cleansing rules are specified as a JSON array, where each object defines a function, target columns, and optional parameters.
-
-
-
-### 6. Run the deployment
+# 5. Run the deployment
 
 Execute the notebook to apply your configuration and deploy the framework.
 
@@ -271,24 +265,5 @@ When load_demo_data = True, you have to upload a csv file (which is available in
 3. **Run process:** Execute the process to validate deployment.
 
 ![Load File to table](./Images/FMD_load_file_to_table.png)
-## Data cleansing
 
-You can define data cleansing rules for the Bronze and Silver layers. Cleansing rules are specified as a JSON array, where each object defines a function, target columns, and optional parameters.
-
-- `function`: Name of the cleansing function
-- `columns`: Semicolon-separated list of columns
-- `parameters`: (Optional) JSON object with function parameters
-
-**Example:**
-
-```json
-[
-    {"function": "to_upper", "columns": "TransactionTypeName"},
-    {"function": "custom_function_with_params", "columns": "TransactionTypeName;LastEditedBy", "parameters": {"param1": "abc", "param2": "123"}}
-]
-```
-
-
-
-For more examples, see [Data Cleansing Examples](./FMD_DATA_CLEANSING.md).
 
