@@ -12,7 +12,9 @@ Author: edkreuk
 
 This article describes how to deploy the Fabric Metadata-Driven (FMD) Framework (FMD_FRAMEWORK) in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
 
-## Prerequisites
+## 📦 Installation
+
+### Prerequisites
 
 Before you begin, ensure the following prerequisites are met:
 
@@ -60,17 +62,17 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 **Configuration and Parameters**
 
 > [!NOTE]
-> Fabric Administrator Role is required to create domain. Otherwise disable creation of Domains in next step
+> Fabric Administrator Role is required to create a domain. Otherwise, disable domain creation in the next step.
 
 
-Define the name for the Main Domain, and you can add 1 or mire sub domains
+Define the name for the Main Domain, and you can add 1 or more sub domains
 
 ```python
 
 FrameworkName = 'DEMO'              # max 6 characters, no spaces
-assign_icons = True                 #Leave on True if you "want to assign the default icons to the workspaces, set on false if you  have already assigned your own
+assign_icons = True                 # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
 
-load_demo_data_data= True           # Set to True if you want to load the demo data, otherwise set to False
+load_demo_data = True               # Set to True if you want to load the demo data, otherwise set to False
 lakehouse_schema_enabled = True     # Set to True if you want to use the lakehouse schema, otherwise set to False
 ```
 
@@ -89,21 +91,22 @@ Define the name for the Main Domain, and you can add 1 or mire sub domains
 create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
 domain_name='FMD'                                   # Main Domain
 sub_domain_names= ['FINANCE','SALES']               # Create business domains(sub)
-domain_contributor_role = {"type": "Contributors","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group/user can add or remove workspaces to this domain
-```
-
-**Workspace roles settings**  
-  Assign security roles to workspaces:
-
-
+# Replace '00000000-0000-0000-0000-000000000000' with the actual Azure AD group or user ID that should have contributor access.
+domain_contributor_role = {
+    "type": "Contributors",
+    "principals": [
+        {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}  # <--- PLACEHOLDER: Enter your real group/user ID here
+    ]
+}  # Which group/user can add or remove workspaces to this domain
 You need to create workspace roles for the different workspaces:
 
 workspace_roles_code
 workspace_roles_data
 workspace_roles_configuration
+workspace_roles_reporting
+workspace_roles_gold
 
-
-Check the example below
+Check the examples below
   ```python
   workspace_roles_data = [
       {
@@ -121,9 +124,35 @@ Check the example below
           "role": "Admin"
       }
   ]
+
+  workspace_roles_reporting = [
+      {
+          "principal": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "type": "Group"
+          },
+          "role": "Viewer"
+      }
+  ]
+
+  workspace_roles_gold = [
+      {
+          "principal": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "type": "Group"
+          },
+          "role": "Member"
+      }
+  ]
+  ```
+              "type": "Group"
+          },
+          "role": "Admin"
+      }
+  ]
   ```
 **Configuration settings  (Fabric Database)**  
-    Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necassary.
+    Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necessary.
 
   
 ```python
@@ -186,7 +215,7 @@ configuration = {
   ```
 **Domain Settings** 
 
-Define settings for every sub domain. Every sub domain is automaticaly assigned to the main domain.
+Define settings for every sub domain. Every sub domain is automatically assigned to the main domain.
   ```python
 domain_deployment = [
                     {
@@ -219,9 +248,11 @@ domain_deployment = [
                             }
                         }
                     }
-                ]
-```
-![Domain and Sb Domain Overview](./Images/FMD_DOMAIN_OVERVIEW.png)
+## Data cleansing
+
+Data cleansing is an essential step in the deployment process to ensure that ingested data is standardized, accurate, and ready for downstream analytics. The FMD Framework allows you to define custom cleansing rules for the Bronze and Silver layers, helping automate data quality improvements during pipeline execution.
+
+You can define data cleansing rules for the Bronze and Silver layers. Cleansing rules are specified as a JSON array, where each object defines a function, target columns, and optional parameters.
 
 
 
@@ -233,7 +264,7 @@ Execute the notebook to apply your configuration and deploy the framework.
 
 ### Load Demo data
 
-When load_demo_data_data= True, you have to upload a csv file(which is available in this repo). With this you can easliy test if every pipeline and the full process is working
+When load_demo_data = True, you have to upload a csv file (which is available in this repo). With this you can easily test if every pipeline and the full process is working
 
 1. **Upload** `customer.csv` to the file section of `LH_DATA_LANDINGZONE` in the development environment.
 2. **Create table:** Generate a table named `in_customer` from the uploaded file. If you use schema-enabled lakehouse, use `dbo.in_customer`.

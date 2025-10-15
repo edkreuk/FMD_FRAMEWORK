@@ -43,7 +43,7 @@ The recommended workspace structure ensures clear separation of responsibilities
 | Code workspaces             | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark |
 | Gold workspaces             | Manage and store data                        | Gold and Semantic Model          |
 | Reporting workspaces        | Create reports for end users                 | Reports                           |
-| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing  and logging   |
+| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing, Logging       |
 
 > [!NOTE]
 > For organizations with a Gold Layer, create a separate workspace for reports to restrict access appropriately.
@@ -57,7 +57,7 @@ The framework implements the Medallion Architecture using Lakehouses:
 - **Data Landing Zone:** Stores raw, unstructured, and structured data with incremental loads and no enforced schema.
 - **Bronze layer:** Deduplicates and structures data, applying schema for consistency.
 - **Silver layer:** Maintains historical, validated data with enforced quality rules.
-- **Gold layer:** Maintains Dimensions and Facts
+- **Gold layer:** Stores curated, business-ready data for analytics, including dimensions and facts tables.
 
 ![FMD Lakehouse Overview](./Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
@@ -67,7 +67,7 @@ The Variable Library centralizes the management of variables used throughout the
 
 ### Parameters in PL_LOAD_ALL pipeline
 
-Parameters are added for the ConnectionString and Database name for the SQL_FMD_FRAMEWORK. These parameters are necassary for the build in logging. Parameters are updated according your environment during the execution on the Setup Notebook.
+Parameters are added for the ConnectionString and Database name for the SQL_FMD_FRAMEWORK. These parameters are necessary for the built-in logging. Parameters are updated according to your environment during execution of the Setup Notebook.
 
 **Currently supported variables:**
 - `key_vault_name`
@@ -139,10 +139,9 @@ If opening a pull request, please follow these steps:
 
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC LICENSE.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 **Contributors:**  
 [Erwin de Kreuk](https://www.linkedin.com/in/erwindekreuk/)  
-[Marco Hansma](https://www.linkedin.com/in/marcohansma/)
