@@ -263,6 +263,9 @@ spark.conf.set("spark.sql.parquet.int96RebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.int96RebaseModeInWrite", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
+spark.conf.set('spark.microsoft.delta.optimize.fast.enabled', True)
+spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
+spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
 
 # METADATA ********************
 
