@@ -59,7 +59,7 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 
 #### Key configuration parameters
 
-**Configuration and Parameters**
+**Framework settings**
 
 > [!NOTE]
 > Fabric Administrator Role is required to create a domain. Otherwise, disable domain creation in the next step.
