@@ -264,6 +264,10 @@ spark.conf.set("spark.sql.parquet.int96RebaseModeInWrite", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
 
+spark.conf.set('spark.microsoft.delta.optimize.fast.enabled', True)
+spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
+spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
+
 # METADATA ********************
 
 # META {
@@ -627,7 +631,7 @@ merge.execute()
 
 # MARKDOWN ********************
 
-# ## Exit notebook
+# ## Define Results
 
 # CELL ********************
 
@@ -666,6 +670,10 @@ execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# ## Notebook exit
 
 # CELL ********************
 

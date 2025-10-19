@@ -17,8 +17,6 @@ The FMD Framework enables organizations to streamline data operations by leverag
 > The FMD Framework is designed for rapid deployment and extensibility. You can use it out-of-the-box or customize it to meet your organization's evolving data needs.
 
 
-<img src="./Images/FMD_FRAMEWORK.jpeg" alt="FMD Framework Deployment" width="400"/> 
-
 ## Video with the Data Factory Team
 
 [![Watch the FMD Framework overview](https://img.youtube.com/vi/UzqSFajSvtY/0.jpg)](https://www.youtube.com/watch?v=UzqSFajSvtY&t=829s)
@@ -37,13 +35,13 @@ The FMD Framework uses a modular architecture that separates data, code, and orc
 
 The recommended workspace structure ensures clear separation of responsibilities and access control.
 
-| Workspace type              | Purpose                                      | Examples                        |
+| Workspace Type              | Purpose                                      | Examples                        |
 |-----------------------------|----------------------------------------------|----------------------------------|
-| Data workspaces             | Manage and store data                        | Data Landing Zone, Bronze, Silver|
-| Code workspaces             | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark |
-| Gold workspaces             | Manage and store data                        | Gold and Semantic Model          |
-| Reporting workspaces        | Create reports for end users                 | Reports                           |
-| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing  and logging   |
+| Data              | Manage and store data                        | Data Landing Zone, Bronze, Silver|
+| Code              | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark Environment, Variable Library |
+| Gold              | Manage and store data                        | Gold and Semantic Model          |
+| Reporting         | Create reports for end users                 | Reports                           |
+| Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing, Logging       |
 
 > [!NOTE]
 > For organizations with a Gold Layer, create a separate workspace for reports to restrict access appropriately.
@@ -54,10 +52,12 @@ The recommended workspace structure ensures clear separation of responsibilities
 
 The framework implements the Medallion Architecture using Lakehouses:
 
-- **Data Landing Zone:** Stores raw, unstructured, and structured data with incremental loads and no enforced schema.
-- **Bronze layer:** Deduplicates and structures data, applying schema for consistency.
-- **Silver layer:** Maintains historical, validated data with enforced quality rules.
-- **Gold layer:** Maintains Dimensions and Facts
+| Layer | Description |
+|----------|-------------|
+| **Data Landing Zone:** | Stores raw, unstructured, and structured data with incremental loads and no enforced schema. |
+| **Bronze layer:** | Deduplicates and structures data, applying schema for consistency. |
+| **Silver layer:** | Maintains historical, validated data with enforced quality rules. |
+| **Gold layer:** | Stores curated, business-ready data for analytics, including dimensions and facts tables. |
 
 ![FMD Lakehouse Overview](./Images/FMD_LAKEHOUSE_OVERVIEW.png)
 
@@ -65,9 +65,9 @@ The framework implements the Medallion Architecture using Lakehouses:
 
 The Variable Library centralizes the management of variables used throughout the FMD Framework. It is integrated with the `PL_LOAD_ALL` process, allowing Variables(parameters) to be passed dynamically during execution.
 
-### Parameters in PL_LOAD_ALL pipeline
+#### Parameters in PL_LOAD_ALL pipeline
 
-Parameters are added for the ConnectionString and Database name for the SQL_FMD_FRAMEWORK. These parameters are necassary for the build in logging. Parameters are updated according your environment during the execution on the Setup Notebook.
+Parameters are added for the ConnectionString and Database name for the SQL_FMD_FRAMEWORK. These parameters are necessary for the built-in logging. Parameters are updated according to your environment during execution of the Setup Notebook.
 
 **Currently supported variables:**
 - `key_vault_name`
@@ -92,6 +92,8 @@ The FMD Framework supports integration with the following sources:
 - Azure Data Factory
 - Onelake tables and files
 
+More data sources will be supported in future releases. 
+
 ## Deployment and getting started
 
 To get started:
@@ -100,13 +102,21 @@ To get started:
 2. Import the taskflow and configure your workspaces as recommended.
 3. Refer to additional resources for data model, pipelines, and logging.
 
+## Data Cleansing
+
+Check the link below to get started on how to implement and configure Data Cleansing functions
+
+- [Data cleansing](./FMD_DATA_CLEANSING.md)
+
 ## Additional resources
 
-- [FMD Data Model reference](./FMD_METADATA_MODEL.md)
-- [FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)
-- [Configure and load demo data](./FMD_LOAD_BULK_DATA.md)
-- [Auditing and logging](./FMD_DATA_LOGGING.md)
-- [Data cleansing](./FMD_DATA_CLEANSING.md)
+
+| Resource | Description |
+|----------|-------------|
+| **[FMD Data Model reference](./FMD_METADATA_MODEL.md)** | Overview of the data model used in the FMD Framework |
+| **[FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)** | Guide to configuring data pipelines in the FMD Framework |
+| **[Configure and load demo data](./FMD_LOAD_BULK_DATA.md)** | Instructions for loading demo data into the FMD Framework |
+| **[Auditing and logging](./FMD_DATA_LOGGING.md)** | Information on auditing and logging within the FMD Framework |
 
 ## Troubleshooting
 
@@ -131,10 +141,9 @@ If opening a pull request, please follow these steps:
 
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC LICENSE.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 **Contributors:**  
 [Erwin de Kreuk](https://www.linkedin.com/in/erwindekreuk/)  
-[Marco Hansma](https://www.linkedin.com/in/marcohansma/)

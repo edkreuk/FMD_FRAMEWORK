@@ -13,7 +13,7 @@ The Fabric Metadata-Driven (FMD) Framework provides built-in logging for pipelin
 
 # CopyActivty logging in the FMD Framework
 
-The Fabric Metadata-Driven (FMD) Framework provides built-in logging for copy activity execution. Each Copy activtity logs a record when it starts, ends, or fails. Logging data is stored in the `audit.CopyActivityExecution` table.
+The Fabric Metadata-Driven (FMD) Framework provides built-in logging for copy activity execution. Each Copy activity logs a record when it starts, ends, or fails. Logging data is stored in the `audit.CopyActivityExecution` table.
 
 # Notebook logging in the FMD Framework
 
@@ -22,5 +22,5 @@ The Fabric Metadata-Driven (FMD) Framework provides built-in logging for Noteboo
 
 
 > [!NOTE]
-> A semantic model for audit and logging reports is not yet available. You can use the raw data in the `audit.PipelineExecution`, `audit.NotebookExecution` and `audit.CopyActivityExecution` table to build custom monitoring and logging
+> A semantic model for audit and logging reports is not yet available. You can use the raw data in the `audit.PipelineExecution`, `audit.NotebookExecution` and `audit.CopyActivityExecution` table to build custom monitoring and logging solutions.
 
