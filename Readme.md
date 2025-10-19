@@ -17,8 +17,6 @@ The FMD Framework enables organizations to streamline data operations by leverag
 > The FMD Framework is designed for rapid deployment and extensibility. You can use it out-of-the-box or customize it to meet your organization's evolving data needs.
 
 
-<img src="./Images/FMD_FRAMEWORK.jpeg" alt="FMD Framework Deployment" width="400"/> 
-
 ## Video with the Data Factory Team
 
 [![Watch the FMD Framework overview](https://img.youtube.com/vi/UzqSFajSvtY/0.jpg)](https://www.youtube.com/watch?v=UzqSFajSvtY&t=829s)
@@ -37,12 +35,12 @@ The FMD Framework uses a modular architecture that separates data, code, and orc
 
 The recommended workspace structure ensures clear separation of responsibilities and access control.
 
-| Workspace type              | Purpose                                      | Examples                        |
+| Workspace Type              | Purpose                                      | Examples                        |
 |-----------------------------|----------------------------------------------|----------------------------------|
-| Data workspaces             | Manage and store data                        | Data Landing Zone, Bronze, Silver|
-| Code workspaces             | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark |
-| Gold workspaces             | Manage and store data                        | Gold and Semantic Model          |
-| Reporting workspaces        | Create reports for end users                 | Reports                           |
+| Data              | Manage and store data                        | Data Landing Zone, Bronze, Silver|
+| Code              | Develop and manage code artifacts            | Data Pipelines, Notebooks, Spark Environment, Variable Library |
+| Gold              | Manage and store data                        | Gold and Semantic Model          |
+| Reporting         | Create reports for end users                 | Reports                           |
 | Orchestration & logging     | Orchestrate and monitor data operations      | Fabric SQL Database, Auditing, Logging       |
 
 > [!NOTE]
@@ -94,6 +92,8 @@ The FMD Framework supports integration with the following sources:
 - Azure Data Factory
 - Onelake tables and files
 
+More data sources will be supported in future releases. 
+
 ## Deployment and getting started
 
 To get started:
@@ -104,7 +104,7 @@ To get started:
 
 ## Data Cleansing
 
-Check the Readme below to get started on how to implement and configure Data Cleansing functions
+Check the link below to get started on how to implement and configure Data Cleansing functions
 
 - [Data cleansing](./FMD_DATA_CLEANSING.md)
 

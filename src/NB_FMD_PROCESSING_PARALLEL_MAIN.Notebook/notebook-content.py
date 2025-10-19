@@ -104,10 +104,10 @@ def is_valid_guid(guid_str: str) -> bool:
 # CELL ********************
 
 ## always use notebook guid instead of pipeline id
-PipelineName = mssparkutils.runtime.context.get('currentNotebookName')
-PipelineGuid = str(mssparkutils.runtime.context.get('currentNotebookId'))
-WorkspaceGuid = mssparkutils.runtime.context.get('currentWorkspaceId')
-PipelineParentRunGuid = mssparkutils.runtime.context.get('PipelineParentRunGuid')
+PipelineName = notebookutils.runtime.context.get('currentNotebookName')
+PipelineGuid = str(notebookutils.runtime.context.get('currentNotebookId'))
+WorkspaceGuid = notebookutils.runtime.context.get('currentWorkspaceId')
+PipelineParentRunGuid = notebookutils.runtime.context.get('PipelineParentRunGuid')
 PipelineRunGuid = str(uuid.uuid4())
 TriggerGuid = format_guid(TriggerGuid)
 

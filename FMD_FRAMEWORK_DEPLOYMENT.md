@@ -10,13 +10,13 @@ Author: edkreuk
 
 ![FMD Overview](/Images/FMD_Overview.png)
 
-This article describes how to deploy the Fabric Metadata-Driven (FMD) Framework (FMD_FRAMEWORK) in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
+This article describes how to deploy the Fabric Metadata-Driven (FMD) Framework in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
 
 ## 📦 Installation
 
 ### Prerequisites
 
-Before you begin, ensure the following prerequisites are met:
+Before you begin, ensure the following prerequisites are met in the Admin Portal of Microsoft Fabric:
 
 - Users can create Fabric items.
 - Fabric SQL database is available.
@@ -37,13 +37,13 @@ Set up the following connections and note their Connection IDs for later configu
 | Connection name              | Connection type         | Authentication |Remarks |
 |------------------------------|------------------------|----------------|--------|
 | CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines  | OAuth2  or Service Principal       |  You must add the Service Principal to the workspace_roles_code.        |
-| CON_FMD_FABRICSQL            | Fabric SQL database    | OAuth2         |        |
+| CON_FMD_FABRICSQL            | Fabric SQL database    | OAuth2         |  Currently Service Principal is not supported      |
 
 If you use Azure Data Factory Pipelines, create this additional connection:
 
 | Connection name              | Connection type         | Authentication |
 |------------------------------|------------------------|----------------|
-| CON_FMD_ADF_PIPELINES        | Azure Data Factory     | OAuth2         |
+| CON_FMD_ADF_PIPELINES        | Azure Data Factory     | OAuth2  or Service Principal       |  You must add the Service Principal to the workspace_roles_code.        |         |
 
 ### 3. Create a configuration workspace
 
@@ -68,7 +68,6 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 Define the name for the Main Domain, and you can add 1 or more sub domains
 
 ```python
-
 FrameworkName = 'DEMO'              # max 6 characters, no spaces
 assign_icons = True                 # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
 
@@ -91,13 +90,14 @@ Define the name for the Main Domain, and you can add 1 or mire sub domains
 create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
 domain_name='FMD'                                   # Main Domain
 sub_domain_names= ['FINANCE','SALES']               # Create business domains(sub)
-# Replace '00000000-0000-0000-0000-000000000000' with the actual Azure AD group or user ID that should have contributor access.
+# Replace '00000000-0000-0000-0000-000000000000' with the actual Entra AD group or user ID that should have contributor access.
 domain_contributor_role = {
     "type": "Contributors",
     "principals": [
         {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}  # <--- PLACEHOLDER: Enter your real group/user ID here
     ]
 }  # Which group/user can add or remove workspaces to this domain
+  ```
 You need to create workspace roles for the different workspaces:
 
 > [!NOTE]
@@ -110,7 +110,7 @@ workspace_roles_reporting
 workspace_roles_gold
 
 Check the examples below
-  ```python
+```python
 workspace_roles_code = [
       {
           "principal": {
@@ -200,9 +200,9 @@ configuration = {
               }
           },
           'connections': {
-              'CON_FMD_FABRIC_SQL': '372237f9-709a-48f8-8fb2-ce06940c990e',
-              'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7',
-              'CON_FMD_ADF_PIPELINES': '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'
+              'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-000000000000',
+              'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',
+              'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'
           }
       },
       {
@@ -220,9 +220,9 @@ configuration = {
               }
           },
           'connections': {
-              'CON_FMD_FABRIC_SQL': '372237f9-709a-48f8-8fb2-ce06940c990e',
-              'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7',
-              'CON_FMD_ADF_PIPELINES': '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'
+              'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-000000000000',
+              'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',
+              'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'
           }
       }
   ]
@@ -264,9 +264,9 @@ domain_deployment = [
                     }
 ```
 
-# 5. Run the deployment
+### 5. Run the deployment
 
-Execute the notebook to apply your configuration and deploy the framework.
+Execute the **notebook** to apply your configuration and deploy the framework.
 
 ---
 
@@ -274,9 +274,9 @@ Execute the notebook to apply your configuration and deploy the framework.
 
 When load_demo_data = True, you have to upload a csv file (which is available in this repo). With this you can easily test if every pipeline and the full process is working
 
-1. **Upload** `customer.csv` to the file section of `LH_DATA_LANDINGZONE` in the development environment.
+1. **Upload** `customer.csv` from demodata folder in this repo to the file section of `LH_DATA_LANDINGZONE` in the development environment.
 2. **Create table:** Generate a table named `in_customer` from the uploaded file. If you use schema-enabled lakehouse, use `dbo.in_customer`.
-3. **Run process:** Execute the process to validate deployment.
+3. **Run process:** Execute the process to validate deployment, by start the `PL_LOAD_ALL` pipeline in the `FMD_FRAMEWORK_CODE (D)` workspace.
 
 ![Load File to table](./Images/FMD_load_file_to_table.png)
 
