@@ -263,6 +263,18 @@ domain_deployment = [
                         }
                     }
 ```
+**Repo Configuration**
+
+Location of the FMD Framework repository. Unless you have a forked version, do not change these settings. If you want to use another branch, you can change the branch name to your own branch.
+  ```python
+#FMD Framework code
+##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE ####
+repo_owner = "edkreuk"              # Owner of the repository
+repo_name = "FMD_FRAMEWORK"         # Name of the repository
+branch = "main"                     #"main" is default                    
+folder_prefix = ""
+###################################################
+```
 
 ### 5. Run the deployment
 
