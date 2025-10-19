@@ -631,7 +631,7 @@ merge.execute()
 
 # MARKDOWN ********************
 
-# ## Exit notebook
+# ## Define Results
 
 # CELL ********************
 
@@ -670,6 +670,10 @@ execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# ## Notebook exit
 
 # CELL ********************
 

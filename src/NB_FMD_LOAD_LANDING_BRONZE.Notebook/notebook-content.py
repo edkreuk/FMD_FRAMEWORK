@@ -300,10 +300,6 @@ spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
 
 # ## Set your loading paths
 
-# MARKDOWN ********************
-
-# https://onelake.dfs.fabric.microsoft.com/3025bfd0-7511-4702-987d-2b4cb2a11c08/8e3bea3d-db0d-4ace-a4aa-b0f73bd01a66/Tables/dbo/customer
-
 # CELL ********************
 
 #Set SourceFile and target Location
@@ -549,7 +545,7 @@ elif IsIncremental not in [False, 'false', 'False']:
 
 # MARKDOWN ********************
 
-# ## Exit notebook
+# ## Define Results
 
 # CELL ********************
 
@@ -580,6 +576,10 @@ result_data = {
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# ## Logging and update queue
+
 # CELL ********************
 
 execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
@@ -592,6 +592,10 @@ execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# ## Notebook exit
 
 # CELL ********************
 
