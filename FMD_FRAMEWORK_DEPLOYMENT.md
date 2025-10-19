@@ -34,10 +34,10 @@ Download the deployment notebook from the setup folder to your local machine:
 
 Set up the following connections and note their Connection IDs for later configuration:
 
-| Connection name              | Connection type         | Authentication |
-|------------------------------|------------------------|----------------|
-| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines  | OAuth2         |
-| CON_FMD_FABRICSQL            | Fabric SQL database    | OAuth2         |
+| Connection name              | Connection type         | Authentication |Remarks |
+|------------------------------|------------------------|----------------|--------|
+| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines  | OAuth2  or Service Principal       |  You must add the Service Principal to the workspace_roles_code.        |
+| CON_FMD_FABRICSQL            | Fabric SQL database    | OAuth2         |        |
 
 If you use Azure Data Factory Pipelines, create this additional connection:
 
@@ -100,6 +100,9 @@ domain_contributor_role = {
 }  # Which group/user can add or remove workspaces to this domain
 You need to create workspace roles for the different workspaces:
 
+> [!NOTE]
+> The id of the User, Group or Service Principal is the Object ID in Microsoft Entra ID. For a Service Principal, you can find the Object ID in the Azure Portal under 'Enterprise applications'. Dont use the Object ID of the App Registration.'
+
 workspace_roles_code
 workspace_roles_data
 workspace_roles_configuration
@@ -108,6 +111,22 @@ workspace_roles_gold
 
 Check the examples below
   ```python
+workspace_roles_code = [
+      {
+          "principal": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "type": "Group"
+          },
+          "role": "Member"
+      },
+      {
+          "principal": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "type": "ServicePrincipal"
+          },
+          "role": "contributor"
+      }
+  ]
   workspace_roles_data = [
       {
           "principal": {
@@ -145,12 +164,7 @@ Check the examples below
       }
   ]
   ```
-              "type": "Group"
-          },
-          "role": "Admin"
-      }
-  ]
-  ```
+
 **Configuration settings  (Fabric Database)**  
     Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necessary.
 
