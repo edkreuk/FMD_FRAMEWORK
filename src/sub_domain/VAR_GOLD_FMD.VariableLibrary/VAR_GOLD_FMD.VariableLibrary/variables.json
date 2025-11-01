@@ -5,7 +5,7 @@
       "name": "key_vault_name",
       "note": "",
       "type": "String",
-      "value": "key_vault_name"
+      "value": "keyvaultname"
     }
   ]
 }
