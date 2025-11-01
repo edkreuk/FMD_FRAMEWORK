@@ -1,15 +1,13 @@
 [
-
-   
-    {
-        "name": "VAR_GOLD_FMD.VariableLibrary",
-        "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
-        "type": "VariableLibrary"
-    },
   {
         "name": "NB_MLV_EXAMPLE.Notebook",
         "id": "f7dee320-4fe9-4196-8769-9847af644bf9",
         "type": "Notebook"
     }
-
+,
+    {
+        "name": "VAR_GOLD_FMD.VariableLibrary",
+        "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
+        "type": "VariableLibrary"
+    }
 ]
