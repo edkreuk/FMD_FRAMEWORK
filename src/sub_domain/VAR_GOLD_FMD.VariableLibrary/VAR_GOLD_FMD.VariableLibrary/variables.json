@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
+  "variables": [
+    {
+      "name": "key_vault_name",
+      "note": "",
+      "type": "String",
+      "value": "key_vault_name"
+    }
+  ]
+}
