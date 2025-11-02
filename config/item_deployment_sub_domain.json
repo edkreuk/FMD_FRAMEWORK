@@ -1,13 +1,7 @@
 [
-  {
+    {
         "name": "NB_MLV_EXAMPLE.Notebook",
         "id": "f7dee320-4fe9-4196-8769-9847af644bf9",
-        "type": "Notebook"
-    }
-,
-         {
-        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
-        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
         "type": "Notebook"
     },
     {
