@@ -1,0 +1,17 @@
+[       
+        {
+            "name": "LH_GOLD_LAYER.Lakehouse",
+            "type": "Lakehouse",
+            "id": "1772e343-0684-4765-a1ff-78f7b855b60c"
+        },
+    {
+        "name": "NB_LOAD_GOLD.Notebook",
+        "id": "37ee9c0e-5d9d-4a7b-b83d-ab1ab87a0e77",
+        "type": "Notebook"
+    },
+    {
+        "name": "VAR_GOLD_FMD.VariableLibrary",
+        "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
+        "type": "VariableLibrary"
+    }
+]
