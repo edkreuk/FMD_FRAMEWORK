@@ -5,6 +5,11 @@
         "type": "Notebook"
     }
 ,
+         {
+        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook",
+        "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
+        "type": "Notebook"
+    },
     {
         "name": "VAR_GOLD_FMD.VariableLibrary",
         "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
