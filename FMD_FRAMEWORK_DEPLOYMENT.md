@@ -68,7 +68,7 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 Define the name for the Main Domain, and you can add 1 or more sub domains
 
 ```python
-FrameworkName = 'DEMO'              # max 6 characters, no spaces
+##FrameworkName = 'DEMO'              # max 6 characters, no spaces. Is now removed, if used this please use the new option framework_post_fix(this will a lot of users more flexibility)
 assign_icons = True                 # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
 
 load_demo_data = True               # Set to True if you want to load the demo data, otherwise set to False
@@ -80,6 +80,8 @@ lakehouse_schema_enabled = True     # Set to True if you want to use the lakehou
 
   ```python
   capacity_name_dvlm = 'Name of your capacity'
+  reassign_capacity= True                 # Set to False if you don't want to reassign the capacity to an existing workspace in case you set the capacity manually
+               
   ```
 
 **Domain settings**
@@ -88,8 +90,12 @@ Define the name for the Main Domain, and you can add 1 or mire sub domains
 
 ```python
 create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
-domain_name='FMD'                                   # Main Domain
-sub_domain_names= ['FINANCE','SALES']               # Create business domains(sub)
+
+domain_name='INTEGRATION'                           # Main Domain    for example INTEGRATION CODE(D) 
+business_domain_names= ['FINANCE','SALES']          # Create business domains(sub)
+framework_post_fix= ''                              # post fix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
+if framework_post_fix != '':
+   framework_post_fix= ' '+ framework_post_fix      #If empty leave as is else add a space before for better visibility
 # Replace '00000000-0000-0000-0000-000000000000' with the actual Entra AD group or user ID that should have contributor access.
 domain_contributor_role = {
     "type": "Contributors",
@@ -111,59 +117,67 @@ workspace_roles_gold
 
 Check the examples below
 ```python
+
+# Replace placeholder IDs with real Object IDs from Microsoft Entra ID.
+# Use "Group", "User" or "ServicePrincipal" for "type" as appropriate.
+
 workspace_roles_code = [
-      {
-          "principal": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "type": "Group"
-          },
-          "role": "Member"
-      },
-      {
-          "principal": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "type": "ServicePrincipal"
-          },
-          "role": "contributor"
-      }
-  ]
-  workspace_roles_data = [
-      {
-          "principal": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "type": "Group"
-          },
-          "role": "Member"
-      },
-      {
-          "principal": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "type": "Group"
-          },
-          "role": "Admin"
-      }
-  ]
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
+        "role": "Member"
+    },
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "ServicePrincipal"},
+        "role": "Contributor"
+    }
+]
 
-  workspace_roles_reporting = [
-      {
-          "principal": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "type": "Group"
-          },
-          "role": "Viewer"
-      }
-  ]
+workspace_roles_data = [
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
+        "role": "Member"
+    },
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
+        "role": "Admin"
+    }
+]
 
-  workspace_roles_gold = [
-      {
-          "principal": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "type": "Group"
-          },
-          "role": "Member"
-      }
-  ]
-  ```
+workspace_roles_configuration = [
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
+        "role": "Contributor"
+    }
+]
+
+workspace_roles_reporting = [
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
+        "role": "Member"
+    }
+]
+
+workspace_roles_gold = [
+    {
+        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
+        "role": "Member"
+    }
+]
+
+# Optional: business-domain specific role lists
+workspace_roles_data_business_domain = [
+    {"principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}, "role": "Member"}
+]
+
+workspace_roles_code_business_domain = [
+    {"principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}, "role": "Member"}
+]
+
+workspace_roles_reporting_business_domain = [
+    {"principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}, "role": "Member"}
+]
+```
+
 
 **Configuration settings  (Fabric Database)**  
     Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necessary.
@@ -172,96 +186,104 @@ workspace_roles_code = [
 ```python
 configuration = {
                     'workspace': {
-                        'name' : FrameworkName + ' CONFIG FMD',             # Name of target workspace
-                        'roles' : workspace_roles_data,                     # Roles to assign to the workspace
-                        'capacity_name' : capacity_name_config              # Name of target capacity for the configuration workspace
+                        'name' : domain_name + ' CONFIG' +  framework_post_fix,             # Name of target workspace
+                        'roles' : workspace_roles_data,                                     # Roles to assign to the workspace
+                        'capacity_name' : capacity_name_config                              # Name of target capacity for the configuration workspace
                     },
-                       'DatabaseName' : 'SQL_'+FrameworkName+'_FRAMEWORK'   # Name of target configuration SQL Database
+                       'DatabaseName' : 'SQL_'+domain_name+'_FRAMEWORK'                     # Name of target configuration SQL Database
 }
   ```
 
 **Workspace configuration**  
-  Define settings for each environment (for example, development and production). You can add multiple environments as needed. Each environment should include workspace configurations, roles, capacity IDs, and connection details.
-
-  ```python
-  environments = [
-      {
-          'environment_name': 'development',
-          'workspaces': {
-              'data': {
-                  'name': 'FMD_FRAMEWORK_DATA (D)',
-                  'roles': workspace_roles_data,
-                  'capacity_name': capacity_name_dvlm
-              },
-              'code': {
-                  'name': 'FMD_FRAMEWORK_CODE (D)',
-                  'roles': workspace_roles_code,
-                  'capacity_name': capacity_name_dvlm
-              }
-          },
-          'connections': {
-              'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-000000000000',
-              'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',
-              'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'
-          }
-      },
-      {
-          'environment_name': 'production',
-          'workspaces': {
-               'data': {
-                  'name': 'FMD_FRAMEWORK_DATA (P)',
-                  'roles': workspace_roles_data,
-                  'capacity_name': capacity_name_prod
-              },
-              'code': {
-                  'name': 'FMD_FRAMEWORK_CODE (P)',
-                  'roles': workspace_roles_code,
-                  'capacity_name': capacity_name_prod
-              }
-          },
-          'connections': {
-              'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-000000000000',
-              'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',
-              'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'
-          }
-      }
-  ]
-  ```
+```python
+# Define settings for each environment (add more environments as needed)
+environments = [
+    {
+        'environment_name': 'development',                                     # Name of target environment
+        'workspaces': {
+            'data': {
+                'name': domain_name + ' DATA (D)' + framework_post_fix,       # Name of target data workspace for development
+                'roles': workspace_roles_data,                                # Roles to assign to the workspace
+                'capacity_name': capacity_name_dvlm                           # Name of target data workspace capacity for development
+            },
+            'code': {
+                'name': domain_name + ' CODE (D)' + framework_post_fix,       # Name of target code workspace for development
+                'roles': workspace_roles_code,                                # Roles to assign to the workspace
+                'capacity_name': capacity_name_dvlm                           # Name of target code workspace capacity for development
+            },
+        },
+        'connections': {
+            'CON_FMD_FABRIC_SQL': '372237f9-709a-48f8-8fb2-ce06940c990e',          # GUID for the Fabric SQL connection
+            'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7',    # GUID for the Fabric Data Pipelines connection
+            'CON_FMD_ADF_PIPELINES': '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'        # GUID for the ADF connection (if used)
+        }
+    },
+    {
+        'environment_name': 'production',                                      # Name of target environment
+        'workspaces': {
+            'data': {
+                'name': domain_name + ' DATA (P)' + framework_post_fix,       # Name of target data workspace for production
+                'roles': workspace_roles_data,                                # Roles to assign to the workspace
+                'capacity_name': capacity_name_prod                           # Name of target data workspace capacity for production
+            },
+            'code': {
+                'name': domain_name + ' CODE (P)' + framework_post_fix,       # Name of target code workspace for production
+                'roles': workspace_roles_code,                                # Roles to assign to the workspace
+                'capacity_name': capacity_name_prod                           # Name of target code workspace capacity for production
+            },
+        },
+        'connections': {
+            'CON_FMD_FABRIC_SQL': '372237f9-709a-48f8-8fb2-ce06940c990e',          # GUID for the Fabric SQL connection
+            'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7',    # GUID for the Fabric Data Pipelines connection
+            'CON_FMD_ADF_PIPELINES': '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'        # GUID for the ADF connection (if used)
+        }
+    }
+]
+```
 **Domain Settings** 
 
 Define settings for every sub domain. Every sub domain is automatically assigned to the main domain.
   ```python
-domain_deployment = [
+business_domain_deployment = [
                     {
-                        'environment_name' : 'development',                 # Name of target environment
-                        'environment_short' : 'D',                          # Short of target environment
+                        'environment_name' : 'development',                                 # Name of target environment
+                        'environment_short' : 'D',                                          # Short of target environment
                         'workspaces': {
                          
-                            'gold' : {
-                                'roles' : workspace_roles_data,             # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_dvlm        # Name of target code workspace for development
+                            'data' : {
+                                'roles' : workspace_roles_data_business_domain,             # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_business_domain_dvlm        # Name of target data workspace for development
                             },
-                                'reporting' : {
-                                 'roles' : workspace_roles_reporting,       # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_dvlm        # Name of target code workspace for development
+                            'code' : {
+                                'roles' : workspace_roles_code_business_domain,             # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_business_domain_dvlm        # Name of target code workspace for development
+                            },
+                            'reporting' : {
+                            'roles' : workspace_roles_reporting_business_domain,            # Roles to assign to the workspace
+                            'capacity_name' : capacity_name_business_domain_dvlm            # Name of target code workspace for development
                             }
                         }
                     },
                     {
-                        'environment_name' : 'production',                  # Name of target environment
-                        'environment_short' : 'P',                          # Short of target environment
+                        'environment_name' : 'production',                                  # Name of target environment
+                        'environment_short' : 'P',                                          # Short of target environment
                         'workspaces': {
                          
-                            'gold' : {
-                                'roles' : workspace_roles_gold,             # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_prod        # Name of target code workspace for development
+                            'data' : {
+                                'roles' : workspace_roles_data_business_domain,             # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_business_domain_prod        # Name of target data workspace for development
+                            },
+                            'code' : {
+                                'roles' : workspace_roles_code_business_domain,             # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_business_domain_prod        # Name of target code workspace for development
                             },
                             'reporting' : {
-                                'roles' : workspace_roles_reporting,        # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_prod        # Name of target code workspace for development
+                                'roles' : workspace_roles_reporting_business_domain,        # Roles to assign to the workspace
+                                'capacity_name' : capacity_name_business_domain_prod        # Name of target code workspace for development
                             }
                         }
                     }
+                ]
 ```
 **Repo Configuration**
 
