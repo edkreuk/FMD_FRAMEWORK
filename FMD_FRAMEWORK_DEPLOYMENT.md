@@ -86,7 +86,8 @@ lakehouse_schema_enabled = True     # Set to True if you want to use the lakehou
 
 **Domain settings**
 
-Define the name for the Main Domain, and you can add 1 or mire sub domains
+Define the name for the Integration Domain, and you can add 1 or more business domains.
+
 
 ```python
 create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
