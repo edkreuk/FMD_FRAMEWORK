@@ -184,6 +184,7 @@ workspace_roles_reporting_business_domain = [
 
   
 ```python
+##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE ####
 configuration = {
                     'workspace': {
                         'name' : domain_name + ' CONFIG' +  framework_post_fix,             # Name of target workspace
@@ -196,6 +197,7 @@ configuration = {
 
 **Workspace configuration**  
 ```python
+##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE, FE ADDING NEW ENVIRONMENTS ####
 # Define settings for each environment (add more environments as needed)
 environments = [
     {
@@ -213,9 +215,9 @@ environments = [
             },
         },
         'connections': {
-            'CON_FMD_FABRIC_SQL': '372237f9-709a-48f8-8fb2-ce06940c990e',          # GUID for the Fabric SQL connection
-            'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7',    # GUID for the Fabric Data Pipelines connection
-            'CON_FMD_ADF_PIPELINES': '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'        # GUID for the ADF connection (if used)
+            'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-000000000000',          # GUID for the Fabric SQL connection
+            'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',    # GUID for the Fabric Data Pipelines connection
+            'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'        # GUID for the ADF connection (if used)
         }
     },
     {
@@ -233,17 +235,18 @@ environments = [
             },
         },
         'connections': {
-            'CON_FMD_FABRIC_SQL': '372237f9-709a-48f8-8fb2-ce06940c990e',          # GUID for the Fabric SQL connection
-            'CON_FMD_FABRIC_PIPELINES': '6d8146c6-a438-47df-94e2-540c552eb6d7',    # GUID for the Fabric Data Pipelines connection
-            'CON_FMD_ADF_PIPELINES': '02e107b8-e97e-4b00-a28c-668cf9ce3d9a'        # GUID for the ADF connection (if used)
+            'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-0000000000000',          # GUID for the Fabric SQL connection
+            'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',    # GUID for the Fabric Data Pipelines connection
+            'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'        # GUID for the ADF connection (if used)
         }
     }
 ]
 ```
 **Domain Settings** 
 
-Define settings for every sub domain. Every sub domain is automatically assigned to the main domain.
+Define settings for every business domain.
   ```python
+  ##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE, FE ADDING NEW ENVIRONMENTS ####
 business_domain_deployment = [
                     {
                         'environment_name' : 'development',                                 # Name of target environment
