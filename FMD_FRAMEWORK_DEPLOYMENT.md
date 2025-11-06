@@ -86,7 +86,7 @@ lakehouse_schema_enabled = True     # Set to True if you want to use the lakehou
 
 **Domain settings**
 
-Define the name for the Integration Domain, and you can add 1 or more business domains.
+Define the name for the Main Domain, and you can add 1 or more business domains.
 
 
 ```python
@@ -108,7 +108,7 @@ domain_contributor_role = {
 You need to create workspace roles for the different workspaces:
 
 > [!NOTE]
-> The id of the User, Group or Service Principal is the Object ID in Microsoft Entra ID. For a Service Principal, you can find the Object ID in the Azure Portal under 'Enterprise applications'. Dont use the Object ID of the App Registration.'
+> The id of the User, Group or Service Principal is the Object ID in Microsoft Entra ID. For a Service Principal, you can find the Object ID in the Azure Portal under 'Enterprise applications'. Don't use the Object ID of the App Registration.'
 
 workspace_roles_code
 workspace_roles_data
@@ -151,19 +151,7 @@ workspace_roles_configuration = [
     }
 ]
 
-workspace_roles_reporting = [
-    {
-        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
-        "role": "Member"
-    }
-]
 
-workspace_roles_gold = [
-    {
-        "principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"},
-        "role": "Member"
-    }
-]
 
 # Optional: business-domain specific role lists
 workspace_roles_data_business_domain = [
