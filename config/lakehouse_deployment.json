@@ -2,7 +2,7 @@
      {
             "name": "LH_DATA_LANDINGZONE.Lakehouse",
             "type": "Lakehouse",
-            "id": "01b832e3-2746-4e9c-b169-540b2741a638"
+            "id": "4b4840bc-5a9f-434e-8345-3f528d1f39bf"
         },
         {
             "name": "LH_BRONZE_LAYER.Lakehouse",

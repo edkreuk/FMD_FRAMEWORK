@@ -50,7 +50,7 @@
                         "type": "Lakehouse",
                         "typeProperties": {
                         "workspaceId": "40e27fdc-775a-4ee2-84d5-48893c92d7cc",
-                        "artifactId": "01b832e3-2746-4e9c-b169-540b2741a638",
+                        "artifactId": "4b4840bc-5a9f-434e-8345-3f528d1f39bf",
                           "rootFolder": "Tables"
                         }
                       }
@@ -58,7 +58,7 @@
                     "type": "LakehouseTable",
                     "schema": [],
                     "typeProperties": {
-                      "schema": "",
+                      "schema": "dbo",
                       "table": {
                         "value": "@concat(item().SourceSchema,'_',item().SourceName)",
                         "type": "Expression"
