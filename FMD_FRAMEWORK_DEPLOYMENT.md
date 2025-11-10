@@ -303,7 +303,12 @@ When load_demo_data = True, you have to upload a csv file (which is available in
 1. **Upload** `customer.csv` from demodata folder in this repo to the file section of `LH_DATA_LANDINGZONE` in the development environment.
 2. **Create table:** Generate a table named `in_customer` from the uploaded file. If you use schema-enabled lakehouse, use `dbo.in_customer`.
 3. **Run process:** Execute the process to validate deployment, by start the `PL_LOAD_ALL` pipeline in the `FMD_FRAMEWORK_CODE (D)` workspace.
+Example of loading the file and creating the table:
 
 ![Load File to table](./Images/FMD_load_file_to_table.png)
+
+Example of loading the file and creating the table with Lakehouse schema enabled:
+
+![Load File to table](./Images/FMD_load_file_to_table_schema.png)
 
 
