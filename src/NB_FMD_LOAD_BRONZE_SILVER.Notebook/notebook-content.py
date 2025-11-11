@@ -268,6 +268,9 @@ spark.conf.set('spark.microsoft.delta.optimize.fast.enabled', True)
 spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
 spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
 
+#This is required to enable optimal refreshed for materialized lake views
+spark.conf.set('spark.databricks.delta.properties.defaults.enableChangeDataFeed', True)
+
 # METADATA ********************
 
 # META {
