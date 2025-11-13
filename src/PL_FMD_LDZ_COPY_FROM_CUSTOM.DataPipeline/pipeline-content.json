@@ -2,7 +2,16 @@
   "properties": {
     "activities": [
       {
+        "name": "FE_ENTITY",
         "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "LK_GET_ENTITIES",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
         "typeProperties": {
           "items": {
             "value": "@activity('LK_GET_ENTITIES').output.value",
@@ -10,7 +19,130 @@
           },
           "activities": [
             {
+              "name": "CP_source_datalandingzone",
+              "type": "Copy",
+              "dependsOn": [
+                {
+                  "activity": "SP_START_AUDIT_PIPELINE_CP",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "DelimitedTextSource",
+                  "storeSettings": {
+                    "type": "AzureBlobFSReadSettings",
+                    "recursive": true,
+                    "enablePartitionDiscovery": false
+                  },
+                  "formatSettings": {
+                    "type": "DelimitedTextReadSettings"
+                  },
+                  "datasetSettings": {
+                    "annotations": [],
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": {
+                          "value": "@item().SourceName",
+                          "type": "Expression"
+                        },
+                        "folderPath": {
+                          "value": "@item().SourceSchema",
+                          "type": "Expression"
+                        },
+                        "fileSystem": "datalanding"
+                      },
+                      "columnDelimiter": ",",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true,
+                      "quoteChar": "\""
+                    },
+                    "schema": [],
+                    "externalReferences": {
+                      "connection": "@item().ConnectionGuid"
+                    }
+                  }
+                },
+                "sink": {
+                  "type": "DelimitedTextSink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings",
+                    "copyBehavior": "PreserveHierarchy"
+                  },
+                  "formatSettings": {
+                    "type": "DelimitedTextWriteSettings",
+                    "fileExtension": ".txt",
+                    "quoteAllText": true
+                  },
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "source_datalandingzone",
+                      "properties": {
+                        "annotations": [],
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "workspaceId": "@item().WorkspaceGuid",
+                          "artifactId": "@item().TargetLakehouseGuid",
+                          "rootFolder": "Files"
+                        }
+                      }
+                    },
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "fileName": {
+                          "value": "@item().TargetFileName",
+                          "type": "Expression"
+                        },
+                        "folderPath": {
+                          "value": "@item().TargetFilePath",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true,
+                      "quoteChar": "\""
+                    },
+                    "schema": []
+                  }
+                },
+                "enableStaging": false,
+                "validateDataConsistency": true,
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                }
+              }
+            },
+            {
+              "name": "SP_START_AUDIT_PIPELINE_CP",
               "type": "SqlServerStoredProcedure",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
               "typeProperties": {
                 "storedProcedureName": {
                   "value": "[logging].[sp_AuditCopyActivity]",
@@ -25,7 +157,7 @@
                     "type": "String"
                   },
                   "LogType": {
-                    "value": "StartCopyActivity",
+                    "value": "StartCopyAcitvity",
                     "type": "String"
                   },
                   "PipelineGuid": {
@@ -107,29 +239,42 @@
               "connectionSettings": {
                 "name": "SQL_FMD_FRAMEWORK",
                 "properties": {
+                  "annotations": [],
                   "type": "FabricSqlDatabase",
                   "typeProperties": {
-                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
                   },
                   "externalReferences": {
                     "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                  },
-                  "annotations": []
+                  }
                 }
-              },
+              }
+            },
+            {
+              "name": "SP_END_AUDIT_PIPELINE_CP",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "SP_UPDATE_PROCESS",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                },
+                {
+                  "activity": "SP_UPDATE_LASTLOADVALIE",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
               "policy": {
                 "timeout": "0.01:00:00",
                 "retry": 0,
                 "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
+                "secureOutput": false,
+                "secureInput": false
               },
-              "name": "SP_START_AUDIT_PIPELINE_CP",
-              "dependsOn": []
-            },
-            {
-              "type": "SqlServerStoredProcedure",
               "typeProperties": {
                 "storedProcedureName": {
                   "value": "[logging].[sp_AuditCopyActivity]",
@@ -138,7 +283,7 @@
                 "storedProcedureParameters": {
                   "LogData": {
                     "value": {
-                      "value": "{    \"Action\" : \"End\",    \"CopyOutput\" : @{activity('NB_source_datalandingzone').output},    }",
+                      "value": "{    \"Action\" : \"End\",    \"CopyOutput\" : @{activity('CP_source_datalandingzone').output},    }",
                       "type": "Expression"
                     },
                     "type": "String"
@@ -226,42 +371,36 @@
               "connectionSettings": {
                 "name": "SQL_FMD_FRAMEWORK",
                 "properties": {
+                  "annotations": [],
                   "type": "FabricSqlDatabase",
                   "typeProperties": {
-                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
                   },
                   "externalReferences": {
                     "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                  },
-                  "annotations": []
+                  }
                 }
-              },
+              }
+            },
+            {
+              "name": "SP_FAIL_AUDIT_PIPELINE_CP",
+              "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "CP_source_datalandingzone",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
               "policy": {
                 "timeout": "0.01:00:00",
                 "retry": 0,
                 "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
+                "secureOutput": false,
+                "secureInput": false
               },
-              "name": "SP_END_AUDIT_PIPELINE_CP",
-              "dependsOn": [
-                {
-                  "activity": "SP_UPDATE_PROCESS",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                },
-                {
-                  "activity": "SP_UPDATE_LASTLOADVALIE",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "SqlServerStoredProcedure",
               "typeProperties": {
                 "storedProcedureName": {
                   "value": "[logging].[sp_AuditCopyActivity]",
@@ -270,7 +409,7 @@
                 "storedProcedureParameters": {
                   "LogData": {
                     "value": {
-                      "value": "{    \"Action\" : \"Error\",     \"Message\" : @{activity('NB_source_datalandingzone').error}}",
+                      "value": "{    \"Action\" : \"Error\",     \"Message\" : @{activity('CP_source_datalandingzone').error}}",
                       "type": "Expression"
                     },
                     "type": "String"
@@ -358,36 +497,36 @@
               "connectionSettings": {
                 "name": "SQL_FMD_FRAMEWORK",
                 "properties": {
+                  "annotations": [],
                   "type": "FabricSqlDatabase",
                   "typeProperties": {
-                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
                   },
                   "externalReferences": {
                     "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                  },
-                  "annotations": []
+                  }
                 }
-              },
-              "policy": {
-                "timeout": "0.01:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
-              },
-              "name": "SP_FAIL_AUDIT_PIPELINE_CP",
-              "dependsOn": [
-                {
-                  "activity": "NB_source_datalandingzone",
-                  "dependencyConditions": [
-                    "Failed"
-                  ]
-                }
-              ]
+              }
             },
             {
+              "name": "SP_UPDATE_PROCESS",
               "type": "SqlServerStoredProcedure",
+              "dependsOn": [
+                {
+                  "activity": "CP_source_datalandingzone",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
               "typeProperties": {
                 "storedProcedureName": "[execution].[sp_UpsertPipelineLandingzoneEntity]",
                 "storedProcedureParameters": {
@@ -421,36 +560,36 @@
               "connectionSettings": {
                 "name": "SQL_FMD_FRAMEWORK",
                 "properties": {
+                  "annotations": [],
                   "type": "FabricSqlDatabase",
                   "typeProperties": {
-                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
                   },
                   "externalReferences": {
                     "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                  },
-                  "annotations": []
+                  }
                 }
-              },
-              "policy": {
-                "timeout": "0.01:00:00",
-                "retry": 2,
-                "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
-              },
-              "name": "SP_UPDATE_PROCESS",
+              }
+            },
+            {
+              "name": "SP_UPDATE_LASTLOADVALIE",
+              "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "NB_source_datalandingzone",
+                  "activity": "CP_source_datalandingzone",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
                 }
-              ]
-            },
-            {
-              "type": "SqlServerStoredProcedure",
+              ],
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
               "typeProperties": {
                 "storedProcedureName": "[execution].[sp_UpsertLandingZoneEntityLastLoadValue]",
                 "storedProcedureParameters": {
@@ -463,215 +602,42 @@
                   },
                   "LastLoadValue": {
                     "value": {
-                      "value": "@activity('NB_source_datalandingzone').output.LoadValue",
+                      "value": "@utcNow()",
                       "type": "Expression"
                     },
-                    "type": "String"
+                    "type": "Datetime"
                   }
                 }
               },
               "connectionSettings": {
                 "name": "SQL_FMD_FRAMEWORK",
                 "properties": {
+                  "annotations": [],
                   "type": "FabricSqlDatabase",
                   "typeProperties": {
-                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
                   },
                   "externalReferences": {
                     "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                  },
-                  "annotations": []
-                }
-              },
-              "policy": {
-                "timeout": "0.01:00:00",
-                "retry": 2,
-                "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
-              },
-              "name": "SP_UPDATE_LASTLOADVALIE",
-              "dependsOn": [
-                {
-                  "activity": "NB_source_datalandingzone",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "TridentNotebook",
-              "typeProperties": {
-                "notebookId": "a69cb3e2-52a1-abee-4335-29721d1d5828",
-                "workspaceId": "00000000-0000-0000-0000-000000000000",
-                "parameters": {
-                  "EntityId": {
-                    "value": {
-                      "value": "@item().EntityId",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "DataSourceName": {
-                    "value": {
-                      "value": "@item().DataSourceName",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "TargetFilePath": {
-                    "value": {
-                      "value": "@item().TargetFilePath",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "TargetFileName": {
-                    "value": {
-                      "value": "@item().TargetFileName",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "TargetLakehouseGuid": {
-                    "value": {
-                      "value": "@item().TargetLakehouseGuid",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "WorkspaceGuid": {
-                    "value": {
-                      "value": "@item().WorkspaceGuid",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "LastLoadValue": {
-                    "value": {
-                      "value": "@item().LastLoadValue",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "connstring": {
-                    "value": {
-                      "value": "@pipeline().parameters.FMD_CONNECTION",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "database": {
-                    "value": {
-                      "value": "@pipeline().parameters.FMD_DATABASE",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "CustomNotebookName": {
-                    "value": {
-                      "value": "@item().CustomNotebookName",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "TriggerGuid": {
-                    "value": "@pipeline().TriggerId",
-                    "type": "string"
-                  },
-                  "TriggerTime": {
-                    "value": "@pipeline().TriggerTime",
-                    "type": "string"
-                  },
-                  "TriggerType": {
-                    "value": "@pipeline().TriggerType",
-                    "type": "string"
                   }
-                },
-                "sessionTag": "FMD_Landingzone"
-              },
-              "policy": {
-                "timeout": "0.12:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
-              },
-              "name": "NB_source_datalandingzone",
-              "dependsOn": [
-                {
-                  "activity": "LK_GET_LASTLOADDATE",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
                 }
-              ]
-            },
-            {
-              "type": "Lookup",
-              "typeProperties": {
-                "source": {
-                  "type": "FabricSqlDatabaseSource",
-                  "sqlReaderQuery": {
-                    "value": "SELECT [LoadValue]\n  FROM [execution].[LandingzoneEntityLastLoadValue]\n  WHERE LandingzoneEntityId = @{item().EntityId}",
-                    "type": "Expression"
-                  },
-                  "partitionOption": "None",
-                  "queryTimeout": "02:00:00"
-                },
-                "datasetSettings": {
-                  "type": "FabricSqlDatabaseTable",
-                  "schema": [],
-                  "connectionSettings": {
-                    "name": "SQL_FMD_FRAMEWORK",
-                    "properties": {
-                      "type": "FabricSqlDatabase",
-                      "typeProperties": {
-                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
-                      },
-                      "externalReferences": {
-                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                      },
-                      "annotations": []
-                    }
-                  },
-                  "annotations": []
-                }
-              },
-              "policy": {
-                "timeout": "0.01:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
-              },
-              "name": "LK_GET_LASTLOADDATE",
-              "dependsOn": [
-                {
-                  "activity": "SP_START_AUDIT_PIPELINE_CP",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ]
+              }
             }
           ]
-        },
-        "name": "FE_ENTITY",
-        "dependsOn": [
-          {
-            "activity": "LK_GET_ENTITIES",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ]
+        }
       },
       {
+        "name": "SP_START_AUDIT_PIPELINE",
         "type": "SqlServerStoredProcedure",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[logging].[sp_AuditPipeline]",
           "storedProcedureParameters": {
@@ -759,29 +725,36 @@
         "connectionSettings": {
           "name": "SQL_FMD_FRAMEWORK",
           "properties": {
+            "annotations": [],
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-            },
-            "annotations": []
+            }
           }
-        },
+        }
+      },
+      {
+        "name": "SP_END_AUDIT_PIPELINE",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "FE_ENTITY",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
         "policy": {
           "timeout": "0.01:00:00",
           "retry": 0,
           "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
+          "secureOutput": false,
+          "secureInput": false
         },
-        "name": "SP_START_AUDIT_PIPELINE",
-        "dependsOn": []
-      },
-      {
-        "type": "SqlServerStoredProcedure",
         "typeProperties": {
           "storedProcedureName": "[logging].[sp_AuditPipeline]",
           "storedProcedureParameters": {
@@ -869,80 +842,22 @@
         "connectionSettings": {
           "name": "SQL_FMD_FRAMEWORK",
           "properties": {
+            "annotations": [],
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-            },
-            "annotations": []
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.01:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "SP_END_AUDIT_PIPELINE",
-        "dependsOn": [
-          {
-            "activity": "FE_ENTITY",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ]
+        }
       },
       {
-        "type": "Lookup",
-        "typeProperties": {
-          "source": {
-            "type": "FabricSqlDatabaseSource",
-            "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='NOTEBOOK'",
-              "type": "Expression"
-            },
-            "partitionOption": "None",
-            "queryTimeout": "02:00:00"
-          },
-          "datasetSettings": {
-            "type": "FabricSqlDatabaseTable",
-            "typeProperties": {
-              "schema": "execution",
-              "table": "vw_LoadToBronzeLayer"
-            },
-            "schema": [],
-            "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
-              "properties": {
-                "type": "FabricSqlDatabase",
-                "typeProperties": {
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
-                },
-                "externalReferences": {
-                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                },
-                "annotations": []
-              }
-            },
-            "annotations": []
-          },
-          "firstRowOnly": false
-        },
-        "policy": {
-          "timeout": "0.01:00:00",
-          "retry": 2,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
         "name": "LK_GET_ENTITIES",
-        "description": "Will run all the Entities with the Type NOTEBOOK assigned in the integration.DataSource",
+        "description": "Will run all the Entities with the Type ADLS_01 assigned in the integration.DataSource",
+        "type": "Lookup",
         "dependsOn": [
           {
             "activity": "SP_START_AUDIT_PIPELINE",
@@ -950,10 +865,68 @@
               "Succeeded"
             ]
           }
-        ]
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderQuery": {
+              "value": "SELECT * FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ADLS_01'",
+              "type": "Expression"
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": false,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "SQL_FMD_FRAMEWORK",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {
+              "schema": "execution",
+              "table": "vw_LoadToBronzeLayer"
+            }
+          }
+        }
       },
       {
+        "name": "SP_FAIL_AUDIT_PIPELINE",
         "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "FE_ENTITY",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[logging].[sp_AuditPipeline]",
           "storedProcedureParameters": {
@@ -1041,43 +1014,21 @@
         "connectionSettings": {
           "name": "SQL_FMD_FRAMEWORK",
           "properties": {
+            "annotations": [],
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
+              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-            },
-            "annotations": []
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.01:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "SP_FAIL_AUDIT_PIPELINE",
-        "dependsOn": [
-          {
-            "activity": "FE_ENTITY",
-            "dependencyConditions": [
-              "Failed"
-            ]
-          }
-        ]
+        }
       }
     ],
     "parameters": {
       "key_vault_name": {
-        "type": "string"
-      },
-      "FMD_DATABASE": {
-        "type": "string"
-      },
-      "FMD_CONNECTION": {
         "type": "string"
       }
     }
