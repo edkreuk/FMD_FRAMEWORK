@@ -578,15 +578,24 @@
                     "type": "string"
                   },
                   "TriggerGuid": {
-                    "value": "@pipeline().TriggerId",
+                    "value": {
+                      "value": "@pipeline().TriggerId",
+                      "type": "Expression"
+                    },
                     "type": "string"
                   },
                   "TriggerTime": {
-                    "value": "@pipeline().TriggerTime",
+                    "value": {
+                      "value": "@pipeline().TriggerTime",
+                      "type": "Expression"
+                    },
                     "type": "string"
                   },
                   "TriggerType": {
-                    "value": "@pipeline().TriggerType",
+                    "value": {
+                      "value": "@pipeline().TriggerType",
+                      "type": "Expression"
+                    },
                     "type": "string"
                   }
                 },
@@ -778,6 +787,7 @@
           "secureOutput": false
         },
         "name": "SP_START_AUDIT_PIPELINE",
+        "description": "",
         "dependsOn": []
       },
       {
