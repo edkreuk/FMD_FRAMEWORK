@@ -202,12 +202,19 @@ spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
 
 LoadValue = datetime.now()
 
-if DataSourceName = "employees"
-    afas_url = f"afas.das.nl/{conector_name}/filter{filter_options}"
-elif DataSourceName = "employees"
-conector_name = DataSourceName
 
-afas_url = f"afas.das.nl/{conector_name}/filter{filter_options}"
+sample_data = pd.DataFrame(
+    data=[
+        {"name": "John Doe",
+         "age": 37
+        },
+        {"name": "Jane Doe",
+         "age": 25
+        },
+        {"name": "Jimmy Doe",
+         "age": 42
+        }
+    ])
 
 sample_dataframe = spark.createDataFrame(sample_data)
 output_dataframe = sample_dataframe
