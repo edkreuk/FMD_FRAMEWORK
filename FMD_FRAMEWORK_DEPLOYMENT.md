@@ -31,8 +31,8 @@ Under Admin API settings, select the switch for the type of admin APIs you want 
 - Service principals can access admin APIs used for update
 
 Under Developer settings, select the switch for the type of admin APIs you want to enable:
-- Service principals can create workspaces, connections, and deployment pipelines
 - Service principals can call Fabric public APIs
+
 
 ## Deployment steps
 
