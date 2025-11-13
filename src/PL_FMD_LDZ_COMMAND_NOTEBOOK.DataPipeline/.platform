@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_FMD_LDZ_COMMAND_NOTEBOOK"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4ee59a0f-ce5b-81d5-4477-eeac0e61c8a5"
+  }
+}

@@ -562,6 +562,14 @@
             "key_vault_name": {
               "value": "@pipeline().libraryVariables.key_vault_name",
               "type": "Expression"
+            },
+            "FMD_DATABASE": {
+              "value": "@pipeline().parameters.FMD_DATABASE",
+              "type": "Expression"
+            },
+            "FMD_CONNECTION": {
+              "value": "@pipeline().parameters.FMD_CONNECTION",
+              "type": "Expression"
             }
           },
           "waitOnCompletion": true,
