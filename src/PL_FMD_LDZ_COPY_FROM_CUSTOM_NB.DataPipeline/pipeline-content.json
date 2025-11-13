@@ -571,7 +571,22 @@
                     "type": "string"
                   },
                   "CustomNotebookName": {
-                    "value": "@item().CustomNotebookName",
+                    "value": {
+                      "value": "@item().CustomNotebookName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TriggerGuid": {
+                    "value": "@pipeline().TriggerId",
+                    "type": "string"
+                  },
+                  "TriggerTime": {
+                    "value": "@pipeline().TriggerTime",
+                    "type": "string"
+                  },
+                  "TriggerType": {
+                    "value": "@pipeline().TriggerType",
                     "type": "string"
                   }
                 },
