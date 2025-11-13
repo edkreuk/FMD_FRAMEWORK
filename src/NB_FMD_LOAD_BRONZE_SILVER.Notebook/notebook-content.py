@@ -57,7 +57,7 @@ result_data=''
 # CELL ********************
 
 import re
-import datetime
+from datetime import datetime
 import json
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
@@ -80,7 +80,7 @@ import pyodbc
 
 # CELL ********************
 
-start_audit_time = datetime.datetime.now()
+start_audit_time = datetime.now()
 
 
 # METADATA ********************
@@ -123,7 +123,7 @@ token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerb
 # CELL ********************
 
 # Ensure TriggerTime is formatted correctly
-TriggerTime = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 
@@ -341,7 +341,7 @@ if DeltaTable.isDeltaTable(spark, target_data_path):
 else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
-    TotalRuntime = str((datetime.datetime.now() - start_audit_time)) 
+    TotalRuntime = str((datetime.now() - start_audit_time)) 
 
     # Your data
     result_data = {
@@ -572,8 +572,8 @@ merge.execute()
 
 # CELL ********************
 
-TotalRuntime = str((datetime.datetime.now() - start_audit_time)) 
-end_audit_time =  str(datetime.datetime.now())
+TotalRuntime = str((datetime.now() - start_audit_time)) 
+end_audit_time =  str(datetime.now())
 start_audit_time =str(start_audit_time)
 # Your data
 result_data = {
