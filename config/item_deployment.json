@@ -15,6 +15,21 @@
         "type": "Notebook"
     },
     {
+        "name": "NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE.Notebook",
+        "id": "8943964b-d1af-467b-b3b2-3afd7b50d862",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_PROCESSING_LANDINGZONE_MAIN.Notebook",
+        "id": "1d1d5828-2972-4335-abee-52a1a69cb3e2",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_UTILITY_FUNCTIONS.Notebook",
+        "id": "a5c26d5c-2bde-406b-8863-a785d8d5cb97",
+        "type": "Notebook"
+    },
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
         "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
         "type": "DataPipeline"

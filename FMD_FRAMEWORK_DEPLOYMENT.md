@@ -22,6 +22,14 @@ Before you begin, ensure the following prerequisites are met in the Admin Portal
 - Fabric SQL database is available.
 - Contributor role is assigned on the target capacity or capacities.
 
+### Prerequisite: Enable Admin API access
+Enable the Fabric admin settings:
+
+Sign in to the Fabric admin portal. You need to be a Fabric admin to see the tenant settings page.
+Under Admin API settings, select the switch for the type of admin APIs you want to enable:
+- Service principals can access read-only admin APIs
+- Service principals can access admin APIs used for update
+
 ## Deployment steps
 
 ### 1. Download deployment assets
@@ -36,7 +44,7 @@ Set up the following connections and note their Connection IDs for later configu
 
 | Connection name              | Connection type         | Authentication |Remarks |
 |------------------------------|------------------------|----------------|--------|
-| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines  | OAuth2  or Service Principal       |  You must add the Service Principal to the workspace_roles_code.        |
+| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines  | OAuth2  or Service Principal       |  You must add the Service Principal to the workspace_roles and data        |
 | CON_FMD_FABRICSQL            | Fabric SQL database    | OAuth2         |  Currently Service Principal is not supported      |
 
 If you use Azure Data Factory Pipelines, create this additional connection:

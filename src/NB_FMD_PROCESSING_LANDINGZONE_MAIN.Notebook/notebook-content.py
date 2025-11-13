@@ -40,13 +40,13 @@ from py4j.protocol import Py4JJavaError
 # PARAMETERS CELL ********************
 
 ###############################Target Parameters###############################
-EntityId = 45
+EntityId = ''
 EntityLayer = "LandingZone"
-DataSourceName = "nb"
-TargetFilePath = "fmd/NB/2025/11/13"
-TargetFileName = "sample_202511130933.parquet"
-TargetLakehouseGuid = "01b832e3-2746-4e9c-b169-540b2741a638"
-WorkspaceGuid = "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+DataSourceName = "NB"
+TargetFilePath = ""
+TargetFileName = ""
+TargetLakehouseGuid = ""
+WorkspaceGuid = ""
 LastLoadValue = None
 CustomNotebookName = "NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE"
 TriggerGuid = ""
@@ -55,8 +55,8 @@ TriggerType = ""
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring='nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com'
-database='SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6'
+connstring=''
+database=''
 result_data=''
 
 # METADATA ********************
