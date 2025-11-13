@@ -22,13 +22,17 @@ Before you begin, ensure the following prerequisites are met in the Admin Portal
 - Fabric SQL database is available.
 - Contributor role is assigned on the target capacity or capacities.
 
-### Prerequisite: Enable Admin API access
+### Prerequisite: Enable API access
 Enable the Fabric admin settings:
 
 Sign in to the Fabric admin portal. You need to be a Fabric admin to see the tenant settings page.
 Under Admin API settings, select the switch for the type of admin APIs you want to enable:
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
+
+Under Developer settings, select the switch for the type of admin APIs you want to enable:
+- Service principals can create workspaces, connections, and deployment pipelines
+- Service principals can call Fabric public APIs
 
 ## Deployment steps
 
