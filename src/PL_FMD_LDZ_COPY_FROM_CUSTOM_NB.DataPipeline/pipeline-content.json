@@ -138,7 +138,7 @@
                 "storedProcedureParameters": {
                   "LogData": {
                     "value": {
-                      "value": "{    \"Action\" : \"End\",    \"CopyOutput\" : @{activity('NB_source_datalandingzone').output},    }",
+                      "value": "{    \"Action\" : \"End\",    \"CopyOutput\" : @{activity('NB_FMD_PROCESSING_LANDINGZONE_MAIN').output},    }",
                       "type": "Expression"
                     },
                     "type": "String"
@@ -270,7 +270,7 @@
                 "storedProcedureParameters": {
                   "LogData": {
                     "value": {
-                      "value": "{    \"Action\" : \"Error\",     \"Message\" : @{activity('NB_source_datalandingzone').error}}",
+                      "value": "{    \"Action\" : \"Error\",     \"Message\" : @{activity('NB_FMD_PROCESSING_LANDINGZONE_MAIN').error}}",
                       "type": "Expression"
                     },
                     "type": "String"
@@ -379,7 +379,7 @@
               "name": "SP_FAIL_AUDIT_PIPELINE_CP",
               "dependsOn": [
                 {
-                  "activity": "NB_source_datalandingzone",
+                  "activity": "NB_FMD_PROCESSING_LANDINGZONE_MAIN",
                   "dependencyConditions": [
                     "Failed"
                   ]
@@ -442,7 +442,7 @@
               "name": "SP_UPDATE_PROCESS",
               "dependsOn": [
                 {
-                  "activity": "NB_source_datalandingzone",
+                  "activity": "NB_FMD_PROCESSING_LANDINGZONE_MAIN",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
@@ -463,7 +463,7 @@
                   },
                   "LastLoadValue": {
                     "value": {
-                      "value": "@activity('NB_source_datalandingzone').output.LoadValue",
+                      "value": "@utcNow()",
                       "type": "Expression"
                     },
                     "type": "String"
@@ -494,7 +494,7 @@
               "name": "SP_UPDATE_LASTLOADVALIE",
               "dependsOn": [
                 {
-                  "activity": "NB_source_datalandingzone",
+                  "activity": "NB_FMD_PROCESSING_LANDINGZONE_MAIN",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
@@ -608,56 +608,7 @@
                 "secureInput": false,
                 "secureOutput": false
               },
-              "name": "NB_source_datalandingzone",
-              "dependsOn": [
-                {
-                  "activity": "LK_GET_LASTLOADDATE",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "Lookup",
-              "typeProperties": {
-                "source": {
-                  "type": "FabricSqlDatabaseSource",
-                  "sqlReaderQuery": {
-                    "value": "SELECT [LoadValue]\n  FROM [execution].[LandingzoneEntityLastLoadValue]\n  WHERE LandingzoneEntityId = @{item().EntityId}",
-                    "type": "Expression"
-                  },
-                  "partitionOption": "None",
-                  "queryTimeout": "02:00:00"
-                },
-                "datasetSettings": {
-                  "type": "FabricSqlDatabaseTable",
-                  "schema": [],
-                  "connectionSettings": {
-                    "name": "SQL_FMD_FRAMEWORK",
-                    "properties": {
-                      "type": "FabricSqlDatabase",
-                      "typeProperties": {
-                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
-                      },
-                      "externalReferences": {
-                        "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                      },
-                      "annotations": []
-                    }
-                  },
-                  "annotations": []
-                }
-              },
-              "policy": {
-                "timeout": "0.01:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureInput": false,
-                "secureOutput": false
-              },
-              "name": "LK_GET_LASTLOADDATE",
+              "name": "NB_FMD_PROCESSING_LANDINGZONE_MAIN",
               "dependsOn": [
                 {
                   "activity": "SP_START_AUDIT_PIPELINE_CP",

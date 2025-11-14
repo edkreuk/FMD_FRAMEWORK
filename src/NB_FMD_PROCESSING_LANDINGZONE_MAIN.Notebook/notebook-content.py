@@ -110,7 +110,6 @@ def is_valid_guid(guid_str: str) -> bool:
 ## always use notebook guid instead of pipeline id
 PipelineName = notebookutils.runtime.context.get('currentNotebookName')
 PipelineGuid = str(notebookutils.runtime.context.get('currentNotebookId'))
-WorkspaceGuid = notebookutils.runtime.context.get('currentWorkspaceId')
 PipelineParentRunGuid = notebookutils.runtime.context.get('PipelineParentRunGuid')
 PipelineRunGuid = str(uuid.uuid4())
 TriggerGuid = format_guid(TriggerGuid)
@@ -199,6 +198,17 @@ except Py4JJavaError as e:
 except Exception as e:
     print(notebook_params)
     raise(e)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+result
 
 # METADATA ********************
 
