@@ -463,7 +463,7 @@
                   },
                   "LastLoadValue": {
                     "value": {
-                      "value": "@utcNow()",
+                      "value": "@json(activity('NB_FMD_PROCESSING_LANDINGZONE_MAIN').output.result.exitValue).LoadValue",
                       "type": "Expression"
                     },
                     "type": "String"
