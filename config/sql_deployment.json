@@ -61,7 +61,31 @@
             "\n    IF NOT EXISTS (SELECT * FROM sys.objects WHERE type = 'UQ' AND name = 'UC_execution_LandingzoneEntityLastLoadValue_Guid')\n    BEGIN\n        ALTER TABLE [execution].[LandingzoneEntityLastLoadValue] ADD  CONSTRAINT [UC_execution_LandingzoneEntityLastLoadValue_Guid] UNIQUE NONCLUSTERED \n        (\n            [LandingzoneEntityId] ASC\n        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]\n    END\n    ",
             "\n    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'PipelineLandingzoneEntity' AND schema_id = SCHEMA_ID('execution'))\n    BEGIN\n        CREATE TABLE [execution].[PipelineLandingzoneEntity](\n            [PipelineLandingzoneEntityId] [bigint] IDENTITY(1,1) NOT NULL,\n            [LandingzoneEntityId] [bigint] NOT NULL,\n            [FilePath] [nvarchar](300) NOT NULL,\n            [FileName] [nvarchar](max) NOT NULL,\n            [InsertDateTime] [datetime] NULL,\n            [IsProcessed] [bit] NOT NULL,\n            [LoadEndDateTime] [datetime] NULL\n        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]\n    END\n    ",
             "\n    IF NOT EXISTS (SELECT * FROM sys.objects WHERE type = 'PK' AND name = 'PK_execution_PipelineLandingzoneEntity')\n    BEGIN\n        ALTER TABLE [execution].[PipelineLandingzoneEntity] ADD  CONSTRAINT [PK_execution_PipelineLandingzoneEntity] PRIMARY KEY CLUSTERED \n        (\n            [PipelineLandingzoneEntityId] ASC\n        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]\n    END\n    ",
-            "\n    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'PipelineBronzeLayerEntity' AND schema_id = SCHEMA_ID('execution'))\n    BEGIN\nCREATE TABLE [execution].[PipelineBronzeLayerEntity](\n\t[PipelineBronzeLayerEntityId] [bigint] IDENTITY(1,1) NOT NULL,\n\t[BronzeLayerEntityId] [bigint] NOT NULL,\n\t[TableName] [nvarchar](300) NOT NULL,\n\t[SchemaName] [nvarchar](max) NOT NULL,\n\t[InsertDateTime] [datetime] NULL,\n\t[IsProcessed] [bit] NOT NULL,\n\t[LoadEndDateTime] [datetime] NULL\n        ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]\n    END\n    ",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             "\n    IF NOT EXISTS (SELECT * FROM sys.objects WHERE type = 'PK' AND name = 'PK_execution_PipelineBronzeLayerEntity')\n    BEGIN\n        ALTER TABLE [execution].[PipelineBronzeLayerEntity] ADD  CONSTRAINT [PK_execution_PipelineBronzeLayerEntity] PRIMARY KEY CLUSTERED \n        (\n            [PipelineBronzeLayerEntityId] ASC\n        )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]\n    END\n    "
         ],
         "queries_views": [

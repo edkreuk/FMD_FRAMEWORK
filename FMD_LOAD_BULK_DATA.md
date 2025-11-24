@@ -27,7 +27,7 @@ Set the following parameters when running the pipeline:
 | `DatasourceName`       | Name of the database                          | `WideWorldImporters`                            |
 | `DatasourceNamespace`  | Prefix for tables or files                    | `wwi`                                           |
 | `DatasourceType`       | Type depending on your connection             | `ASQL_01`                                       |
-| `Tables`               | List of tables to include (comma-separated)   | `PurchaseOrders,PurchaseOrderLines,Orders,OrderLines,Invoices,InvoiceLines,BuyingGroups,CustomerCategories` |
+| `Tables`               | List of schema.tables to include (comma-separated)   | ('Purchasing.PurchaseOrders' ,'Purchasing.PurchaseOrderLines' ,'Sales.Orders' ,'Sales.OrderLines' ,'Sales.Invoices' ,'Sales.InvoiceLines' ,'Sales.BuyingGroups' ,'Sales.CustomerCategories') |
 
 > [!TIP]
 > Ensure all parameter values match your environment and connection details.
