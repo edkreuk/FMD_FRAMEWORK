@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_FMD_LDZ_COMMAND_ORACLE"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "03e51795-feb0-b062-472f-81f44460c3b8"
+  }
+}

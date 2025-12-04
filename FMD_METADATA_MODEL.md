@@ -30,6 +30,18 @@ Stores all connection definitions.
 | DatasourceReference | varchar(max) | NULL                           | Reference to the data source                |
 | IsActive         | bit             | NOT NULL, DEFAULT ((1))        | Indicates if the connection is active       |
 
+#### Connection types
+
+| Connection         | Type         |
+|--------------------|-------------|
+| SQL Connection     | SQL |
+| Datalake           | ADLS     |
+| Azure Data Factory | ADF         |
+| SFTP / FTP        | SFTP, FTP | 
+| Notebook           | NOTEBOOK    |
+| Oracle            | ORACLE  |
+
+
 ### DataSource
 
 Stores all data sources. Each data source is associated with a connection.
@@ -44,13 +56,18 @@ Stores all data sources. Each data source is associated with a connection.
 | Description      | nvarchar(200)   | NULL                           | Description of the data source              |
 | IsActive         | bit             | NOT NULL, DEFAULT ((1))        | Indicates if the data source is active      |
 
-#### Connection types
+#### Datasource types
 
 | Connection         | Type         |
 |--------------------|-------------|
 | SQL Connection     | ASQL_01, ASQL_02 |
 | Datalake           | ADLS_01     |
 | Azure Data Factory | ADF         |
+| SFTP / FTP        | SFTP_01, FTP_01 | 
+| Notebook           | NOTEBOOK    |
+| Oracle            | ORACLE_01   |
+
+
 
 ### Workspace
 
