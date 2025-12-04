@@ -102,12 +102,14 @@ Stores metadata for landing zone entities.
 | SourceSchema          | nvarchar(100)   | NULL                           | Schema of the source table or file folder   |
 | SourceName            | nvarchar(200)   | NOT NULL                       | Name of the source table or file            |
 | SourceCustomSelect    | nvarchar(4000)  | NULL                           | Optional custom select value                |
+| CustomNotebookName    | varchar(200)    | NULL                           | Name of the custom notebook                 |
 | FileName              | nvarchar(200)   | NOT NULL                       | File name in the landing zone               |
 | FileType              | nvarchar(20)    | NOT NULL                       | File type (e.g., csv, parquet)              |
 | FilePath              | nvarchar(500)   | NOT NULL                       | Folder path in the lakehouse                |
 | IsIncremental         | bit             | NOT NULL, DEFAULT ((0))        | Indicates if incremental loading is enabled |
 | IsIncrementalColumn   | nvarchar(50)    | NULL                           | Column used for incremental loading         |
 | IsActive              | bit             | NOT NULL, DEFAULT ((1))        | Indicates if the entity is active           |
+
 
 ![LandingzoneEntity](/Images/FMD_LandingzoneEntity.png)
 

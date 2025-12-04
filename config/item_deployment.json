@@ -15,6 +15,26 @@
         "type": "Notebook"
     },
     {
+        "name": "NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE.Notebook",
+        "id": "8943964b-d1af-467b-b3b2-3afd7b50d862",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_PROCESSING_LANDINGZONE_MAIN.Notebook",
+        "id": "a69cb3e2-52a1-abee-4335-29721d1d5828",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_FMD_UTILITY_FUNCTIONS.Notebook",
+        "id": "a5c26d5c-2bde-406b-8863-a785d8d5cb97",
+        "type": "Notebook"
+    },
+    {
+        "name": "PL_FMD_LDZ_COPY_FROM_CUSTOM_NB.DataPipeline",
+        "id": "cb0f651b-9c6b-4801-8f67-2d5a38f17b20",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_FMD_LDZ_COPY_FROM_ADLS_01.DataPipeline",
         "id": "740e290a-ea29-474f-a3d6-91768f5466ea",
         "type": "DataPipeline"
@@ -49,6 +69,7 @@
         "id": "a7f32c61-f86b-4484-b2e2-366d839bcb42",
         "type": "DataPipeline"
     },
+
     {
         "name": "PL_FMD_LDZ_COMMAND_ADLS.DataPipeline",
         "id": "a5918d08-0395-45ba-9c8c-f53d78b465eb",
@@ -77,6 +98,11 @@
     {
         "name": "PL_FMD_LDZ_COMMAND_ADF.DataPipeline",
         "id": "28c5f888-0efc-4b60-b568-c82f47680680",
+        "type": "DataPipeline"
+    },
+    {
+        "name": "PL_FMD_LDZ_COMMAND_NOTEBOOK.DataPipeline",
+        "id": "0e61c8a5-eeac-4477-81d5-ce5b4ee59a0f",
         "type": "DataPipeline"
     },
     {

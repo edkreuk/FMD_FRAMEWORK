@@ -91,6 +91,7 @@ The FMD Framework supports integration with the following sources:
 - SFTP / FTP
 - Azure Data Factory
 - Onelake tables and files
+- Custom Notebooks
 
 More data sources will be supported in future releases. 
 
@@ -113,6 +114,7 @@ Check the link below to get started on how to implement and configure Data Clean
 
 | Resource | Description |
 |----------|-------------|
+| **[FMD Integration Framework reference](./FMD_INTEGRATION_FRAMEWORK.md)** |Overview on how to add sources to the FMD Framework |
 | **[FMD Data Model reference](./FMD_METADATA_MODEL.md)** | Overview of the data model used in the FMD Framework |
 | **[FMD Framework Data Pipelines](./FMD_DATA_PIPELINES.md)** | Guide to configuring data pipelines in the FMD Framework |
 | **[Configure and load demo data](./FMD_LOAD_BULK_DATA.md)** | Instructions for loading demo data into the FMD Framework |
