@@ -1,6 +1,6 @@
 ---
 Title: FMD Data Pipelines overview
-Description: Learn about the architecture, key pipelines, and configuration of the Fabric Metadata-Driven (FMD) Framework data pipelines.
+Description: Learn about the architecture, key pipelines, and configuration of the Fabric Metadata-Driven Framework (FMD) data pipelines.
 Topic: overview
 Date: 07/2025
 Author: edkreuk
@@ -8,7 +8,7 @@ Author: edkreuk
 
 # FMD Data Pipelines overview
 
-The Fabric Metadata-Driven (FMD) Framework provides a robust data pipeline architecture for orchestrating data movement and transformation across multiple layers, including Landingzone, Bronze, and Silver. This article describes the core pipelines, their roles, and configuration guidance.
+The Fabric Metadata-Driven Framework (FMD) provides a robust data pipeline architecture for orchestrating data movement and transformation across multiple layers, including Landingzone, Bronze, and Silver. This article describes the core pipelines, their roles, and configuration guidance.
 
 ## Architecture overview
 

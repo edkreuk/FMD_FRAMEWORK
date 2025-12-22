@@ -1,6 +1,6 @@
 ---
 Title: Deploy the FMD Framework
-Description: Learn how to deploy the Fabric Metadata-Driven (FMD) Framework in Microsoft Fabric, including prerequisites, setup, and configuration.
+Description: Learn how to deploy the Fabric Metadata-Driven Framework (FMD) in Microsoft Fabric, including prerequisites, setup, and configuration.
 Topic: how-to
 Date: 07/2025
 Author: edkreuk
@@ -10,7 +10,7 @@ Author: edkreuk
 
 ![FMD Overview](/Images/FMD_Overview.png)
 
-This article describes how to deploy the Fabric Metadata-Driven (FMD) Framework in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
+This article describes how to deploy the Fabric Metadata-Driven Framework (FMD) in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
 
 ## 📦 Installation
 

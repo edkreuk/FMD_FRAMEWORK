@@ -1,6 +1,6 @@
 ---
 Title: Configure and load Bulk data into the FMD Framework
-Description: Learn how to use the PL_TOOLING_POST_ASQL_TO_FMD pipeline to insert metadata and load bulk data into the Fabric Metadata-Driven (FMD) Framework.
+Description: Learn how to use the PL_TOOLING_POST_ASQL_TO_FMD pipeline to insert metadata and load bulk data into the Fabric Metadata-Driven Framework (FMD).
 Topic: how-to
 Date: 07/2025
 Author: edkreuk
@@ -8,7 +8,7 @@ Author: edkreuk
 
 # Configure and load bulk data into the FMD Framework
 
-This article describes how to configure and load demo data into the Fabric Metadata-Driven (FMD) Framework using the `PL_TOOLING_POST_ASQL_TO_FMD` pipeline.
+This article describes how to configure and load demo data into the Fabric Metadata-Driven Framework (FMD) using the `PL_TOOLING_POST_ASQL_TO_FMD` pipeline.
 
 ## Overview
 

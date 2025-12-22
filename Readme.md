@@ -1,13 +1,13 @@
 ---
-Title: Fabric Metadata-Driven (FMD) Framework Overview
-Description: Discover the architecture, components, and deployment guidance for the Fabric Metadata-Driven (FMD) Framework on Fabric SQL Database.
+Title: Fabric Metadata-Driven Framework (FMD) Overview
+Description: Discover the architecture, components, and deployment guidance for the Fabric Metadata-Driven Framework (FMD) on Fabric SQL Database.
 Date: 07/2025
 Author: edkreuk
 ---
 
-# Fabric Metadata-Driven (FMD) Framework overview
+# Fabric Metadata-Driven Framework (FMD)  overview
 
-The Fabric Metadata-Driven (FMD) Framework is a scalable, extensible solution for managing, integrating, and governing data using a metadata-driven approach on Fabric SQL Database. This article provides an overview of the FMD Framework, including its architecture, core components, workspace structure, supported data sources, and deployment guidance.
+The Fabric Metadata-Driven Framework (FMD) is a scalable, extensible solution for managing, integrating, and governing data using a metadata-driven approach on Fabric SQL Database. This article provides an overview of the FMD Framework, including its architecture, core components, workspace structure, supported data sources, and deployment guidance.
 
 ## Overview
 

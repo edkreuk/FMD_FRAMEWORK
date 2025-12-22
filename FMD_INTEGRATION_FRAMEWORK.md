@@ -1,6 +1,6 @@
 ---
 Title: Data Integration examples for the FMD Framework
-Description: Learn how to add sources using metadata-driven  for the Fabric Metadata-Driven (FMD) Framework.
+Description: Learn how to add sources using metadata-driven  for the Fabric Metadata-Driven Framework (FMD).
 Topic: how-to
 Date: 12/2025
 Author: edkreuk
@@ -9,7 +9,7 @@ Author: edkreuk
 
 ## Custom Notebooks
 
-The Fabric Metadata-Driven (FMD) Framework enables you to define custom data integration logic using Notebooks. Create Notebooks that perform transformations, aggregations, or data manipulations within your data pipelines.
+The Fabric Metadata-Driven Framework (FMD) enables you to define custom data integration logic using Notebooks. Create Notebooks that perform transformations, aggregations, or data manipulations within your data pipelines.
 
 The deployment process includes a template Notebook called **NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE**. Use this template as a starting point to implement your custom data integration logic.
 

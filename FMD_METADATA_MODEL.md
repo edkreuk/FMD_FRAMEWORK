@@ -1,6 +1,6 @@
 ---
 Title: FMD Data Model reference
-Description: Learn about the metadata tables and schema used by the Fabric Metadata-Driven (FMD) Framework.
+Description: Learn about the metadata tables and schema used by the Fabric Metadata-Driven Framework (FMD).
 Topic: reference
 Date: 07/2025
 Author: edkreuk
@@ -8,7 +8,7 @@ Author: edkreuk
 
 # FMD Data Model reference
 
-This article describes the metadata tables and schema used by the Fabric Metadata-Driven (FMD) Framework. The data model enables dynamic orchestration, lineage, and governance across your data platform.
+This article describes the metadata tables and schema used by the Fabric Metadata-Driven Framework (FMD). The data model enables dynamic orchestration, lineage, and governance across your data platform.
 
 ![FMD Metadata Overview](/Images/FMD_METADATA_OVERVIEW.png)
 

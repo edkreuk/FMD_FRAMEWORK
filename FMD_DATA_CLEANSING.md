@@ -1,6 +1,6 @@
 ---
 Title: Data cleansing examples for the FMD Framework
-Description: Learn how to define data cleansing operations using metadata-driven JSON for the Fabric Metadata-Driven (FMD) Framework.
+Description: Learn how to define data cleansing operations using metadata-driven JSON for the Fabric Metadata-Driven Framework (FMD).
 Topic: how-to
 Date: 07/2025
 Author: edkreuk
@@ -27,7 +27,7 @@ You can define data cleansing rules for the Bronze and Silver layers. Cleansing 
 
 # Data cleansing examples 
 
-This article provides sample metadata-driven JSON configurations for common data cleansing operations in the Fabric Metadata-Driven (FMD) Framework. Use these examples to define cleansing steps in your data pipelines.
+This article provides sample metadata-driven JSON configurations for common data cleansing operations in the Fabric Metadata-Driven Framework (FMD). Use these examples to define cleansing steps in your data pipelines.
 
 Custom functions can be added in `NB_FMD_DQ_CLEANSING`. Each function should use the following structure:
 
