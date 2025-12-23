@@ -92,7 +92,7 @@ The FMD Framework supports integration with the following sources:
 - Azure Data Factory
 - Onelake tables and files
 - Custom Notebooks
-- Oracle (onoy with On Premises Data Gateway)
+- Oracle (only with On Premises Data Gateway)
 
 More data sources will be supported in future releases. 
 
