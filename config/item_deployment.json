@@ -143,5 +143,10 @@
         "name": "VAR_FMD.VariableLibrary",
         "id": "582c746d-d11d-960f-45fb-0f57937b1bf2",
         "type": "VariableLibrary"
+    },
+    {
+        "name": "ENV_FMD.VariableLibrary",
+        "id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
+        "type": "Environment"
     }
 ]
