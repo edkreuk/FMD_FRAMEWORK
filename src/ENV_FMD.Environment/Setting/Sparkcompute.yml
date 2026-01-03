@@ -7,4 +7,4 @@ dynamic_executor_allocation:
   enabled: true
   min_executors: 1
   max_executors: 2
-runtime_version: 2.0
+runtime_version: 1.3
