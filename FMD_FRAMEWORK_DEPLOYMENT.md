@@ -16,21 +16,29 @@ This article describes how to deploy the Fabric Metadata-Driven Framework (FMD) 
 
 ### Prerequisites
 
-Before you begin, ensure the following prerequisites are met in the Admin Portal of Microsoft Fabric:
-
-- Users can create Fabric items.
+Before you begin, ensure the following prerequisites are met in the Admin Portal:
 - Contributor role is assigned on the target capacity or capacities.
 
-### Prerequisite: Enable API access
-Enable the Fabric admin settings:
+### Prerequisite: Enable access in the Fabric Admin portal
 
 Sign in to the Fabric admin portal. You need to be a Fabric admin to see the tenant settings page.
-Under Admin API settings, select the switch for the type of admin APIs you want to enable:
+Make sure the following settings are enabled:
+# Microsoft Fabric settings:
+- Users can create Fabric items.
+# Workspace settings:
+- Create Workspaces
+
+Select the switch for the type of admin APIs you want to enable:
+# Developer settings:
+- Service principals can create workspaces, connections, and deployment pipelines
+- Service principals can call Fabric public APIs
+# Admin API settings
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
 
-Under Developer settings, select the switch for the type of admin APIs you want to enable:
-- Service principals can call Fabric public APIs
+In case you need to use a security group add the security group to above settings 
+Add Workspace identity(after deployment) or Service Principal to the security groups
+
 
 ### Managed identity or Service Principal used for execution must have the following role assigned:
 - Workspace Contributor role on the workspace (Workspace Identity is automatically assigned during deployment, Service principal must be assigned manually)
@@ -50,8 +58,9 @@ Set up the following connections and note their Connection IDs for later configu
 
 | Connection name              | Connection type            | Authentication                                    |Remarks |
 |------------------------------|----------------------------|---------------------------------------------------|--------|
-| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines      | OAuth2/Service Principal/Workspace Identity       |        |
-| CON_FMD_FABRICSQL            | Fabric SQL database        | OAuth2/Service Principal                          |        |
+| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines      | OAuth2/Service Principal/Workspace Identity       |  Connection is automatically created during deployment      |
+| CON_FMD_FABRIC_SQL           | Fabric SQL database        | OAuth2/Service Principal                          |  Connection needs to be created manually due to limitations      |
+| CON_FMD_FABRIC_NOTEBOOKS     | Fabric Notebooks           | OAuth2/Service Principal/Workspace Identity       |  For future use     |
 
 If you use Azure Data Factory Pipelines, create this additional connection:
 

@@ -17,6 +17,30 @@
 # CELL ********************
 
 # -------------------------------
+# Deploy Utilities
+# -------------------------------
+
+def mapping_table_composite_key(row, keys):
+    return tuple(row.get(k) for k in keys)
+
+def upsert_mapping(mapping_table, new_item, keys=("Description","environment", "ItemType","old_id")):
+    new_key = mapping_table_composite_key(new_item, keys)
+    for i, row in enumerate(mapping_table):
+        if composite_key(row, keys) == new_key:
+            mapping_table[i] = {**row, **new_item}
+            return
+    mapping_table.append(new_item)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# -------------------------------
 # FABRIC CLI Utilities
 # -------------------------------
 
@@ -56,11 +80,17 @@ def create_fabric_domain(domain_name):
     Create a domain.
     """
     start = time()
-    try:
-        run_fab_command(f'create .domains/{domain_name}.Domain',  capture_output=True, silently_continue=True)
-        print(f"✅ {domain_name} Domain Created'")
-    except Exception as e:
-        print(f"❌ Failed to create domain: {e}")
+    DomainExists=run_fab_command(f'exists .domains/{domain_name}.Domain',capture_output=True, silently_continue=True)
+    if DomainExists != "* true":
+        try:
+            print(f"Creating Donain: {name}")
+            result = run_fab_command(f'create .domains/{domain_name}.Domain',  capture_output=True, silently_continue=True)
+            print(f"✅ {domain_name} Domain Created'")
+        except Exception as e:
+            print(f"❌ Failed to create domain: {e}")
+
+    else:
+            result=('Domain already exists, skip creation')
     assign_domain_description(domain_name)
     assign_domain_contributor_roles(domain_contributor_role, domain_name)
     tasks.append({"task_name": f"Create or Update Domain {domain_name}","task_duration": int(time() - start),"status": "success"})
@@ -117,15 +147,12 @@ def get_domain_id_by_name(domain_name):
     """
     Retrieves the domain ID by its display name.
     """
-    result = run_fab_command("api -X get domains/", capture_output=True, silently_continue=True)
-    domains = json.loads(result)["text"]["value"]
-    normalized_name = domain_name.strip().lower()
-    match = next((w for w in domains if w['displayName'].strip().lower() == normalized_name), None)
-    return match['id'] if match else None
+    result = run_fab_command(f"get .domains/{domain_name}.Domain -q id", capture_output=True, silently_continue=True)
+    return result
+
 # -------------------------------
 # Workspace Management
 # -------------------------------
-
 def get_workspace_id_by_name(workspace_name):
     """
     Retrieves the workspace ID by its display name.
@@ -135,7 +162,7 @@ def get_workspace_id_by_name(workspace_name):
     normalized_name = workspace_name.strip().lower()
     match = next((w for w in workspaces if w['displayName'].strip().lower() == normalized_name), None)
     return match['id'] if match else None
-
+    
 def ensure_workspace_exists(workspace, workspace_name):
     """
     Ensures the workspace exists; creates it if not found.
@@ -170,11 +197,11 @@ def ensure_workspace_exists(workspace, workspace_name):
             print(f" - Created workspace '{workspace_name}'. ID: {workspace_id}")
             return workspace_id, "created"
         else:
-            raise RuntimeError(f"Workspace '{workspace_name}' could not be created or found.")
+            raise RuntimeError(f"Workspace '{workspace_name}' could not be created or found.")  
+
 # -------------------------------
 # Item Utilities
 # -------------------------------
-
 def get_item_id(workspace_name, name, property):
     """
     Retrieves the item ID from a workspace.
@@ -190,21 +217,19 @@ def get_item_display_name(workspace_name, name):
 # -------------------------------
 # File and ID Replacement
 # -------------------------------
-
-def copy_to_tmp(name, child=None):
+def copy_to_tmp(name):
     """
     Extracts item files from a ZIP archive to a temporary directory,
     including all subfolders under the specified path.
     Checks src/{name} first; if not found, checks src/business_domain/{name}.
     Returns the path for the first match only.
     """
-    child_path = "" if child is None else f".children/{child}/"
     shutil.rmtree("./builtin/tmp", ignore_errors=True)
     path2zip = "./builtin/src/src.zip"
 
     prefixes = [
-        f"src/{name}/{child_path}",
-        f"src/business_domain/{name}/{child_path}"
+        f"src/{name}",
+        f"src/business_domain/{name}"
     ]
 
     with ZipFile(path2zip) as archive:
@@ -282,7 +307,7 @@ def replace_ids_and_mark_inactive(folder_path, mapping_table, environment_name, 
                 # Replace IDs
                 for mapping in mapping_table:
                     if mapping["environment"] in (environment_name, "config"):
-                        content = content.replace(mapping["old_id"], mapping["new_id"])
+                        content = content.replace(mapping[f"old_id"], mapping[f"new_id"])
 
                 try:
                     data = json.loads(content)
@@ -306,7 +331,6 @@ def replace_ids_and_mark_inactive(folder_path, mapping_table, environment_name, 
 # -------------------------------
 # Description and Identity Assignment
 # -------------------------------
-
 def assign_workspace_description(workspace_name):
     """
     Assigns a standard description to the workspace.
@@ -342,7 +366,6 @@ def create_workspace_identity(workspace_name):
 # -------------------------------
 # Role Assignment
 # -------------------------------
-
 def assign_workspace_roles(workspace, workspace_name):
     """
     Assigns roles to principals in the workspace.
@@ -371,7 +394,6 @@ def assign_workspace_identity_role(workspace_name):
 # -------------------------------
 # Folder Handling
 # -------------------------------
-
 def get_workspace_folders(workspace_id):
     """
     Retrieves all folders in a workspace.
@@ -395,7 +417,6 @@ def create_workspace_folder(workspace_name, folder_name):
         print(f"✅ Folder {folder_name} created in workspace '{workspace_name}'")
     except Exception as e:
         print(f"❌ Failed to create folder: {e}")
-
     return result
 
 def assign_item_to_folder(workspace_name, item_id, folder_name):
@@ -439,14 +460,16 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
 
     print("--------------------------")
     print(f"Updating Mapping Table: {environment_name}")
-    mapping_table.append({"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": old_id,"new_id": workspace_id })
-    mapping_table.append({"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": "00000000-0000-0000-0000-000000000000","new_id": workspace_id})
+    upsert_mapping(mapping_table, {"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": old_id,"new_id": workspace_id }, keys=("Description","environment", "ItemType","old_id"))
+    upsert_mapping(mapping_table, {"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": "00000000-0000-0000-0000-000000000000","new_id": workspace_id}, keys=("Description","environment", "ItemType","old_id"))
+
+    
 
     assign_workspace_description(workspace_name)
     assign_workspace_roles(workspace,workspace_name)
     create_workspace_identity(workspace_name)
 
-    if "CODE" in workspace_name:
+    if "CODE" in workspace_name.upper():
         assign_workspace_identity_role(workspace_name)  #required to support Workspace identity in Fabric Pipelines connectionb
 
     if create_domains:
@@ -454,11 +477,10 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
 
     tasks.append({"task_name": f"Create or Update workspace {workspace_name}","task_duration": int(time() - start),"status": "success" })
 
-
-return_item =  run_fab_command(f"get INTEGRATION CONFIG.Workspace/SQL_INTEGRATION_FRAMEWORK.SQLDatabase -f -q properties.connectionString" , capture_output = True, silently_continue= True)
-
-
-def deploy_item(workspace,workspace_name,name, mapping_table, environment_name, connection_list, tasks, lakehouse_schema_enabled, child=None, it=None):
+# -------------------------------
+# Item deployment
+# -------------------------------
+def deploy_item(workspace_name,name, mapping_table, environment_name, connection_list, tasks, lakehouse_schema_enabled, it=None):
     """
     Deploys an item (Notebook, Lakehouse, DataPipeline) into a workspace.
     Handles ID replacement, description assignment, and updates mapping and task logs.
@@ -478,69 +500,128 @@ def deploy_item(workspace,workspace_name,name, mapping_table, environment_name, 
     print("\n#############################################")
     print(f"Deploying in {workspace_name}: {name}")
 
-    tmp_path = copy_to_tmp(name, child )
-    name = name if child is None else child
+    tmp_path = copy_to_tmp(name)
+
     workspace_id = get_workspace_id_by_name(workspace_name)
     cli_parameter = ''
 
     if "Notebook" in name:
         cli_parameter += " --format .py"
-        result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f {cli_parameter}",capture_output=True, silently_continue=True)
-        assign_item_description(workspace_name, name)
+        result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f {cli_parameter}",capture_output=True, silently_continue=True)
+        #assign_item_description(workspace_name, name)  #added to Notebook import to speed up deployment
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Notebooks')
         mapping_type='Notebook'
 
     elif "Lakehouse" in name:
-        if lakehouse_schema_enabled:
-            result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P enableschemas=true",capture_output=True, silently_continue=True)
+        LakehouseExists=run_fab_command(f'exists {workspace_name}.Workspace/{name}',capture_output=True, silently_continue=True)
+        if LakehouseExists != "* true":
+                try:
+                    print(f"Creating Lakehouse: {name}")
+                    if lakehouse_schema_enabled:
+                        result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P enableschemas=true",capture_output=True, silently_continue=True)
+                        #assign_item_description(workspace_name, name)
+                    else:
+                        result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P", capture_output=True, silently_continue=True)
+                        #assign_item_description(workspace_name, name)
+                    print(f"✅ {name} Created/Imported'")
+                except Exception as e:
+                    raise RuntimeError(f"❌ Failed to create Lakehouse: {e}")
         else:
-            result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P", capture_output=True, silently_continue=True)
-        assign_item_description(workspace_name, name)
+             result=('Lakehouse already exists, skip creation')
+
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Lakehouses')
         mapping_type='Lakehouse'
 
     elif "DataPipeline" in name:
-        print(f"Replacing connections guid in {workspace['name']}: {name}")
+        print(f"Replacing connections guid in {workspace_name}: {name}")
         replace_ids_and_mark_inactive(tmp_path, mapping_table, environment_name, connection_list)
         result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
         assign_item_description(workspace_name, name)
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='DataPipelines')
-        
         mapping_type='DataPipeline'
 
-    elif "VariableLibrary" in name:   #Not working yet, import is giving error back
-        print(f"Creating VariableLibrary: {name}")
-        result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f", capture_output=True, silently_continue=True)
+    elif "VariableLibrary" in name:   
+        VariableLibraryExists=run_fab_command(f'exists {workspace_name}.Workspace/{name}',capture_output=True, silently_continue=True)
+        if VariableLibraryExists != "* true" or overwrite_variable_library:
+                try:
+                    print(f"Creating or updating VariableLibrary: {name}")
+                    result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
+                    print(f"✅ {name} Created/Imported'")
+                except Exception as e:
+                    print(f"❌ Failed to create VariableLibrary: {e}")
+        else:
+             result=('VariableLibrary already exists, skip creation and do not overwrite')
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='VariableLibraries')
         mapping_type='VariableLibrary'
     
     elif "Environment" in name:   #Not working yet, import is giving error back
-        print(f"Creating Environment: {name}")
-        result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f", capture_output=True, silently_continue=True)
+        try:
+            print(f"Creating or updating Environment: {name}")
+            result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
+            print(f"✅ {name} Created/Imported'")
+        except Exception as e:
+            print(f"❌ Failed to create Environment: {e}")
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Environments')
         mapping_type='Environment'
     
-    elif "SQLDatabase" in name:   
-        print(f"Creating SQLDatabase: {name}")
-        result = run_fab_command(f"create {workspace_name}.Workspace/{name}",capture_output=True, silently_continue=True)
-        assign_item_description(workspace_name, name)
+    elif "SQLDatabase" in name:  
+        tmp_path = copy_to_tmp('SQL_FMD_FRAMEWORK.SQLDatabase')  #This is the folder in Github repo
+        try:
+            print(f"Creating or updating SQLDatabase: {name}")
+            result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
+            assign_item_description(workspace_name, name)
+            print(f"✅ {name} Created/Imported'")
+        except Exception as e:
+            raise RuntimeError(f"❌ Failed to create database: {e}")
         new_id = get_item_id(workspace_name, name, 'id')
-        
         mapping_type='SQLDatabase'
 
     print(result)
     if it:
-        mapping_table.append({"Description": name,"environment": environment_name,"ItemType": mapping_type, "old_id": it["id"],"new_id": new_id})
-
+        upsert_mapping(mapping_table, {"Description": name,"environment": environment_name,"ItemType": mapping_type, "old_id": it["id"],"new_id": new_id}, keys=("Description","environment", "ItemType","old_id"))
     tasks.append({
         "task_name": f"Create or Update item Definition {workspace_name} - {name}","task_duration": int(time() - start),"status": result })
 
+# METADATA ********************
 
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+def create_or_get_fmd_connection(connection_name,connection_role, type):
+    """
+    Ensures the workspace exists; creates it if not found.
+    Optionally reassigns capacity if requested.
+    """
+    ConnectionExists=run_fab_command(f'exists .connections/{connection_name}.Connection',capture_output=True, silently_continue=True)
+    if ConnectionExists != "* true":
+        try:
+            if type =='FabricSql':
+                print("FabricSql can't created automated yet to CLI limitations, please create manual")
+            elif type =='FabricDataPipelines':
+                run_fab_command(f"""create .connections/{connection_name}.Connection 
+                    -P connectionDetails.type=FabricDataPipelines,connectionDetails.creationMethod=FabricDataPipelines.Actions,connectionDetails.parameters.dummy=x,credentialDetails.type=WorkspaceIdentity""")
+                print(f"✅ {connection_name} Created")
+        except Exception as e:
+            print(f"❌ Failed to create connection: {e}")
+        else:
+             print('Connection already exists, skip creation')
+    connection_id=run_fab_command(f"get .connections/{connection_name}.Connection -q id", silently_continue= True, capture_output= True)
+    payload_role = json.dumps(connection_role)
+    try:
+        run_fab_command(f'api -X post connections/{connection_id}/roleAssignments -i "{payload_role}"',capture_output=True ,silently_continue=True  )
+        print(f"✅ Role applied to {connection_name}")
+    except Exception as e:
+        print(f"❌ Failed to apply role: {e}")
+    return connection_id
 
 # METADATA ********************
 
@@ -596,7 +677,6 @@ def get_workspace_metadata(workspace_id):
     response.raise_for_status()
     return response.json()
 
-
 def set_workspace_icon(workspace_id, base64_png):
     if base64_png == "":
         icon = ""
@@ -612,6 +692,7 @@ def set_workspace_icon(workspace_id, base64_png):
         except:
             print(f"Could not set icon on workspace id {workspace_id}. Ensure that the user is admin on workspace.")
             return None
+            
 # -------------------------------
 # FMD specific Icon functions
 # Inspiration and the code is coming from Peer, who wrote a blog post about this (https://peerinsights.hashnode.dev/automating-fabric-maintaining-workspace-icon-images) 
