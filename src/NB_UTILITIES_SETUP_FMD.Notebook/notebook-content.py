@@ -17,6 +17,30 @@
 # CELL ********************
 
 # -------------------------------
+# Deploy Utilities
+# -------------------------------
+
+def mapping_table_composite_key(row, keys):
+    return tuple(row.get(k) for k in keys)
+
+def upsert_mapping(mapping_table, new_item, keys=("Description","environment", "ItemType","old_id")):
+    new_key = mapping_table_composite_key(new_item, keys)
+    for i, row in enumerate(mapping_table):
+        if composite_key(row, keys) == new_key:
+            mapping_table[i] = {**row, **new_item}
+            return
+    mapping_table.append(new_item)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# -------------------------------
 # FABRIC CLI Utilities
 # -------------------------------
 
@@ -436,8 +460,10 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
 
     print("--------------------------")
     print(f"Updating Mapping Table: {environment_name}")
-    mapping_table.append({"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": old_id,"new_id": workspace_id })
-    mapping_table.append({"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": "00000000-0000-0000-0000-000000000000","new_id": workspace_id})
+    upsert_mapping(mapping_table, {"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": old_id,"new_id": workspace_id }, keys=("Description","environment", "ItemType","old_id"))
+    upsert_mapping(mapping_table, {"Description": workspace_name,"environment": environment_name,"ItemType": "Workspace","old_id": "00000000-0000-0000-0000-000000000000","new_id": workspace_id}, keys=("Description","environment", "ItemType","old_id"))
+
+    
 
     assign_workspace_description(workspace_name)
     assign_workspace_roles(workspace,workspace_name)
@@ -557,8 +583,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, connection
 
     print(result)
     if it:
-        mapping_table.append({"Description": name,"environment": environment_name,"ItemType": mapping_type, "old_id": it["id"],"new_id": new_id})
-
+        upsert_mapping(mapping_table, {"Description": name,"environment": environment_name,"ItemType": mapping_type, "old_id": it["id"],"new_id": new_id}, keys=("Description","environment", "ItemType","old_id"))
     tasks.append({
         "task_name": f"Create or Update item Definition {workspace_name} - {name}","task_duration": int(time() - start),"status": result })
 
