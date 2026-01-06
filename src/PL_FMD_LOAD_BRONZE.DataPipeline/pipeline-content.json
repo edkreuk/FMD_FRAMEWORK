@@ -14,7 +14,7 @@
               "type": "String"
             },
             "LogType": {
-              "value": "StartPipelineActivity",
+              "value": "StartPipeline",
               "type": "String"
             },
             "PipelineGuid": {
@@ -124,7 +124,7 @@
               "type": "String"
             },
             "LogType": {
-              "value": "EndPipelineActivity",
+              "value": "EndPipeline",
               "type": "String"
             },
             "PipelineGuid": {
@@ -221,7 +221,7 @@
         "name": "SP_END_AUDIT_PIPELINE",
         "dependsOn": [
           {
-            "activity": "ForEachExitValue",
+            "activity": "IF_RESULT_NOT_EMPTY",
             "dependencyConditions": [
               "Succeeded"
             ]
@@ -277,129 +277,81 @@
         ]
       },
       {
-        "type": "TridentNotebook",
+        "type": "IfCondition",
         "typeProperties": {
-          "notebookId": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
-          "workspaceId": "00000000-0000-0000-0000-000000000000",
-          "parameters": {
-            "Path": {
-              "value": {
-                "value": "@activity('LK_GET_ENTITIES_BRZ').output.value[0].notebookParams",
-                "type": "Expression"
-              },
-              "type": "string"
-            },
-            "TriggerGuid": {
-              "value": {
-                "value": "@pipeline().TriggerId",
-                "type": "Expression"
-              },
-              "type": "string"
-            },
-            "TriggerTime": {
-              "value": {
-                "value": "@pipeline().TriggerTime",
-                "type": "Expression"
-              },
-              "type": "string"
-            },
-            "TriggerType": {
-              "value": {
-                "value": "@pipeline().TriggerType",
-                "type": "Expression"
-              },
-              "type": "string"
-            },
-            "tenant_id": {
-              "type": "string"
-            },
-            "key_vault": {
-              "value": {
-                "value": "@pipeline().parameters.key_vault_name",
-                "type": "Expression"
-              },
-              "type": "string"
-            },
-            "schema_enabled": {
-              "value": {
-                "value": "@pipeline().parameters.Lakehouse_schema_enabled",
-                "type": "Expression"
-              },
-              "type": "bool"
-            }
-          },
-          "sessionTag": "fmd_framework"
-        },
-        "policy": {
-          "timeout": "0.01:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN",
-        "dependsOn": [
-          {
-            "activity": "LK_GET_ENTITIES_BRZ",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ]
-      },
-      {
-        "type": "ForEach",
-        "typeProperties": {
-          "items": {
-            "value": "@json(activity('NB_FMD_PROCESSING_PARALLEL_MAIN').output.result.exitValue)",
+          "expression": {
+            "value": "@equals(length(json(activity('LK_GET_ENTITIES_BRZ').output.value[0].NotebookParams)), 0)\n",
             "type": "Expression"
           },
-          "activities": [
+          "ifTrueActivities": [],
+          "ifFalseActivities": [
             {
-              "type": "SqlServerStoredProcedure",
+              "type": "TridentNotebook",
               "typeProperties": {
-                "storedProcedureName": "[execution].[sp_UpsertPipelineLandingzoneEntity]",
-                "storedProcedureParameters": {
-                  "Filename": {
+                "notebookId": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "Path": {
                     "value": {
-                      "value": "@json(item().exitVal).CopyOutput.SourceFileName",
+                      "value": "@activity('LK_GET_ENTITIES_BRZ').output.value[0].notebookParams",
                       "type": "Expression"
                     },
-                    "type": "String"
+                    "type": "string"
                   },
-                  "FilePath": {
+                  "TriggerGuid": {
                     "value": {
-                      "value": "@json(item().exitVal).CopyOutput.SourceFilePath",
+                      "value": "@pipeline().TriggerId",
                       "type": "Expression"
                     },
-                    "type": "String"
+                    "type": "string"
                   },
-                  "IsProcessed": {
-                    "value": "True",
-                    "type": "Boolean"
-                  },
-                  "LandingzoneEntityId": {
+                  "TriggerTime": {
                     "value": {
-                      "value": "@json(item().exitVal).CopyOutput.LandingzoneEntityId",
+                      "value": "@pipeline().TriggerTime",
                       "type": "Expression"
                     },
-                    "type": "Int64"
+                    "type": "string"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "tenant_id": {
+                    "type": "string"
+                  },
+                  "key_vault": {
+                    "value": {
+                      "value": "@pipeline().parameters.key_vault_name",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "schema_enabled": {
+                    "value": {
+                      "value": "@pipeline().parameters.Lakehouse_schema_enabled",
+                      "type": "Expression"
+                    },
+                    "type": "bool"
+                  },
+                  "connstring": {
+                    "value": {
+                      "value": "@pipeline().parameters.FMD_CONNECTION",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "database": {
+                    "value": {
+                      "value": "@pipeline().parameters.FMD_DATABASE",
+                      "type": "Expression"
+                    },
+                    "type": "string"
                   }
-                }
-              },
-              "connectionSettings": {
-                "name": "SQL_FMD_FRAMEWORK",
-                "properties": {
-                  "type": "FabricSqlDatabase",
-                  "typeProperties": {
-                    "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                    "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
-                  },
-                  "externalReferences": {
-                    "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
-                  },
-                  "annotations": []
-                }
+                },
+                "sessionTag": "fmd_framework"
               },
               "policy": {
                 "timeout": "0.01:00:00",
@@ -408,23 +360,26 @@
                 "secureInput": false,
                 "secureOutput": false
               },
-              "name": "SP_UPDATE_PROCESS",
+              "name": "NB_FMD_PROCESSING_PARALLEL_MAIN",
               "dependsOn": []
             },
             {
               "type": "SqlServerStoredProcedure",
               "typeProperties": {
-                "storedProcedureName": "[logging].[sp_AuditPipeline]",
+                "storedProcedureName": {
+                  "value": "[logging].[sp_AuditPipeline]",
+                  "type": "Expression"
+                },
                 "storedProcedureParameters": {
                   "LogData": {
                     "value": {
-                      "value": "{    \"Action\" : \"End\"    }",
+                      "value": "{    \"Action\" : \"Error\",     \"Message\" : @{activity('NB_FMD_PROCESSING_PARALLEL_MAIN').error}}",
                       "type": "Expression"
                     },
                     "type": "String"
                   },
                   "LogType": {
-                    "value": "NotebookActivity",
+                    "value": "FailPipeline",
                     "type": "String"
                   },
                   "PipelineGuid": {
@@ -492,10 +447,7 @@
                     "type": "String"
                   },
                   "EntityId": {
-                    "value": {
-                      "value": "@json(item().exitVal).CopyOutput.EntityId",
-                      "type": "Expression"
-                    },
+                    "value": null,
                     "type": "Int32"
                   }
                 }
@@ -521,15 +473,41 @@
                 "secureInput": false,
                 "secureOutput": false
               },
-              "name": "SP_END_AUDIT_PIPELINE_NB",
-              "dependsOn": []
+              "name": "SP_FAIL_AUDIT_PIPELINE",
+              "dependsOn": [
+                {
+                  "activity": "NB_FMD_PROCESSING_PARALLEL_MAIN",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Fail",
+              "typeProperties": {
+                "message": {
+                  "value": "@concat(activity('NB_FMD_PROCESSING_PARALLEL_MAIN').output.result.error.evalue,'--------------------------------', 'https://app.powerbi.com/',activity('NB_FMD_PROCESSING_PARALLEL_MAIN').output.SparkMonitoringURL, '?trident=1&tab=related','  ' )",
+                  "type": "Expression"
+                },
+                "errorCode": "Notebooks failed"
+              },
+              "name": "FA_THROW_ERROR",
+              "dependsOn": [
+                {
+                  "activity": "SP_FAIL_AUDIT_PIPELINE",
+                  "dependencyConditions": [
+                    "Completed"
+                  ]
+                }
+              ]
             }
           ]
         },
-        "name": "ForEachExitValue",
+        "name": "IF_RESULT_NOT_EMPTY",
         "dependsOn": [
           {
-            "activity": "NB_FMD_PROCESSING_PARALLEL_MAIN",
+            "activity": "LK_GET_ENTITIES_BRZ",
             "dependencyConditions": [
               "Succeeded"
             ]
@@ -542,7 +520,14 @@
         "type": "string"
       },
       "Lakehouse_schema_enabled": {
-        "type": "bool"
+        "type": "bool",
+        "defaultValue": true
+      },
+      "FMD_DATABASE": {
+        "type": "string"
+      },
+      "FMD_CONNECTION": {
+        "type": "string"
       }
     }
   }

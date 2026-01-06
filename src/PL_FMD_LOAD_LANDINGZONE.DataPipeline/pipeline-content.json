@@ -233,6 +233,78 @@
                         "dependsOn": []
                       }
                     ]
+                  },
+                  {
+                    "value": "NOTEBOOK",
+                    "activities": [
+                      {
+                        "type": "InvokePipeline",
+                        "typeProperties": {
+                          "parameters": {
+                            "FMD_CONNECTION": {
+                              "value": "@pipeline().parameters.FMD_CONNECTION",
+                              "type": "Expression"
+                            },
+                            "FMD_DATABASE": {
+                              "value": "@pipeline().parameters.FMD_DATABASE",
+                              "type": "Expression"
+                            }
+                          },
+                          "waitOnCompletion": true,
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "pipelineId": "4ee59a0f-ce5b-81d5-4477-eeac0e61c8a5",
+                          "operationType": "InvokeFabricPipeline"
+                        },
+                        "externalReferences": {
+                          "connection": "6d8146c6-a438-47df-94e2-540c552eb6d7"
+                        },
+                        "policy": {
+                          "timeout": "0.12:00:00",
+                          "retry": 0,
+                          "retryIntervalInSeconds": 30,
+                          "secureInput": false,
+                          "secureOutput": false
+                        },
+                        "name": "PL_FMD_LDZ_COMMAND_NOTEBOOK",
+                        "dependsOn": []
+                      }
+                    ]
+                  },
+                  {
+                    "value": "ORACLE",
+                    "activities": [
+                      {
+                        "type": "InvokePipeline",
+                        "typeProperties": {
+                          "parameters": {
+                            "FMD_CONNECTION": {
+                              "value": "@pipeline().parameters.FMD_CONNECTION",
+                              "type": "Expression"
+                            },
+                            "FMD_DATABASE": {
+                              "value": "@pipeline().parameters.FMD_DATABASE",
+                              "type": "Expression"
+                            }
+                          },
+                          "waitOnCompletion": true,
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "pipelineId": "03e51795-feb0-b062-472f-81f44460c3b8",
+                          "operationType": "InvokeFabricPipeline"
+                        },
+                        "externalReferences": {
+                          "connection": "6d8146c6-a438-47df-94e2-540c552eb6d7"
+                        },
+                        "policy": {
+                          "timeout": "0.12:00:00",
+                          "retry": 0,
+                          "retryIntervalInSeconds": 30,
+                          "secureInput": false,
+                          "secureOutput": false
+                        },
+                        "name": "PL_FMD_LDZ_COMMAND_ORACLE",
+                        "dependsOn": []
+                      }
+                    ]
                   }
                 ],
                 "defaultActivities": [
@@ -542,6 +614,12 @@
     ],
     "parameters": {
       "key_vault_name": {
+        "type": "string"
+      },
+      "FMD_DATABASE": {
+        "type": "string"
+      },
+      "FMD_CONNECTION": {
         "type": "string"
       }
     }

@@ -3,6 +3,7 @@
             "name": "SQL_FMD_FRAMEWORK",
             "type": "SQLDatabase",
             "id": "075e5656-613d-41f4-89ed-63f6837c0ff6",
+            "database": "SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6",
             "endpoint": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com"
            },
         {

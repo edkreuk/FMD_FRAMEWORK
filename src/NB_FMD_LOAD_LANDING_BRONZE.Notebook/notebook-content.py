@@ -50,8 +50,11 @@ cleansing_rules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-
+connstring=''
+database=''
 schema_enabled = ''
+EntityLayer='Bronze'
+result_data=''
 
 # METADATA ********************
 
@@ -67,13 +70,15 @@ schema_enabled = ''
 # CELL ********************
 
 import re
-import datetime
+from datetime import datetime
 import json
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from delta.tables import *
 from notebookutils import mssparkutils
 import uuid
+import struct
+import pyodbc
 
 # METADATA ********************
 
@@ -88,7 +93,101 @@ import uuid
 
 # CELL ********************
 
-start_audit_time = datetime.datetime.now()
+start_audit_time = datetime.now()
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerbi/api')
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ## Execution Logic
+
+# CELL ********************
+
+%run NB_FMD_UTILITY_FUNCTIONS
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ## Define Stored Procedures for Logging
+
+# CELL ********************
+
+# Ensure TriggerTime is formatted correctly
+TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+notebook_name=  notebookutils.runtime.context['currentNotebookName']
+
+
+UpsertPipelineLandingzoneEntity = (
+    f"[execution].[sp_UpsertPipelineLandingzoneEntity] "
+    f"@Filename = \"{SourceFileName}\", "
+    f"@FilePath = \"{SourceFilePath}\", "
+    f"@IsProcessed = \"True\", "
+    f"@LandingzoneEntityId = \"{LandingzoneEntityId}\""
+)
+
+InsertPipelineBronzeLayerEntity = (
+    f"[execution].[sp_UpsertPipelineBronzeLayerEntity] "
+    f"@SchemaName = \"{TargetSchema}\", "
+    f"@TableName = \"{TargetName}\", "
+    f"@IsProcessed = \"False\", "
+    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
+)
+
+StartNotebookActivity = (
+    f"[logging].[sp_AuditNotebook] "
+    f"@NotebookGuid = \"{NotebookExecutionId}\", "
+    f"@NotebookName = \"{notebook_name}\", "
+    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
+    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
+    f"@NotebookParameters = \"{TargetName}\", "
+    f"@TriggerType = \"{TriggerType}\", "
+    f"@TriggerGuid = \"{TriggerGuid}\", "
+    f"@TriggerTime = \"{TriggerTime}\", "
+    f"@LogData = '{{\"Action\":\"Start\"}}', "
+    f"@LogType = \"StartNotebookActivity\", "
+    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
+    f"@EntityId = \"{BronzeLayerEntityId}\", "
+    f"@EntityLayer = \"{EntityLayer}\""
+)
+
+EndNotebookActivity = (
+    f"[logging].[sp_AuditNotebook] "
+    f"@NotebookGuid = \"{NotebookExecutionId}\", "
+    f"@NotebookName = \"{notebook_name}\", "
+    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
+    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
+    f"@NotebookParameters = \"{TargetName}\", "
+    f"@TriggerType = \"{TriggerType}\", "
+    f"@TriggerGuid = \"{TriggerGuid}\", "
+    f"@TriggerTime = \"{TriggerTime}\", "
+    f"@LogType = \"EndNotebookActivity\", "
+    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
+    f"@EntityId = \"{BronzeLayerEntityId}\", "
+    f"@EntityLayer = \"{EntityLayer}\""
+)
 
 # METADATA ********************
 
@@ -103,7 +202,18 @@ start_audit_time = datetime.datetime.now()
 
 # CELL ********************
 
-#Make sure you have disabled V-Order
+execute_with_logging(StartNotebookActivity, driver, connstring, database)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+#Make sure you have disabled V-Order, Bronze we want to load fast
 
 spark.conf.set("sprk.sql.parquet.vorder.enabled", "false")
 
@@ -111,6 +221,10 @@ spark.conf.set("spark.sql.parquet.int96RebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.int96RebaseModeInWrite", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
+
+spark.conf.set('spark.microsoft.delta.optimize.fast.enabled', True)
+spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
+spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
 
 # METADATA ********************
 
@@ -122,10 +236,6 @@ spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
 # MARKDOWN ********************
 
 # ## Set your loading paths
-
-# MARKDOWN ********************
-
-# https://onelake.dfs.fabric.microsoft.com/3025bfd0-7511-4702-987d-2b4cb2a11c08/8e3bea3d-db0d-4ace-a4aa-b0f73bd01a66/Tables/dbo/customer
 
 # CELL ********************
 
@@ -307,22 +417,30 @@ if DeltaTable.isDeltaTable(spark, target_data_path):
 else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
-    TotalRuntime = str((datetime.datetime.now() - start_audit_time)) 
-
+    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    end_audit_time =  str(datetime.now())
+    start_audit_time =str(start_audit_time)
     # Your data
     result_data = {
-        "CopyOutput":{
+        "Action" : "End", "CopyOutput":{
             "Total Runtime": TotalRuntime,
             "TargetSchema": TargetSchema,
             "TargetName" : TargetName,
             "SourceFilePath" : SourceFilePath,
             "SourceFileName" : SourceFileName,
-            "LandingzoneEntityId" : EntityId
+            "LandingzoneEntityId" : LandingzoneEntityId,
+            "EntityId" : BronzeLayerEntityId,
+            "StartTime" : start_audit_time,
+            "EndTime" : end_audit_time
+
         }
         }
 
-
-    mssparkutils.notebook.exit(result_data)
+    execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+    execute_with_logging(InsertPipelineBronzeLayerEntity, driver, connstring, database)
+    execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    notebookutils.notebook.exit(result_data)
 
 # METADATA ********************
 
@@ -364,16 +482,16 @@ elif IsIncremental not in [False, 'false', 'False']:
 
 # MARKDOWN ********************
 
-# ## Exit notebook
+# ## Define Results
 
 # CELL ********************
 
-TotalRuntime = str((datetime.datetime.now() - start_audit_time)) 
-end_audit_time =  str(datetime.datetime.now())
+TotalRuntime = str((datetime.now() - start_audit_time)) 
+end_audit_time =  str(datetime.now())
 start_audit_time =str(start_audit_time)
 # Your data
 result_data = {
-    "CopyOutput":{
+    "Action" : "End", "CopyOutput":{
         "Total Runtime": TotalRuntime,
         "TargetSchema": TargetSchema,
         "TargetName" : TargetName,
@@ -388,7 +506,37 @@ result_data = {
     }
 
 
-mssparkutils.notebook.exit(result_data)
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ## Logging and update queue
+
+# CELL ********************
+
+execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+execute_with_logging(InsertPipelineBronzeLayerEntity, driver, connstring, database)
+execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ## Notebook exit
+
+# CELL ********************
+
+notebookutils.notebook.exit(result_data)
 
 # METADATA ********************
 
