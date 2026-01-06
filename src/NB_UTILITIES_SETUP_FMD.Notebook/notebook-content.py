@@ -26,7 +26,7 @@ def mapping_table_composite_key(row, keys):
 def upsert_mapping(mapping_table, new_item, keys=("Description","environment", "ItemType","old_id")):
     new_key = mapping_table_composite_key(new_item, keys)
     for i, row in enumerate(mapping_table):
-        if composite_key(row, keys) == new_key:
+        if mapping_table_composite_key(row, keys) == new_key:
             mapping_table[i] = {**row, **new_item}
             return
     mapping_table.append(new_item)
