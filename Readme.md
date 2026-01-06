@@ -57,7 +57,7 @@ To get started:
 
 | Resource | Description |
 |----------|-------------|
-| **[FMD Integration Framework reference](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Integration)** |Overview on how to add sources to the FMD Framework |
+| **[FMD Integration Framework reference](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Integration)** |Overview on how to add sources and demo data to the FMD Framework |
 | **[FMD Data Model reference](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Model)** | Overview of the data model used in the FMD Framework |
 | **[Configure and load demo data](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Integration#configure-and-load-bulk-data-into-the-fmd-framework)** | Instructions for loading demo data into the FMD Framework |
 

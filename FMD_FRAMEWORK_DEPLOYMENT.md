@@ -88,14 +88,15 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 > Fabric Administrator Role is required to create a domain. Otherwise, disable domain creation in the next step.
 
 
-Define the name for the Main Domain, and you can add 1 or more sub domains
+**Framework settings**  
 
 ```python
-##FrameworkName = 'DEMO'              # max 6 characters, no spaces. Is now removed, if used this please use the new option framework_post_fix(this will a lot of users more flexibility)
-assign_icons = True                 # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
+assign_icons = True                                # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
+load_demo_data= True                                # Set to True if you want to load the demo data, otherwise set to False
+lakehouse_schema_enabled = True                     # Set to True if you want to use the lakehouse schema, otherwise set to False
 
-load_demo_data = True               # Set to True if you want to load the demo data, otherwise set to False
-lakehouse_schema_enabled = True     # Set to True if you want to use the lakehouse schema, otherwise set to False
+driver = '{ODBC Driver 18 for SQL Server}'          # Change this if you use a different driver
+overwrite_variable_library=True                    # By default the Library is overwritten, change this to "False" if you have custom changes
 ```
 
 **Capacity settings**  
@@ -113,21 +114,23 @@ Define the name for the Main Domain, and you can add 1 or more business domains.
 
 
 ```python
-create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
-
-domain_name='INTEGRATION'                           # Main Domain    for example INTEGRATION CODE(D) 
-business_domain_names= ['FINANCE','SALES']          # Create business domains(sub)
 framework_post_fix= ''                              # post fix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
 if framework_post_fix != '':
    framework_post_fix= ' '+ framework_post_fix      #If empty leave as is else add a space before for better visibility
-# Replace '00000000-0000-0000-0000-000000000000' with the actual Entra AD group or user ID that should have contributor access.
-domain_contributor_role = {
-    "type": "Contributors",
-    "principals": [
-        {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}  # <--- PLACEHOLDER: Enter your real group/user ID here
-    ]
-}  # Which group/user can add or remove workspaces to this domain
-  ```
+
+##Domains
+create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
+create_business_domains = True                      # Do you wanto create the workspace for the business domains
+domain_name='INTEGRATION'                           # Main Domain for Integration for example INTEGRATION CODE(D) 
+business_domain_names= ['FINANCE','SALES']          # Define business domains
+domain_contributor_role = {"type": "Contributors","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group(Object ID) can add or remove workspaces to this domain
+
+##Connections
+connection_fabric_datapipelines_name='CON_FMD_FABRIC_PIPELINES'
+connection_fabric_notebooks_name='CON_FMD_FABRIC_NOTEBOOKS'
+connection_fabric_database_name='CON_FMD_FABRIC_SQL'
+connection_role =  {"role": "owner","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group(Object ID) can add or remove workspaces to this domain
+```
 You need to create workspace roles for the different workspaces:
 
 > [!NOTE]
@@ -195,17 +198,8 @@ workspace_roles_reporting_business_domain = [
     Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necessary.
 
   
-```python
-##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE ####
-configuration = {
-                    'workspace': {
-                        'name' : domain_name + ' CONFIG' +  framework_post_fix,             # Name of target workspace
-                        'roles' : workspace_roles_data,                                     # Roles to assign to the workspace
-                        'capacity_name' : capacity_name_config                              # Name of target capacity for the configuration workspace
-                    },
-                       'DatabaseName' : 'SQL_'+domain_name+'_FRAMEWORK'                     # Name of target configuration SQL Database
-}
-  ```
+```
+
 
 **Workspace configuration**  
 ```python
@@ -225,11 +219,6 @@ environments = [
                 'roles': workspace_roles_code,                                # Roles to assign to the workspace
                 'capacity_name': capacity_name_dvlm                           # Name of target code workspace capacity for development
             },
-        },
-        'connections': {
-            'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-000000000000',          # GUID for the Fabric SQL connection
-            'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',    # GUID for the Fabric Data Pipelines connection
-            'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'        # GUID for the ADF connection (if used)
         }
     },
     {
@@ -245,60 +234,9 @@ environments = [
                 'roles': workspace_roles_code,                                # Roles to assign to the workspace
                 'capacity_name': capacity_name_prod                           # Name of target code workspace capacity for production
             },
-        },
-        'connections': {
-            'CON_FMD_FABRIC_SQL': '00000000-0000-0000-0000-0000000000000',          # GUID for the Fabric SQL connection
-            'CON_FMD_FABRIC_PIPELINES': '00000000-0000-0000-0000-000000000000',    # GUID for the Fabric Data Pipelines connection
-            'CON_FMD_ADF_PIPELINES': '00000000-0000-0000-0000-000000000000'        # GUID for the ADF connection (if used)
         }
     }
 ]
-```
-**Domain Settings** 
-
-Define settings for every business domain.
-  ```python
-  ##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE, FE ADDING NEW ENVIRONMENTS ####
-business_domain_deployment = [
-                    {
-                        'environment_name' : 'development',                                 # Name of target environment
-                        'environment_short' : 'D',                                          # Short of target environment
-                        'workspaces': {
-                         
-                            'data' : {
-                                'roles' : workspace_roles_data_business_domain,             # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_business_domain_dvlm        # Name of target data workspace for development
-                            },
-                            'code' : {
-                                'roles' : workspace_roles_code_business_domain,             # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_business_domain_dvlm        # Name of target code workspace for development
-                            },
-                            'reporting' : {
-                            'roles' : workspace_roles_reporting_business_domain,            # Roles to assign to the workspace
-                            'capacity_name' : capacity_name_business_domain_dvlm            # Name of target code workspace for development
-                            }
-                        }
-                    },
-                    {
-                        'environment_name' : 'production',                                  # Name of target environment
-                        'environment_short' : 'P',                                          # Short of target environment
-                        'workspaces': {
-                         
-                            'data' : {
-                                'roles' : workspace_roles_data_business_domain,             # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_business_domain_prod        # Name of target data workspace for development
-                            },
-                            'code' : {
-                                'roles' : workspace_roles_code_business_domain,             # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_business_domain_prod        # Name of target code workspace for development
-                            },
-                            'reporting' : {
-                                'roles' : workspace_roles_reporting_business_domain,        # Roles to assign to the workspace
-                                'capacity_name' : capacity_name_business_domain_prod        # Name of target code workspace for development
-                            }
-                        }
-                    }
-                ]
 ```
 **Repo Configuration**
 
@@ -319,19 +257,8 @@ Execute the **notebook** to apply your configuration and deploy the framework.
 
 ---
 
-### Load Demo data
+Check out the [wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki) for more information and detailed guidance on using the FMD Framework and how to load demo data.
 
-When load_demo_data = True, you have to upload a csv file (which is available in this repo). With this you can easily test if every pipeline and the full process is working
 
-1. **Upload** `customer.csv` from demodata folder in this repo to the file section of `LH_DATA_LANDINGZONE` in the development environment.
-2. **Create table:** Generate a table named `in_customer` from the uploaded file. If you use schema-enabled lakehouse, use `dbo.in_customer`.
-3. **Run process:** Execute the process to validate deployment, by start the `PL_LOAD_ALL` pipeline in the `FMD_FRAMEWORK_CODE (D)` workspace.
-Example of loading the file and creating the table:
-
-![Load File to table](./Images/FMD_load_file_to_table.png)
-
-Example of loading the file and creating the table with Lakehouse schema enabled:
-
-![Load File to table](./Images/FMD_load_file_to_table_schema.png)
 
 
