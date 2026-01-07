@@ -31,15 +31,15 @@ The FMD Framework enables organizations to streamline data operations by leverag
 
 The FMD Framework uses a modular architecture that separates data, code, and orchestration for enhanced security and manageability.
 
-- **[Workspace architecture](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Workspace-architecture)**.
-- **[Medallion architecture](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Medallion-architecture)**.
-- **[Supported data sources](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Supported-data-sources)**.
-- **[Data Cleansing](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Cleansing)**.
-- **[Logging and auditing](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Logging-and-auditing)**.  
-- **[Variable Library](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Variable-Library)**.
-- **[Data Pipelines and Notebooks](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Pipelines-and-Notebooks)**.
-- **[Taskflow orchestration](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Taskflow)**.
-- **[Business Domains](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Business-Domains)**.
+- **[Workspace architecture](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Workspace-architecture)**
+- **[Medallion architecture](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Medallion-architecture)**
+- **[Supported data sources](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Supported-data-sources)**
+- **[Data Cleansing](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Cleansing)**
+- **[Logging and auditing](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Logging-and-auditing)**  
+- **[Variable Library](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Variable-Library)**
+- **[Data Pipelines and Notebooks](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Pipelines-and-Notebooks)**
+- **[Taskflow orchestration](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Taskflow)**
+- **[Business Domains](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Business-Domains)**
 
 ## Deployment and getting started
 
@@ -80,7 +80,7 @@ If opening a pull request, please follow these steps:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+***
 
 **Contributors:**  
 [Erwin de Kreuk](https://www.linkedin.com/in/erwindekreuk/)  

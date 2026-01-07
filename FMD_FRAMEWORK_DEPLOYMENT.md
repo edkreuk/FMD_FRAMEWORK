@@ -23,16 +23,16 @@ Before you begin, ensure the following prerequisites are met in the Admin Portal
 
 Sign in to the Fabric admin portal. You need to be a Fabric admin to see the tenant settings page.
 Make sure the following settings are enabled:
-# Microsoft Fabric settings:
+**Microsoft Fabric settings:**
 - Users can create Fabric items.
-# Workspace settings:
+**Workspace settings:**
 - Create Workspaces
 
 Select the switch for the type of admin APIs you want to enable:
-# Developer settings:
+**Developer settings:**
 - Service principals can create workspaces, connections, and deployment pipelines
 - Service principals can call Fabric public APIs
-# Admin API settings
+**Admin API settings:**
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
 
@@ -91,12 +91,12 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 **Framework settings**  
 
 ```python
-assign_icons = True                                # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
-load_demo_data= True                                # Set to True if you want to load the demo data, otherwise set to False
-lakehouse_schema_enabled = True                     # Set to True if you want to use the lakehouse schema, otherwise set to False
+assign_icons = True                       # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
+load_demo_data = True                     # Set to True if you want to load the demo data, otherwise set to False
+lakehouse_schema_enabled = True           # Set to True if you want to use the lakehouse schema, otherwise set to False
 
-driver = '{ODBC Driver 18 for SQL Server}'          # Change this if you use a different driver
-overwrite_variable_library=True                    # By default the Library is overwritten, change this to "False" if you have custom changes
+driver = '{ODBC Driver 18 for SQL Server}'# Change this if you use a different driver
+overwrite_variable_library = True         # By default the Library is overwritten, change this to "False" if you have custom changes
 ```
 
 **Capacity settings**  
@@ -120,7 +120,7 @@ if framework_post_fix != '':
 
 ##Domains
 create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
-create_business_domains = True                      # Do you wanto create the workspace for the business domains
+create_business_domains = True                      # Do you want to create the workspace for the business domains
 domain_name='INTEGRATION'                           # Main Domain for Integration for example INTEGRATION CODE(D) 
 business_domain_names= ['FINANCE','SALES']          # Define business domains
 domain_contributor_role = {"type": "Contributors","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group(Object ID) can add or remove workspaces to this domain
@@ -194,11 +194,7 @@ workspace_roles_reporting_business_domain = [
 ```
 
 
-**Configuration settings  (Fabric Database)**  
-    Define settings for the configuration database. The database where all the metadata is stored. Do not change if not necessary.
 
-  
-```
 
 
 **Workspace configuration**  
