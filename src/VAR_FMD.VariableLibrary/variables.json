@@ -5,19 +5,50 @@
       "name": "Data_WorkspaceGuid",
       "note": "",
       "type": "String",
-      "value": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      "value": ""
     },
     {
-      "name": "key_vault_name",
+      "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": "keyvaultname"
+      "value": ""
+    }    ,
+    {
+      "name": "key_vault_tenant_id",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "key_vault_client_id",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "key_vault_client_secret",
+      "note": "",
+      "type": "String",
+      "value": ""
     },
     {
       "name": "Lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
       "value": true
+    }  
+    ,
+    {
+      "name": "fmd_fabric_db_connection",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "fmd_fabric_db_name",
+      "note": "",
+      "type": "String",
+      "value": ""
     }
   ]
 }
