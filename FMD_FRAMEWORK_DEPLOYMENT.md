@@ -73,6 +73,8 @@ If you use Azure Data Factory Pipelines, create this additional connection:
 - Create a new workspace (for example, `FMD_FRAMEWORK_CONFIGURATION`).
 - Import the deployment notebook into the workspace (ensure you are in the Fabric Experience):
   - `NB_SETUP_FMD.ipynb`
+  > [!NOTE]
+> Make sure you set Set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs .
 
 ![Fabric Experience](/Images/FMD_Fabric_Experience.png)
 
