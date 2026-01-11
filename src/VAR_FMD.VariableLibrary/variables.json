@@ -30,7 +30,13 @@
       "note": "",
       "type": "String",
       "value": "x"
-    } 
+    },
+    {
+      "name": "Lakehouse_schema_enabled",
+      "note": "",
+      "type": "Boolean",
+      "value": true
+    }  
     ,
     {
       "name": "fmd_fabric_db_connection",
