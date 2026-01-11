@@ -169,11 +169,6 @@
                 "type": "variable",
                 "source": "key_vault_client_secret"
             },
-              {
-                "name": "Lakehouse_schema_enabled",
-                "type": "variable",
-                "source": "Lakehouse_schema_enabled"
-            },
             {
                 "name": "fmd_fabric_db_connection",
                 "type": "variable",
