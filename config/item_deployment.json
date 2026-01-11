@@ -145,10 +145,10 @@
         "type": "VariableLibrary",
          "variables": [
             {
-                "name": "Data_WorkspaceGuid",
+                "name": "data_workspaceguid",
                 "type": "variable",
                 "datatype": "String",
-                "source": "Data_WorkspaceGuid"
+                "source": "data_workspaceguid"
             },
             {
                 "name": "key_vault_uri_name",
@@ -175,10 +175,10 @@
                 "source": "key_vault_client_secret"
             },
               {
-                "name": "Lakehouse_schema_enabled",
+                "name": "lakehouse_schema_enabled",
                 "type": "variable",
                 "datatype": "Boolean",
-                "source": "Lakehouse_schema_enabled"
+                "source": "lakehouse_schema_enabled"
             },
             {
                 "name": "fmd_fabric_db_connection",

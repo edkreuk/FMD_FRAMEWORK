@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
   "variables": [
     {
-      "name": "Data_WorkspaceGuid",
+      "name": "data_workspaceguid",
       "note": "",
       "type": "String",
       "value": "x"
@@ -32,7 +32,7 @@
       "value": "x"
     },
     {
-      "name": "Lakehouse_schema_enabled",
+      "name": "lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
       "value": true
