@@ -1,12 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
-    "type": "VariableLibrary",
-    "displayName": "VAR_GOLD_FMD",
-    "description": "Imported from fab"
+    "type": "Notebook",
+    "displayName": "NB_CREATE_SHORTCUTS",
+    "description": "New notebook"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "4a0f2d13-26b7-9ea6-424a-1dd370616d02"
+    "logicalId": "7ce2bda8-9899-96b5-4eed-e516cc59f8c7"
   }
 }

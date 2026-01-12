@@ -144,12 +144,7 @@
         "id": "582c746d-d11d-960f-45fb-0f57937b1bf2",
         "type": "VariableLibrary",
          "variables": [
-            {
-                "name": "data_workspaceguid",
-                "type": "variable",
-                "datatype": "String",
-                "source": "data_workspaceguid"
-            },
+           
             {
                 "name": "key_vault_uri_name",
                 "type": "variable",

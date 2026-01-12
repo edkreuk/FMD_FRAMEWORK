@@ -6,6 +6,30 @@
       "note": "",
       "type": "String",
       "value": "keyvaultname"
+    },
+    {
+      "name": "Shortcut_TargetWorkspaceId",
+      "note": "",
+      "type": "String",
+      "value": "0f32a78c-4128-40b7-b3be-2409ff547400"
+    },
+    {
+      "name": "Shortcut_TargetLakehouseId",
+      "note": "",
+      "type": "String",
+      "value": "b7ea00fd-c839-4400-99e6-362ba3e54684"
+    },
+    {
+      "name": "Shortcut_TargetSchema",
+      "note": "",
+      "type": "String",
+      "value": "wwi"
+    },
+    {
+      "name": "Shortcut_SourceSchema",
+      "note": "",
+      "type": "String",
+      "value": "gold"
     }
   ]
 }

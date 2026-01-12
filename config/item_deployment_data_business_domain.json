@@ -13,5 +13,21 @@
         "name": "VAR_GOLD_FMD.VariableLibrary",
         "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
         "type": "VariableLibrary"
+    },
+    
+    {
+        "name": "NB_MLV_DEMO_GOLD.Notebook",
+        "id": "05043c55-984d-aeb9-44c6-b4364e3bf037",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_CREATE_DIMDATE.Notebook",
+        "id": "22909f1c-fc6b-ad56-4199-09f452192ddf",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_CREATE_SHORTCUTS.Notebook",
+        "id": "7ce2bda8-9899-96b5-4eed-e516cc59f8c7",
+        "type": "Notebook"
     }
 ]
