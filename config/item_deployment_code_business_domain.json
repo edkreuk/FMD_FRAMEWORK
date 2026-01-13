@@ -7,6 +7,14 @@
     {
         "name": "VAR_GOLD_FMD.VariableLibrary",
         "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
-        "type": "VariableLibrary"
+        "type": "VariableLibrary",
+         "variables": [
+           
+            {
+                "name": "key_vault_uri_name",
+                "type": "variable",
+                "datatype": "String",
+                "source": "key_vault_uri_name"
+            }]
     }
 ]
