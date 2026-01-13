@@ -1,49 +1,47 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
   "variables": [
-    
     {
       "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": "x"
-    }    ,
+      "value": "val_key_vault_uri_name"
+    },
     {
       "name": "key_vault_tenant_id",
       "note": "",
       "type": "String",
-      "value": "x"
+      "value": "val_key_vault_tenant_id"
     },
     {
       "name": "key_vault_client_id",
       "note": "",
       "type": "String",
-      "value": "x"
+      "value": "val_key_vault_client_id"
     },
     {
       "name": "key_vault_client_secret",
       "note": "",
       "type": "String",
-      "value": "x"
+      "value": "val_key_vault_client_secret"
     },
     {
       "name": "lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
       "value": true
-    }  
-    ,
+    },
     {
       "name": "fmd_fabric_db_connection",
       "note": "",
       "type": "String",
-      "value": "x"
+      "value": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com,1433"
     },
     {
       "name": "fmd_fabric_db_name",
       "note": "",
       "type": "String",
-      "value": "x"
+      "value": "SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6"
     }
   ]
 }

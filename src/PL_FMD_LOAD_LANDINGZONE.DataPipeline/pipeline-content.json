@@ -25,8 +25,8 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
+                            "key_vault_uri_name": {
+                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                               "type": "Expression"
                             },
                             "ConnectionType": {
@@ -61,8 +61,8 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
+                            "key_vault_uri_name": {
+                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                               "type": "Expression"
                             },
                             "ConnectionType": {
@@ -97,8 +97,8 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
+                            "key_vault_uri_name": {
+                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                               "type": "Expression"
                             },
                             "ConnectionType": {
@@ -134,7 +134,7 @@
                         "typeProperties": {
                           "parameters": {
                             "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
+                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                               "type": "Expression"
                             },
                             "ConnectionType": {
@@ -170,7 +170,7 @@
                         "typeProperties": {
                           "parameters": {
                             "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
+                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                               "type": "Expression"
                             },
                             "ConnectionType": {
@@ -206,7 +206,7 @@
                         "typeProperties": {
                           "parameters": {
                             "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
+                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                               "type": "Expression"
                             },
                             "ConnectionType": {
@@ -240,16 +240,7 @@
                       {
                         "type": "InvokePipeline",
                         "typeProperties": {
-                          "parameters": {
-                            "FMD_CONNECTION": {
-                              "value": "@pipeline().parameters.FMD_CONNECTION",
-                              "type": "Expression"
-                            },
-                            "FMD_DATABASE": {
-                              "value": "@pipeline().parameters.FMD_DATABASE",
-                              "type": "Expression"
-                            }
-                          },
+                          "parameters": {},
                           "waitOnCompletion": true,
                           "workspaceId": "00000000-0000-0000-0000-000000000000",
                           "pipelineId": "4ee59a0f-ce5b-81d5-4477-eeac0e61c8a5",
@@ -278,11 +269,11 @@
                         "typeProperties": {
                           "parameters": {
                             "FMD_CONNECTION": {
-                              "value": "@pipeline().parameters.FMD_CONNECTION",
+                              "value": "@pipeline().libraryVariables.VAR_FMD_fmd_fabric_db_connection",
                               "type": "Expression"
                             },
                             "FMD_DATABASE": {
-                              "value": "@pipeline().parameters.FMD_DATABASE",
+                              "value": "@pipeline().libraryVariables.VAR_FMD_fmd_fabric_db_name",
                               "type": "Expression"
                             }
                           },
@@ -612,15 +603,21 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       },
-      "FMD_DATABASE": {
-        "type": "string"
+      "VAR_FMD_fmd_fabric_db_connection": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_connection",
+        "libraryName": "VAR_FMD"
       },
-      "FMD_CONNECTION": {
-        "type": "string"
+      "VAR_FMD_fmd_fabric_db_name": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

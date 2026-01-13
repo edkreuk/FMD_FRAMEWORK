@@ -71,7 +71,7 @@ def get_cluster_url():
     else:
         print("Cluster URL not found.")
         return None
-    
+
 # -------------------------------
 # Domain Management
 # -------------------------------
@@ -217,6 +217,27 @@ def get_item_display_name(workspace_name, name):
 # -------------------------------
 # File and ID Replacement
 # -------------------------------
+def update_variable_library(folder_path, it_variables):
+    variable_file = f"{folder_path}/variables.json"  
+    variables_table = []
+    for it_variable in it_variables:
+        if it_variable["type"] == "variable":
+            new_variable = variable_parameters[it_variable["source"]]
+        variables_table.append(
+            {
+                "name": it_variable.get("name"),
+                "note": it_variable.get("note"),
+                "type": it_variable.get("datatype"),
+                "value": new_variable,
+            }
+        )
+
+    with open(variable_file, "r", encoding="utf-8") as file:
+        content = json.load(file)
+    content["variables"] = variables_table
+    with open(variable_file, "w", encoding="utf-8") as file:
+        json.dump(content, file, indent=4)
+
 def copy_to_tmp(name):
     """
     Extracts item files from a ZIP archive to a temporary directory,
@@ -480,7 +501,7 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
 # -------------------------------
 # Item deployment
 # -------------------------------
-def deploy_item(workspace_name,name, mapping_table, environment_name, connection_list, tasks, lakehouse_schema_enabled, it=None):
+def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lakehouse_schema_enabled, it=None):
     """
     Deploys an item (Notebook, Lakehouse, DataPipeline) into a workspace.
     Handles ID replacement, description assignment, and updates mapping and task logs.
@@ -536,6 +557,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, connection
 
     elif "DataPipeline" in name:
         print(f"Replacing connections guid in {workspace_name}: {name}")
+        connection_list=get_existing_connections_by_id()
         replace_ids_and_mark_inactive(tmp_path, mapping_table, environment_name, connection_list)
         result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
         assign_item_description(workspace_name, name)
@@ -548,6 +570,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, connection
         if VariableLibraryExists != "* true" or overwrite_variable_library:
                 try:
                     print(f"Creating or updating VariableLibrary: {name}")
+                    result = update_variable_library(tmp_path, it.get("variables"))
                     result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
                     print(f"✅ {name} Created/Imported'")
                 except Exception as e:
@@ -596,6 +619,18 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, connection
 
 # CELL ********************
 
+# -------------------------------
+# Connections
+# -------------------------------
+
+def get_existing_connections_by_id():
+    """
+    Retrieves the connections ID 
+    """
+    result = run_fab_command("ls .connections -l -q [].{id:id}", capture_output=True, silently_continue=True)
+    connection_list = result[2:]
+    return connection_list
+
 def create_or_get_fmd_connection(connection_name,connection_role, type):
     """
     Ensures the workspace exists; creates it if not found.
@@ -606,6 +641,9 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
         try:
             if type =='FabricSql':
                 print("FabricSql can't created automated yet to CLI limitations, please create manual")
+            elif type =='AzureDataFactory':
+                print("AzureDataFactory can't created automated yet to CLI limitations, please create manual")
+            
             elif type =='FabricDataPipelines':
                 run_fab_command(f"""create .connections/{connection_name}.Connection 
                     -P connectionDetails.type=FabricDataPipelines,connectionDetails.creationMethod=FabricDataPipelines.Actions,connectionDetails.parameters.dummy=x,credentialDetails.type=WorkspaceIdentity""")

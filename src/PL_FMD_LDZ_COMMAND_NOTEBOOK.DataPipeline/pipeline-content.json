@@ -241,19 +241,7 @@
               "type": "InvokePipeline",
               "typeProperties": {
                 "parameters": {
-                  "key_vault_name": {
-                    "value": "@pipeline().parameters.key_vault_name",
-                    "type": "Expression"
-                  },
-                  "DataSourceType": "NOTEBOOK",
-                  "FMD_DATABASE": {
-                    "value": "@pipeline().parameters.FMD_DATABASE",
-                    "type": "Expression"
-                  },
-                  "FMD_CONNECTION": {
-                    "value": "@pipeline().parameters.FMD_CONNECTION",
-                    "type": "Expression"
-                  }
+                  "DataSourceType": "NOTEBOOK"
                 },
                 "waitOnCompletion": true,
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -453,15 +441,11 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
-      },
-      "FMD_DATABASE": {
-        "type": "string"
-      },
-      "FMD_CONNECTION": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

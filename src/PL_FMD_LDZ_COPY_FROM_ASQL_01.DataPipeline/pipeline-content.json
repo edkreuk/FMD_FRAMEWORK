@@ -81,7 +81,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "1388f30d_5062_48c3_aa76_b0c2bdc545fd",
+                      "name": "5f3566d1_6570_42bc_81c5_8ef26131a120",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -1210,7 +1210,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "1388f30d_5062_48c3_aa76_b0c2bdc545fd",
+                      "name": "ce0a5e74_2680_435c_8ce4_21008dd3a394",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -2151,9 +2151,11 @@
         }
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

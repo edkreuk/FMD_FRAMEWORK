@@ -37,6 +37,17 @@ from py4j.protocol import Py4JJavaError
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# CELL ********************
+
+variable_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # PARAMETERS CELL ********************
 
 ###############################Target Parameters###############################
@@ -52,11 +63,12 @@ CustomNotebookName = "NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE"
 TriggerGuid = ""
 TriggerTime = ""
 TriggerType = ""
-
+key_vault =variable_settings.VAR_FMD_key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=''
-database=''
+connstring=variable_settings.VAR_FMD_fmd_fabric_db_connection
+database=variable_settings.VAR_FMD_fmd_fabric_db_name
+schema_enabled =variable_settings.VAR_FMD_lakehouse_schema_enabled
 result_data=''
 
 # METADATA ********************

@@ -15,6 +15,17 @@
 # META   }
 # META }
 
+# CELL ********************
+
+variable_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # PARAMETERS CELL ********************
 
 # Set arguments
@@ -50,9 +61,9 @@ cleansing_rules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=''
-database=''
-schema_enabled = ''
+connstring=variable_settings.fmd_fabric_db_connection
+database=variable_settings.fmd_fabric_db_name
+schema_enabled = variable_settings.lakehouse_schema_enabled
 EntityLayer='Bronze'
 result_data=''
 

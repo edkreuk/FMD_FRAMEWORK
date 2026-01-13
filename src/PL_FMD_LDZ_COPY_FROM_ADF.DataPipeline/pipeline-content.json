@@ -409,8 +409,8 @@
                 "operationType": "InvokeADFPipeline",
                 "pipelineName": "PL_COPY_EXECUTE_FTP",
                 "parameters": {
-                  "key_vault_name": {
-                    "value": "@pipeline().parameters.key_vault_name",
+                  "key_vault_uri_name": {
+                    "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
                     "type": "Expression"
                   },
                   "TargetFilePath": {
@@ -961,9 +961,11 @@
         }
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

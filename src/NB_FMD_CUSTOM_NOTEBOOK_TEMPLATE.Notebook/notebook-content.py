@@ -25,6 +25,17 @@
 # 
 # Make a copy of this notebook, every time you re deploy the framework this notebook will be overwritten
 
+# CELL ********************
+
+#variable_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ## Imports
@@ -79,6 +90,7 @@ LastLoadValue = ""
 driver = '{ODBC Driver 18 for SQL Server}'
 connstring=''
 database=''
+schema_enabled = ''
 result_data=''
 
 # METADATA ********************

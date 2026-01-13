@@ -8,14 +8,8 @@
 # META   },
 # META   "dependencies": {
 # META     "lakehouse": {
-# META       "default_lakehouse": "63ddad67-a2c0-424b-bae6-d93db2fc592a",
-# META       "default_lakehouse_name": "LH_GOLD_LAYER",
-# META       "default_lakehouse_workspace_id": "89c45add-7ca9-4fdf-be0f-8e5665294031",
-# META       "known_lakehouses": [
-# META         {
-# META           "id": "63ddad67-a2c0-424b-bae6-d93db2fc592a"
-# META         }
-# META       ]
+# META       "default_lakehouse_name": "",
+# META       "default_lakehouse_workspace_id": ""
 # META     }
 # META   }
 # META }
@@ -24,7 +18,7 @@
 
 # # Notebook to create shortcuts in Gold
 # 
-# Don't forget to change the parameters in de **VAR_GOLD_FMD** library
+# Don't forget to change the parameters in de **VAR_GOLD_COLD_FMD** library
 # 
 # 
 # More details: https://github.com/edkreuk/FMD_FRAMEWORK
@@ -34,7 +28,7 @@
 
 import json, requests
 import notebookutils 
-import sempy.fabric as fabric           # provides workspace/item context
+
 
 # METADATA ********************
 
@@ -49,7 +43,7 @@ import sempy.fabric as fabric           # provides workspace/item context
 
 ShortcutNames=['Sales_BuyingGroups','Sales_CustomerCategories','Sales_InvoiceLines','Sales_Invoices','Sales_OrderLines','Sales_vCustomers','Warehouse_PackageTypes','Warehouse_StockItems' ]         #Tablenames of the to be created shortcuts, same name will be used for destination
 
-ShortcutSettings=notebookutils.variableLibrary.getLibrary("VAR_GOLD_FMD")
+ShortcutSettings=notebookutils.variableLibrary.getLibrary("VAR_GOLD_CODE_FMD")
 
 
 # METADATA ********************
@@ -61,11 +55,7 @@ ShortcutSettings=notebookutils.variableLibrary.getLibrary("VAR_GOLD_FMD")
 
 # CELL ********************
 
-def create_shortcut(path:str, name:str, target:dict, conflict_policy:str="Abort"):
-
-    # Get Local Lakehouse details
-    workspace_id = fabric.get_workspace_id()
-    lakehouse_id = fabric.get_lakehouse_id()
+def create_shortcut(path:str, name:str, target:dict, workspace_id:str ,lakehouse_id:str ,conflict_policy:str="Abort"):
 
     # Get Token
     token = notebookutils.credentials.getToken("pbi")
@@ -73,7 +63,6 @@ def create_shortcut(path:str, name:str, target:dict, conflict_policy:str="Abort"
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
-
     body = {
         "path": path,    # e.g., "Files/raw" OR "Tables"
         "name": name,    # e.g., "sales_external"
@@ -90,7 +79,6 @@ def create_shortcut(path:str, name:str, target:dict, conflict_policy:str="Abort"
     else:
         print("Failed:", resp.status_code, resp.text)
 
-
 # METADATA ********************
 
 # META {
@@ -102,7 +90,7 @@ def create_shortcut(path:str, name:str, target:dict, conflict_policy:str="Abort"
 
 for ShortcutName in ShortcutNames:
     oneLake_target = {    "oneLake": {        "workspaceId": ShortcutSettings.Shortcut_TargetWorkspaceId,        "itemId":      ShortcutSettings.Shortcut_TargetLakehouseId,"path": "Tables/"+ShortcutSettings.Shortcut_TargetSchema+"/"+ShortcutName   }}
-    create_shortcut(path="Tables/"+ShortcutSettings.Shortcut_SourceSchema, name=ShortcutName, target=oneLake_target, conflict_policy="CreateOrOverwrite")
+    create_shortcut(path="Tables/"+ShortcutSettings.SourceSchema, name=ShortcutName, target=oneLake_target,workspace_id=ShortcutSettings.SourceWorkspaceId,lakehouse_id=ShortcutSettings.SourceLakehouseId, conflict_policy="CreateOrOverwrite")
 
 # METADATA ********************
 

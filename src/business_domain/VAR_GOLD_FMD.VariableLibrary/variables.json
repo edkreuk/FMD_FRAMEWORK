@@ -8,13 +8,13 @@
       "value": "keyvaultname"
     },
     {
-      "name": "Shortcut_TargetWorkspaceId",
+      "name": "SourceWorkspaceId",
       "note": "",
       "type": "String",
       "value": "0f32a78c-4128-40b7-b3be-2409ff547400"
     },
     {
-      "name": "Shortcut_TargetLakehouseId",
+      "name": "SourceLakehouseId",
       "note": "",
       "type": "String",
       "value": "b7ea00fd-c839-4400-99e6-362ba3e54684"

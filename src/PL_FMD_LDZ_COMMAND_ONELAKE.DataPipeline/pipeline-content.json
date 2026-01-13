@@ -302,10 +302,6 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
-                              "type": "Expression"
-                            },
                             "DataSourceType": "ONELAKE_TABLES_01"
                           },
                           "waitOnCompletion": true,
@@ -335,10 +331,6 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().parameters.key_vault_name",
-                              "type": "Expression"
-                            },
                             "DataSourceType": "ONELAKE_FILES_01"
                           },
                           "waitOnCompletion": true,
@@ -497,9 +489,11 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }
