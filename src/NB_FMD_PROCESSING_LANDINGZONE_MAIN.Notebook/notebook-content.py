@@ -63,12 +63,12 @@ CustomNotebookName = "NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE"
 TriggerGuid = ""
 TriggerTime = ""
 TriggerType = ""
-key_vault =variable_settings.VAR_FMD_key_vault_uri_name
+key_vault =variable_settings.key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=variable_settings.VAR_FMD_fmd_fabric_db_connection
-database=variable_settings.VAR_FMD_fmd_fabric_db_name
-schema_enabled =variable_settings.VAR_FMD_lakehouse_schema_enabled
+connstring=variable_settings.fmd_fabric_db_connection
+database=variable_settings.fmd_fabric_db_name
+schema_enabled =variable_settings.lakehouse_schema_enabled
 result_data=''
 
 # METADATA ********************
