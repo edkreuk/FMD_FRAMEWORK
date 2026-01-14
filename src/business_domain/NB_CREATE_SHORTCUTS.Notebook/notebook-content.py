@@ -29,7 +29,6 @@
 import json, requests
 import notebookutils 
 
-
 # METADATA ********************
 
 # META {
@@ -41,10 +40,9 @@ import notebookutils
 
 #Shortcut location parameters
 
-ShortcutNames=['Sales_BuyingGroups','Sales_CustomerCategories','Sales_InvoiceLines','Sales_Invoices','Sales_OrderLines','Sales_vCustomers','Warehouse_PackageTypes','Warehouse_StockItems' ]         #Tablenames of the to be created shortcuts, same name will be used for destination
+ShortcutNames=['Sales_BuyingGroups','Sales_CustomerCategories','Sales_InvoiceLines','Sales_Invoices','Sales_Orders','Sales_OrderLines','Sales_vCustomers','Warehouse_PackageTypes','Warehouse_StockItems' ]         #Tablenames of the to be created shortcuts, same name will be used for destination
 
 ShortcutSettings=notebookutils.variableLibrary.getLibrary("VAR_GOLD_CODE_FMD")
-
 
 # METADATA ********************
 

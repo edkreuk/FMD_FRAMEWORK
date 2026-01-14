@@ -26,7 +26,20 @@
 -- 1. Use this notebook to create materialized lake views. 
 -- 2. Select **Run all** to run the notebook. 
 -- 3. When the notebook run is completed, return to your lakehouse and refresh your materialized lake views graph. 
+-- 
+-- **Make sure you connect the correct Lakehouse from on your Data Workspace as default lakehouse**
 
+
+-- CELL ********************
+
+CREATE SCHEMA IF NOT EXISTS gold
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sparksql",
+-- META   "language_group": "synapse_pyspark"
+-- META }
 
 -- CELL ********************
 
