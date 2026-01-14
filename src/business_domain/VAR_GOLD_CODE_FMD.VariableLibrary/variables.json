@@ -2,22 +2,28 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
   "variables": [
     {
-      "name": "key_vault_name",
+      "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": "keyvaultname"
+      "value": "val_key_vault_uri_name"
     },
     {
       "name": "SourceWorkspaceId",
       "note": "",
       "type": "String",
-      "value": "0f32a78c-4128-40b7-b3be-2409ff547400"
+      "value": "c90c9850-99fe-4050-899c-417cc30d7f70"
     },
     {
       "name": "SourceLakehouseId",
       "note": "",
       "type": "String",
-      "value": "b7ea00fd-c839-4400-99e6-362ba3e54684"
+      "value": "b6e09e2a-99d3-4a4a-9d6e-8d978cd44956"
+    },
+    {
+      "name": "SourceSchema",
+      "note": "",
+      "type": "String",
+      "value": "dbo"
     },
     {
       "name": "Shortcut_TargetSchema",
@@ -26,10 +32,16 @@
       "value": "wwi"
     },
     {
-      "name": "Shortcut_SourceSchema",
+      "name": "Shortcut_TargetWorkspaceId",
       "note": "",
       "type": "String",
-      "value": "gold"
+      "value": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+    },
+    {
+      "name": "Shortcut_TargetLakehouseId",
+      "note": "",
+      "type": "String",
+      "value": "50d7d4c9-7db0-4d4d-a324-31e18b536fe4"
     }
   ]
 }
