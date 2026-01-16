@@ -14,6 +14,17 @@
 # META   }
 # META }
 
+# CELL ********************
+
+#
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # PARAMETERS CELL ********************
 
 # Set arguments

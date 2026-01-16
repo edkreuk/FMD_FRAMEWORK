@@ -1,12 +1,76 @@
 [
     {
         "name": "NB_LOAD_GOLD.Notebook",
-        "id": "1c74f547-2306-4260-af87-f9a28b6fabb1",
+        "id": "c884e094-2716-83ff-4fb6-bc61f94617c5",
         "type": "Notebook"
     },
     {
-        "name": "VAR_GOLD_FMD.VariableLibrary",
-        "id": "a688d8bb-13b0-4963-b2ca-2b9b622086c9",
-        "type": "VariableLibrary"
+        "name": "NB_MLV_EXAMPLE.Notebook",
+        "id": "7f3419e4-1e18-9166-43d1-de9529d88dc3",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_MLV_DEMO_GOLD.Notebook",
+        "id": "ee87fe29-9adc-91be-4bf5-c5dfecff5b25",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_CREATE_DIMDATE.Notebook",
+        "id": "22909f1c-fc6b-ad56-4199-09f452192ddf",
+        "type": "Notebook"
+    },
+    {
+        "name": "NB_CREATE_SHORTCUTS.Notebook",
+        "id": "54288605-abe0-ad7a-4bb9-249481b85052",
+        "type": "Notebook"
+    },
+    {
+        "name": "VAR_GOLD_CODE_FMD.VariableLibrary",
+        "id": "622086c9-2b9b-b2ca-4963-13b0a688d8bb",
+        "type": "VariableLibrary",
+        "variables": [
+            {
+                "name": "key_vault_uri_name",
+                "type": "variable",
+                "datatype": "String",
+                "source": "key_vault_uri_name"
+            },
+            {
+                "name": "SourceWorkspaceId",
+                "type": "variable",
+                "datatype": "String",
+                "source": "SourceWorkspaceId"
+            },
+            {
+                "name": "SourceLakehouseId",
+                "type": "variable",
+                "datatype": "String",
+                "source": "SourceLakehouseId"
+            },
+            {
+                "name": "SourceSchema",
+                "type": "variable",
+                "datatype": "String",
+                "source": "SourceSchema"
+            },
+            {
+                "name": "Shortcut_TargetSchema",
+                "type": "variable",
+                "datatype": "String",
+                "source": "Shortcut_TargetSchema"
+            },
+            {
+                "name": "Shortcut_TargetWorkspaceId",
+                "type": "variable",
+                "datatype": "String",
+                "source": "Shortcut_TargetWorkspaceId"
+            },
+            {
+                "name": "Shortcut_TargetLakehouseId",
+                "type": "variable",
+                "datatype": "String",
+                "source": "Shortcut_TargetLakehouseId"
+            }
+        ]
     }
 ]

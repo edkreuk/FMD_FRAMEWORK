@@ -556,20 +556,6 @@
                     },
                     "type": "string"
                   },
-                  "connstring": {
-                    "value": {
-                      "value": "@pipeline().parameters.FMD_CONNECTION",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "database": {
-                    "value": {
-                      "value": "@pipeline().parameters.FMD_DATABASE",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
                   "CustomNotebookName": {
                     "value": {
                       "value": "@item().CustomNotebookName",
@@ -1031,15 +1017,21 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       },
-      "FMD_DATABASE": {
-        "type": "string"
+      "VAR_FMD_fmd_fabric_db_connection": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_connection",
+        "libraryName": "VAR_FMD"
       },
-      "FMD_CONNECTION": {
-        "type": "string"
+      "VAR_FMD_fmd_fabric_db_name": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

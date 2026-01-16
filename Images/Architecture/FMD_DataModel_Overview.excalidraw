@@ -80,7 +80,7 @@
       "strokeColor": "#1e1e1e",
       "backgroundColor": "#7deadb",
       "width": 81.12118018084675,
-      "height": 46.25838622249488,
+      "height": 46.258386222494885,
       "seed": 1780179944,
       "groupIds": [
         "Q0XylYZNKNcKKX8vQNRfb",
@@ -266,7 +266,7 @@
       "strokeColor": "#1e1e1e",
       "backgroundColor": "#0f655d",
       "width": 39.01542852181122,
-      "height": 29.358142746059773,
+      "height": 29.358142746059777,
       "seed": 187795944,
       "groupIds": [
         "Q0XylYZNKNcKKX8vQNRfb",
@@ -5397,11 +5397,11 @@
         "type": 3
       },
       "seed": 814898840,
-      "version": 569,
-      "versionNonce": 1324693480,
+      "version": 571,
+      "versionNonce": 1887852539,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1756659835610,
+      "updated": 1768586565648,
       "link": null,
       "locked": false
     },

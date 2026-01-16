@@ -8,40 +8,40 @@
       "value": "val_key_vault_uri_name"
     },
     {
-      "name": "key_vault_tenant_id",
+      "name": "SourceWorkspaceId",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_tenant_id"
+      "value": "c90c9850-99fe-4050-899c-417cc30d7f70"
     },
     {
-      "name": "key_vault_client_id",
+      "name": "SourceLakehouseId",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_client_id"
+      "value": "b6e09e2a-99d3-4a4a-9d6e-8d978cd44956"
     },
     {
-      "name": "key_vault_client_secret",
+      "name": "SourceSchema",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_client_secret"
+      "value": "dbo"
     },
     {
-      "name": "lakehouse_schema_enabled",
-      "note": "",
-      "type": "Boolean",
-      "value": true
-    },
-    {
-      "name": "fmd_fabric_db_connection",
+      "name": "Shortcut_TargetSchema",
       "note": "",
       "type": "String",
-      "value": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com,1433"
+      "value": "wwi"
     },
     {
-      "name": "fmd_fabric_db_name",
+      "name": "Shortcut_TargetWorkspaceId",
       "note": "",
       "type": "String",
-      "value": "SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6"
+      "value": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+    },
+    {
+      "name": "Shortcut_TargetLakehouseId",
+      "note": "",
+      "type": "String",
+      "value": "1c5620b3-93ce-4225-b128-9cd03d50e281"
     }
   ]
 }

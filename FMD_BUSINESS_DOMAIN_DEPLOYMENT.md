@@ -1,16 +1,16 @@
 ---
-Title: Deploy the FMD Framework
+Title: Deploy the Business Domain for the FMD Framework
 Description: Learn how to deploy the Fabric Metadata-Driven Framework (FMD) in Microsoft Fabric, including prerequisites, setup, and configuration.
 Topic: how-to
-Date: 07/2025
+
 Author: edkreuk
 ---
 
-# Deploy the FMD Framework
+# Deploy the FMD Business Domain Framework in Microsoft Fabric
 
-![FMD Overview](/Images/FMD_Overview.png)
+![FMD Overview](/Images/FMD_Domain_Overview.png)
 
-This article describes how to deploy the Fabric Metadata-Driven Framework (FMD) in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
+This article describes how to deploy the Business Domains in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
 
 ## 📦 Installation
 
@@ -36,8 +36,8 @@ Select the switch for the type of admin APIs you want to enable:
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
 
-In case you need to use a security group add the security group to above settings 
-Add Workspace identity(after deployment) or Service Principal to the security groups
+In case you need to use a security group add the security group to above settings.
+Add Workspace identity (after deployment) or Service Principal to the security groups
 
 
 ### Managed identity or Service Principal used for execution must have the following role assigned:
@@ -50,37 +50,22 @@ Add Workspace identity(after deployment) or Service Principal to the security gr
 
 Download the deployment notebook from the setup folder to your local machine:
 
-- `NB_SETUP_FMD.ipynb` – Automates artifact creation for FMD_FRAMEWORK in Fabric, based on your configuration.
+- `NB_SETUP_BUSINESS_DOMAINS.ipynb` – Automates artifact creation for FMD_FRAMEWORK in Fabric, based on your configuration.
 
-### 2. Create required connections
 
-Set up the following connections and note their Connection IDs for later configuration:
-
-| Connection name              | Connection type            | Authentication                                    |Remarks |
-|------------------------------|----------------------------|---------------------------------------------------|--------|
-| CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines      | OAuth2/Service Principal/Workspace Identity       |  Connection is automatically created during deployment      |
-| CON_FMD_FABRIC_SQL           | Fabric SQL database        | OAuth2/Service Principal                          |  Connection needs to be created manually due to limitations      |
-| CON_FMD_FABRIC_NOTEBOOKS     | Fabric Notebooks           | OAuth2/Service Principal/Workspace Identity       |  For future use     |
-
-If you use Azure Data Factory Pipelines, create this additional connection:
-
-| Connection name              | Connection type            | Authentication                                    |Remarks |
-|------------------------------|----------------------------|---------------------------------------------------|--------|
-| CON_FMD_ADF_PIPELINES        | Azure Data Factory         | OAuth2  or Service Principal                      |You must add the Service Principal to the workspace_roles_code.        |         |
-
-### 3. Create a configuration workspace
+### 2. Create a configuration workspace
 
 - Create a new workspace (for example, `FMD_FRAMEWORK_CONFIGURATION`).
 - Import the deployment notebook into the workspace (ensure you are in the Fabric Experience):
-  - `NB_SETUP_FMD.ipynb`
+  - `NB_SETUP_BUSINESS_DOMAINS.ipynb`
   > [!NOTE]
-> Make sure you set Set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs .
+> Make sure you set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs .
 
 ![Fabric Experience](/Images/FMD_Fabric_Experience.png)
 
-### 4. Configure deployment settings
+### 3. Configure deployment settings
 
-Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the following parameters as needed.
+Open `NB_SETUP_BUSINESS_DOMAINS.ipynb` and navigate to the configuration cell. Update the following parameters as needed.
 
 #### Key configuration parameters
 
@@ -90,24 +75,26 @@ Open `NB_SETUP_FMD.ipynb` and navigate to the configuration cell. Update the fol
 > Fabric Administrator Role is required to create a domain. Otherwise, disable domain creation in the next step.
 
 
-**Framework settings**  
+**settings**  
 
 ```python
 assign_icons = True                       # Set to True to assign default icons to workspaces; set to False if you have already assigned custom icons
-load_demo_data = True                     # Set to True if you want to load the demo data, otherwise set to False
+
 lakehouse_schema_enabled = True           # Set to True if you want to use the lakehouse schema, otherwise set to False
 
 driver = '{ODBC Driver 18 for SQL Server}'# Change this if you use a different driver
 overwrite_variable_library = True         # By default the Library is overwritten, change this to "False" if you have custom changes
 ```
-**Keyvault settings**  
-For future use.
+**Variable settings**
 ```python
 key_vault_uri_name='val_key_vault_uri_name'
-key_vault_tenant_id='val_key_vault_tenant_id'
-key_vault_client_id='val_key_vault_client_id'
-key_vault_client_secret='val_key_vault_client_secret'
-```
+SourceWorkspaceId=''                            
+SourceLakehouseId=''                            # Your Gold lakehouse  
+SourceSchema=''
+Shortcut_TargetSchema=''
+Shortcut_TargetWorkspaceId=''
+Shortcut_TargetLakehouseId=''                   # Your Silver Lakehouse
+````
 
 **Capacity settings**  
   Specify the unique name for the capacity:
@@ -124,31 +111,26 @@ Define the name for the Main Domain, and you can add 1 or more business domains.
 
 
 ```python
-framework_post_fix= ''                              # post fix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
+framework_post_fix= ''                              # postfix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
 if framework_post_fix != '':
    framework_post_fix= ' '+ framework_post_fix      #If empty leave as is else add a space before for better visibility
 
 ##Domains
 create_domains=  True                               # If you do not have a Fabric Admin role, you need to set this option to False. For domain creation the Fabric Admin role is needed
-domain_name='INTEGRATION'                           # Main Domain for Integration for example INTEGRATION CODE(D) 
-
+business_domain_names= ['FINANCE','SALES']          # Define business domains
 domain_contributor_role = {"type": "Contributors","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group(Object ID) can add or remove workspaces to this domain
+configuration_database_workspace=  'Name of the workspace of your SQL Server database which holds the configuration database'
+configuration_database_name= 'Name of the configuration database'
 
-##Connections
-connection_fabric_datapipelines_name='CON_FMD_FABRIC_PIPELINES'
-connection_fabric_notebooks_name='CON_FMD_FABRIC_NOTEBOOKS'
-connection_fabric_database_name='CON_FMD_FABRIC_SQL'
-connection_fabric_adf_name='CON_FMD_ADF_PIPELINES'
-connection_role =  {"role": "owner","principals": [{"id": "00000000-0000-0000-0000-000000000000","type": "Group"}  ]}  # Which group(Object ID) can add or remove workspaces to this domain
 ```
 You need to create workspace roles for the different workspaces:
 
 > [!NOTE]
 > The id of the User, Group or Service Principal is the Object ID in Microsoft Entra ID. For a Service Principal, you can find the Object ID in the Azure Portal under 'Enterprise applications'. Don't use the Object ID of the App Registration.'
 
-workspace_roles_code
-workspace_roles_data
-workspace_roles_configuration
+
+workspace_roles_reporting
+workspace_roles_gold
 
 Check the examples below
 ```python
@@ -184,53 +166,27 @@ workspace_roles_configuration = [
         "role": "Contributor"
     }
 ]
-```
 
 
 
+# Optional: business-domain specific role lists
+workspace_roles_data_business_domain = [
+    {"principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}, "role": "Member"}
+]
 
+workspace_roles_code_business_domain = [
+    {"principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}, "role": "Member"}
+]
 
-**Workspace configuration**  
-```python
-##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE, FE ADDING NEW ENVIRONMENTS ####
-# Define settings for each environment (add more environments as needed)
-environments = [
-    {
-        'environment_name': 'development',                                     # Name of target environment
-        'workspaces': {
-            'data': {
-                'name': domain_name + ' DATA (D)' + framework_post_fix,       # Name of target data workspace for development
-                'roles': workspace_roles_data,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_dvlm                           # Name of target data workspace capacity for development
-            },
-            'code': {
-                'name': domain_name + ' CODE (D)' + framework_post_fix,       # Name of target code workspace for development
-                'roles': workspace_roles_code,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_dvlm                           # Name of target code workspace capacity for development
-            },
-        }
-    },
-    {
-        'environment_name': 'production',                                      # Name of target environment
-        'workspaces': {
-            'data': {
-                'name': domain_name + ' DATA (P)' + framework_post_fix,       # Name of target data workspace for production
-                'roles': workspace_roles_data,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_prod                           # Name of target data workspace capacity for production
-            },
-            'code': {
-                'name': domain_name + ' CODE (P)' + framework_post_fix,       # Name of target code workspace for production
-                'roles': workspace_roles_code,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_prod                           # Name of target code workspace capacity for production
-            },
-        }
-    }
+workspace_roles_reporting_business_domain = [
+    {"principal": {"id": "00000000-0000-0000-0000-000000000000", "type": "Group"}, "role": "Member"}
 ]
 ```
+
 **Repo Configuration**
 
 Location of the FMD Framework repository. Unless you have a forked version, do not change these settings. If you want to use another branch, you can change the branch name to your own branch.
-  ```python
+```python
 #FMD Framework code
 ##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE ####
 repo_owner = "edkreuk"              # Owner of the repository

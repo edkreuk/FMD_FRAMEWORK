@@ -322,37 +322,6 @@
                       "type": "Expression"
                     },
                     "type": "string"
-                  },
-                  "tenant_id": {
-                    "type": "string"
-                  },
-                  "key_vault": {
-                    "value": {
-                      "value": "@pipeline().parameters.key_vault_name",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "schema_enabled": {
-                    "value": {
-                      "value": "@pipeline().parameters.Lakehouse_schema_enabled",
-                      "type": "Expression"
-                    },
-                    "type": "bool"
-                  },
-                  "connstring": {
-                    "value": {
-                      "value": "@pipeline().parameters.FMD_CONNECTION",
-                      "type": "Expression"
-                    },
-                    "type": "string"
-                  },
-                  "database": {
-                    "value": {
-                      "value": "@pipeline().parameters.FMD_DATABASE",
-                      "type": "Expression"
-                    },
-                    "type": "string"
                   }
                 },
                 "sessionTag": "fmd_framework"
@@ -519,19 +488,26 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       },
-      "Lakehouse_schema_enabled": {
-        "type": "bool",
-        "defaultValue": true
+      "VAR_FMD_lakehouse_schema_enabled": {
+        "type": "Bool",
+        "variableName": "lakehouse_schema_enabled",
+        "libraryName": "VAR_FMD"
       },
-      "FMD_DATABASE": {
-        "type": "string"
+      "VAR_FMD_fmd_fabric_db_connection": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_connection",
+        "libraryName": "VAR_FMD"
       },
-      "FMD_CONNECTION": {
-        "type": "string"
+      "VAR_FMD_fmd_fabric_db_name": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

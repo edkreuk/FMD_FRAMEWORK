@@ -3,7 +3,7 @@
   "name": "Prod",
   "variableOverrides": [
     {
-      "name": "key_vault_name",
+      "name": "key_vault_uri_name",
       "value": "keyvaultname"
     }
   ]

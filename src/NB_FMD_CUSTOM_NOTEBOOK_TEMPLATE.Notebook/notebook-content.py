@@ -79,6 +79,7 @@ LastLoadValue = ""
 driver = '{ODBC Driver 18 for SQL Server}'
 connstring=''
 database=''
+schema_enabled = ''
 result_data=''
 
 # METADATA ********************

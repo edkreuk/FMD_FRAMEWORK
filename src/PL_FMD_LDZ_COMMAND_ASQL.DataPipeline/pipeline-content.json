@@ -241,10 +241,6 @@
               "type": "InvokePipeline",
               "typeProperties": {
                 "parameters": {
-                  "key_vault_name": {
-                    "value": "@pipeline().parameters.key_vault_name",
-                    "type": "Expression"
-                  },
                   "DataSourceType": "ASQL_01"
                 },
                 "waitOnCompletion": true,
@@ -445,9 +441,26 @@
         ]
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
+      },
+      "VAR_FMD_lakehouse_schema_enabled": {
+        "type": "Bool",
+        "variableName": "lakehouse_schema_enabled",
+        "libraryName": "VAR_FMD"
+      },
+      "VAR_FMD_fmd_fabric_db_connection": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_connection",
+        "libraryName": "VAR_FMD"
+      },
+      "VAR_FMD_fmd_fabric_db_name": {
+        "type": "String",
+        "variableName": "fmd_fabric_db_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }

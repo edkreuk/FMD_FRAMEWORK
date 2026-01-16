@@ -7,12 +7,12 @@
         {
             "name": "LH_BRONZE_LAYER.Lakehouse",
             "type": "Lakehouse",
-            "id": "5b2306b4-122c-4269-b41f-b77aef342f48"
+            "id": "5eafdc67-2e0a-41fe-acb7-ca98e2c3e7af"
         },
         {
             "name": "LH_SILVER_LAYER.Lakehouse",
             "type": "Lakehouse",
-            "id": "50d7d4c9-7db0-4d4d-a324-31e18b536fe4"
+            "id": "1c5620b3-93ce-4225-b128-9cd03d50e281"
         }
 
     

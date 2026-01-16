@@ -377,7 +377,7 @@
                         "datasetSettings": {
                           "annotations": [],
                           "linkedService": {
-                            "name": "1388f30d_5062_48c3_aa76_b0c2bdc545fd",
+                            "name": "721acd3b_1aa5_4b24_b83b_730222a0292b",
                             "properties": {
                               "annotations": [],
                               "type": "Lakehouse",
@@ -1186,9 +1186,11 @@
         }
       }
     ],
-    "parameters": {
-      "key_vault_name": {
-        "type": "string"
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
       }
     }
   }
