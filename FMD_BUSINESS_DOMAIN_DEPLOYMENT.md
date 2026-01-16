@@ -1,5 +1,5 @@
 ---
-Title: Deploy the Business for the FMD Framework
+Title: Deploy the Business Domain for the FMD Framework
 Description: Learn how to deploy the Fabric Metadata-Driven Framework (FMD) in Microsoft Fabric, including prerequisites, setup, and configuration.
 Topic: how-to
 
@@ -36,8 +36,8 @@ Select the switch for the type of admin APIs you want to enable:
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
 
-In case you need to use a security group add the security group to above settings 
-Add Workspace identity(after deployment) or Service Principal to the security groups
+In case you need to use a security group add the security group to above settings.
+Add Workspace identity (after deployment) or Service Principal to the security groups
 
 
 ### Managed identity or Service Principal used for execution must have the following role assigned:
@@ -59,11 +59,11 @@ Download the deployment notebook from the setup folder to your local machine:
 - Import the deployment notebook into the workspace (ensure you are in the Fabric Experience):
   - `NB_SETUP_BUSINESS_DOMAINS.ipynb`
   > [!NOTE]
-> Make sure you set Set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs .
+> Make sure you set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs .
 
 ![Fabric Experience](/Images/FMD_Fabric_Experience.png)
 
-### 4. Configure deployment settings
+### 3. Configure deployment settings
 
 Open `NB_SETUP_BUSINESS_DOMAINS.ipynb` and navigate to the configuration cell. Update the following parameters as needed.
 
@@ -86,7 +86,7 @@ driver = '{ODBC Driver 18 for SQL Server}'# Change this if you use a different d
 overwrite_variable_library = True         # By default the Library is overwritten, change this to "False" if you have custom changes
 ```
 **Variable settings**
-````python
+```python
 key_vault_uri_name='val_key_vault_uri_name'
 SourceWorkspaceId=''                            
 SourceLakehouseId=''                            # Your Gold lakehouse  
@@ -94,7 +94,7 @@ SourceSchema=''
 Shortcut_TargetSchema=''
 Shortcut_TargetWorkspaceId=''
 Shortcut_TargetLakehouseId=''                   # Your Silver Lakehouse
-```
+````
 
 **Capacity settings**  
   Specify the unique name for the capacity:
@@ -111,7 +111,7 @@ Define the name for the Main Domain, and you can add 1 or more business domains.
 
 
 ```python
-framework_post_fix= ''                              # post fix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
+framework_post_fix= ''                              # postfix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
 if framework_post_fix != '':
    framework_post_fix= ' '+ framework_post_fix      #If empty leave as is else add a space before for better visibility
 
@@ -183,51 +183,10 @@ workspace_roles_reporting_business_domain = [
 ]
 ```
 
-
-
-
-
-**Workspace configuration**  
-```python
-##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE, FE ADDING NEW ENVIRONMENTS ####
-# Define settings for each environment (add more environments as needed)
-environments = [
-    {
-        'environment_name': 'development',                                     # Name of target environment
-        'workspaces': {
-            'data': {
-                'name': domain_name + ' DATA (D)' + framework_post_fix,       # Name of target data workspace for development
-                'roles': workspace_roles_data,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_dvlm                           # Name of target data workspace capacity for development
-            },
-            'code': {
-                'name': domain_name + ' CODE (D)' + framework_post_fix,       # Name of target code workspace for development
-                'roles': workspace_roles_code,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_dvlm                           # Name of target code workspace capacity for development
-            },
-        }
-    },
-    {
-        'environment_name': 'production',                                      # Name of target environment
-        'workspaces': {
-            'data': {
-                'name': domain_name + ' DATA (P)' + framework_post_fix,       # Name of target data workspace for production
-                'roles': workspace_roles_data,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_prod                           # Name of target data workspace capacity for production
-            },
-            'code': {
-                'name': domain_name + ' CODE (P)' + framework_post_fix,       # Name of target code workspace for production
-                'roles': workspace_roles_code,                                # Roles to assign to the workspace
-                'capacity_name': capacity_name_prod                           # Name of target code workspace capacity for production
-            },
-        }
-    }
-]
-```
 **Repo Configuration**
 
 Location of the FMD Framework repository. Unless you have a forked version, do not change these settings. If you want to use another branch, you can change the branch name to your own branch.
-  ```python
+```python
 #FMD Framework code
 ##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE ####
 repo_owner = "edkreuk"              # Owner of the repository
