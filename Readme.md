@@ -1,7 +1,16 @@
-# Fabric Metadata-Driven Framework (FMD)
-A Microsoft Fabric framework for building metadata-driven data pipelines.
+# 📘 Fabric Metadata‑Driven Framework (FMD)
+### *A Microsoft Fabric Framework for Metadata‑Driven Data Pipelines*
 
-The Fabric Metadata-Driven Framework (FMD) is a scalable, extensible solution for managing, integrating, and governing data using a metadata-driven approach on Fabric SQL Database. This article provides an overview of the FMD Framework, including its architecture, core components, workspace structure, supported data sources, and deployment guidance.
+The **Fabric Metadata‑Driven Framework (FMD)** is a powerful and extensible **Microsoft Fabric framework** designed to automate, orchestrate, and standardize **metadata‑driven data pipelines**. Built for lakehouse‑first architectures, FMD provides a configurable and reusable approach to ingestion, transformation, governance, and automation across Microsoft Fabric.
+
+## 🚀 Why the FMD Framework?
+Modern data platforms demand agility, scalability, and consistency. FMD simplifies these challenges by enabling:
+- **Dynamic, metadata‑driven pipelines**  
+- **Consistent orchestration across ingestion, processing, and publishing**  
+- **Centralized configuration** for all data entities  
+- **Alignment with Microsoft Fabric Lakehouse & Medallion Architecture**  
+- **Reduced engineering effort** through reusable patterns  
+- **Faster delivery** with standardized, tested components  
 
 ## Overview
 
@@ -14,14 +23,36 @@ The FMD Framework enables organizations to streamline data operations by leverag
 ## Video with the Data Factory Team
 
 [![Watch the FMD Framework overview](https://img.youtube.com/vi/UzqSFajSvtY/0.jpg)](https://www.youtube.com/watch?v=UzqSFajSvtY&t=829s)
-## Key features
+🚀 Why the FMD Framework?
+Modern data platforms demand agility, scalability, and consistency. FMD simplifies these challenges by enabling:
 
-- **Comprehensive data governance:** Maintain detailed metadata for improved data quality, consistency, and compliance.
-- **Scalability and flexibility:** Seamlessly scale with organizational growth and adapt to changing data requirements.
-- **Streamlined data integration:** Integrate diverse data sources for a unified data landscape.
-- **Cost efficiency:** Optimize data processes and reduce redundancy to achieve cost savings.
+Dynamic, metadata‑driven pipelines
+Consistent orchestration across ingestion, processing, and publishing
+Centralized configuration for all data entities
+Alignment with Microsoft Fabric Lakehouse & Medallion Architecture
+Reduced engineering effort through reusable patterns
+Faster delivery with standardized, tested components
 
-## Architecture and components
+FMD lets teams deliver more with less code, fewer errors, and dramatically faster setup.
+
+## 🧩 Key Features
+### ✔ Metadata‑Driven Orchestration
+Pipeline behavior is fully configured using metadata tables: source details, transformation logic, load type, timestamp columns, schema handling, and more.
+
+### ✔ End‑to‑End Fabric Integration
+Built natively for **Microsoft Fabric Lakehouse**, leveraging notebooks, SQL, Delta Tables, and Fabric pipelines.
+
+### ✔ Dynamic Pipelines
+Automatically adjusts pipeline execution based on metadata—ideal for large‑scale, multi‑source environments.
+
+### ✔ Scalable & Extensible
+Modular design allows custom logic, new transformations, and custom patterns without breaking existing workloads.
+
+### ✔ Governance & Observability
+Track rows processed, load statuses, timestamps, and operational metrics through centralized metadata.
+
+## 🏗️ Architecture Overview
+The FMD Framework is built on top of core **Microsoft Fabric** capabilities:
 
 The FMD Framework uses a modular architecture that separates data, code, and orchestration for enhanced security and manageability.
 
@@ -46,8 +77,8 @@ To get started:
 5. Import the taskflow and configure your workspaces as recommended.
 6. Refer to **[wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki)** for data model, pipelines, and logging.
 
-## Business Deployment
-Review the **[Business Deployment Framework Deployment Guide](./FMD_BUSINESS_DOMAIN_DEPLOYMENT.md)**.
+## Business Domain Deployment
+Review the **[Business Domain Deployment Framework Deployment Guide](./FMD_BUSINESS_DOMAIN_DEPLOYMENT.md)**.
 
 
 ## Additional resources
@@ -61,11 +92,19 @@ Review the **[Business Deployment Framework Deployment Guide](./FMD_BUSINESS_DOM
 ## Troubleshooting
 [Troubleshooting](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Troubleshooting)
 
+## 📚 Documentation
+Full overview & tutorials: https://erwindekreuk.com/fmd-framework/
 
-## Contributing
+## 📦 Use Cases
+- Enterprise‑grade ingestion frameworks  
+- Reusable ingestion + transformation patterns  
+- Standardized data architecture for Fabric Lakehouse  
+- Multi‑source data ingestion using dynamic pipelines  
+- Rapid onboarding of new datasets  
+- Migration from Synapse or ADF metadata‑driven solutions  
 
-We welcome contributions! To suggest improvements, open an issue or submit a pull request.  
-If opening a pull request, please follow these steps:
+## 🤝 Contributing
+Contributions, enhancements, and feature requests are welcome.  To contribute:
 
 1. Fork the repository.
 2. Create a feature branch.
@@ -73,9 +112,8 @@ If opening a pull request, please follow these steps:
 4. Push to the feature branch.
 5. Create a pull request and add documentation on what you have changed.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+📝 License
+This project is released under the MIT License. - see the [LICENSE](LICENSE) file for details.
 
 ***
 
