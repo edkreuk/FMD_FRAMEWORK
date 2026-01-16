@@ -52,6 +52,9 @@ To get started:
 5. Import the taskflow and configure your workspaces as recommended.
 6. Refer to **[wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki)** for data model, pipelines, and logging.
 
+## Business Deployment
+Review the **[Business Deployment Framework Deployment Guide](./FMD_BUSINESS_DOMAIN_DEPLOYMENT.md)**.
+
 
 ## Additional resources
 
