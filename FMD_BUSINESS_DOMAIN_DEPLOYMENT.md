@@ -2,14 +2,7 @@
 Title: Deploy the Business for the FMD Framework
 Description: Learn how to deploy the Fabric Metadata-Driven Framework (FMD) in Microsoft Fabric, including prerequisites, setup, and configuration.
 Topic: how-to
-I need clarification on what you'd like me to do. The `$SELECTION_PLACEHOLDER$` appears after the date field in the frontmatter (07/2025). 
 
-Are you asking me to:
-1. **Remove the placeholder** and keep the date as-is?
-2. **Add additional metadata** (like version number)?
-3. **Restructure the entire document** differently?
-
-Please specify what changes you want at that location or for the overall document structure.
 Author: edkreuk
 ---
 

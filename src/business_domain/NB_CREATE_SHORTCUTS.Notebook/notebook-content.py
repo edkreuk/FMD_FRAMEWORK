@@ -18,7 +18,7 @@
 
 # # Notebook to create shortcuts in Gold
 # 
-# Don't forget to change the parameters in de **VAR_GOLD_COLD_FMD** library
+# Don't forget to change the parameters in the **VAR_GOLD_COLD_FMD** library
 # 
 # 
 # More details: https://github.com/edkreuk/FMD_FRAMEWORK
