@@ -23,6 +23,7 @@ The FMD Framework enables organizations to streamline data operations by leverag
 ## Video with the Data Factory Team
 
 [![Watch the FMD Framework overview](https://img.youtube.com/vi/UzqSFajSvtY/0.jpg)](https://www.youtube.com/watch?v=UzqSFajSvtY&t=829s)
+
 🚀 Why the FMD Framework?
 Modern data platforms demand agility, scalability, and consistency. FMD simplifies these challenges by enabling:
 
