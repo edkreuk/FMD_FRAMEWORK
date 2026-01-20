@@ -155,7 +155,7 @@ starttime = datetime.now()
 
 # CELL ********************
 
-nb_name = 'NB_FMD_DQ_CLEANSING'
+nb_name = 'NB_FMD_CUSTOM_DQ_CLEANSING'
 nb_exists = False
 
 try:

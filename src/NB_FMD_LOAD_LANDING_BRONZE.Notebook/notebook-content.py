@@ -199,6 +199,10 @@ EndNotebookActivity = (
     f"@EntityId = \"{BronzeLayerEntityId}\", "
     f"@EntityLayer = \"{EntityLayer}\""
 )
+GetCleansingRule = (
+    f"[execution].[sp_GetBronzeCleansingRule]"
+    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
+)
 
 # METADATA ********************
 
@@ -213,7 +217,7 @@ EndNotebookActivity = (
 
 # CELL ********************
 
-execute_with_logging(StartNotebookActivity, driver, connstring, database)
+execute_with_outputs(StartNotebookActivity, driver, connstring, database)
 
 # METADATA ********************
 
@@ -380,7 +384,35 @@ if cleansing_rules == "":
 
 # CELL ********************
 
+CleansingRules=execute_with_outputs(GetCleansingRule, driver, connstring, database)
+rules_str = None
+# Extract the string
+rules_str = CleansingRules["result_sets"][0][0]["CleansingRules"]
+if rules_str != None :
+# Convert JSON text → Python dict/list
+    cleansing_rules = json.loads(rules_str)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
 %run NB_FMD_DQ_CLEANSING
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # METADATA ********************
 
@@ -448,9 +480,9 @@ else:
         }
         }
 
-    execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
-    execute_with_logging(InsertPipelineBronzeLayerEntity, driver, connstring, database)
-    execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+    execute_with_outputs(InsertPipelineBronzeLayerEntity, driver, connstring, database)
+    execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
     notebookutils.notebook.exit(result_data)
 
 # METADATA ********************
@@ -530,9 +562,9 @@ result_data = {
 
 # CELL ********************
 
-execute_with_logging(UpsertPipelineLandingzoneEntity, driver, connstring, database)
-execute_with_logging(InsertPipelineBronzeLayerEntity, driver, connstring, database)
-execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+execute_with_outputs(InsertPipelineBronzeLayerEntity, driver, connstring, database)
+execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
 
 # METADATA ********************
 

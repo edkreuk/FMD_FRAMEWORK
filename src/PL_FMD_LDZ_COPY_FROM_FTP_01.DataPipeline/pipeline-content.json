@@ -134,7 +134,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='FTP_01'",
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='FTP_01'\nand WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
               "type": "Expression"
             },
             "queryTimeout": "02:00:00",
@@ -378,7 +378,7 @@
                         "datasetSettings": {
                           "annotations": [],
                           "linkedService": {
-                            "name": "06ef85e7_62eb_4963_8f76_c4d7d3c910b3",
+                            "name": "5234c723_9405_431c_9c3c_71a8c8f30965",
                             "properties": {
                               "annotations": [],
                               "type": "Lakehouse",
@@ -1188,6 +1188,12 @@
         }
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

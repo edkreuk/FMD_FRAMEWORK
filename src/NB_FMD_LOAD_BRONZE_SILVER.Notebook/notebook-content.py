@@ -44,7 +44,7 @@ TargetLakehouse =""
 TargetLakehouseName =''
 TargetSchema = ""
 TargetName = ""
-CleansingRules = []
+cleansing_rules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
@@ -178,6 +178,10 @@ EndNotebookActivity = (
     f"@EntityId = \"{BronzeLayerEntityId}\", "
     f"@EntityLayer = \"{EntityLayer}\""
 )
+GetCleansingRule = (
+    f"[execution].[sp_GetSilverCleansingRule]"
+    f"@SilverLayerEntityId = \"{SilverLayerEntityId}\""
+)
 
 # METADATA ********************
 
@@ -188,7 +192,7 @@ EndNotebookActivity = (
 
 # CELL ********************
 
-execute_with_logging(StartNotebookActivity, driver, connstring, database)
+execute_with_outputs(StartNotebookActivity, driver, connstring, database)
 
 # METADATA ********************
 
@@ -215,6 +219,8 @@ spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
 spark.conf.set('spark.microsoft.delta.optimize.fast.enabled', True)
 spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
 spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
+
+spark.conf.set('spark.microsoft.delta.properties.defaults.enableChangeDataFeed',True)
 
 # METADATA ********************
 
@@ -296,7 +302,35 @@ if cleansing_rules == "":
 
 # CELL ********************
 
+CleansingRules=execute_with_outputs(GetCleansingRule, driver, connstring, database)
+rules_str = None
+# Extract the string
+rules_str = CleansingRules["result_sets"][0][0]["CleansingRules"]
+if rules_str != None :
+# Convert JSON text → Python dict/list
+    cleansing_rules = json.loads(rules_str)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
 %run NB_FMD_DQ_CLEANSING
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # METADATA ********************
 
@@ -367,8 +401,8 @@ else:
         }
         }
 
-    execute_with_logging(UpsertPipelineBronzeLayerEntity, driver, connstring, database)
-    execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    execute_with_outputs(UpsertPipelineBronzeLayerEntity, driver, connstring, database)
+    execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
 
     notebookutils.notebook.exit(result_data)
 
@@ -609,8 +643,8 @@ result_data = {
 
 # CELL ********************
 
-execute_with_logging(UpsertPipelineBronzeLayerEntity, driver, connstring, database)
-execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+execute_with_outputs(UpsertPipelineBronzeLayerEntity, driver, connstring, database)
+execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
 
 # METADATA ********************
 

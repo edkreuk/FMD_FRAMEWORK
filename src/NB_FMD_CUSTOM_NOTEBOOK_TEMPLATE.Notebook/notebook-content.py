@@ -155,7 +155,7 @@ EndNotebookActivity = (
 
 # CELL ********************
 
-execute_with_logging(StartNotebookActivity, driver, connstring, database)
+execute_with_outputs(StartNotebookActivity, driver, connstring, database)
 
 # METADATA ********************
 
@@ -277,7 +277,7 @@ result_data = {
 }
 
 # Write the logging entry into the logging database
-execute_with_logging(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
 
 # Exit the notebook
 notebookutils.notebook.exit(result_data)
