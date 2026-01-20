@@ -451,7 +451,7 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
 # -------------------------------
 # Item deployment
 # -------------------------------
-def deploy_item(workspace_name,name, mapping_table, environment_name, connection_list, tasks, lakehouse_schema_enabled, it=None):
+def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lakehouse_schema_enabled, it=None):
     """
     Deploys an item (Notebook, Lakehouse, DataPipeline) into a workspace.
     Handles ID replacement, description assignment, and updates mapping and task logs.
