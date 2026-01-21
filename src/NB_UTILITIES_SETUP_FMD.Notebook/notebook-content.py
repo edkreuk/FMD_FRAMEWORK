@@ -17,6 +17,30 @@
 # CELL ********************
 
 # -------------------------------
+# Deploy Utilities
+# -------------------------------
+
+def mapping_table_composite_key(row, keys):
+    return tuple(row.get(k) for k in keys)
+
+def upsert_mapping(mapping_table, new_item, keys=("Description","environment", "ItemType","old_id")):
+    new_key = mapping_table_composite_key(new_item, keys)
+    for i, row in enumerate(mapping_table):
+        if mapping_table_composite_key(row, keys) == new_key:
+            mapping_table[i] = {**row, **new_item}
+            return
+    mapping_table.append(new_item)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# -------------------------------
 # FABRIC CLI Utilities
 # -------------------------------
 
