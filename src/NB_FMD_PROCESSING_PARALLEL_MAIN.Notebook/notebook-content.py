@@ -186,7 +186,7 @@ if not nb_exists:
     }
 
     cell_code = """
-    # Implement custom cleanings fucntion here
+    # Implement custom cleansings function here
 
     #def <functienaam> (df, columns, args):
     #    print(args['<custom parameter name>']) # use of custom parameters

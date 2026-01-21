@@ -16,7 +16,7 @@
 
 # MARKDOWN ********************
 
-# functioname # Data cleansing functions
+# ## Data cleansing functions
 # 
 # It is possible to perform cleansing functions on incoming data. For example, converting all text in a column to uppercase. This can be achieved by defining cleansing rules for a table. The cleansing_rules contains a piece of JSON as shown below. This is an array of one or more functions that need to be called.
 # 
@@ -35,10 +35,12 @@
 #     "parameters": {"param1" : "abc", "param2" : "123"}}
 # ]
 # ```
+# More info https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Cleansing
+# 
 # 
 # ## Custom functions
 # 
-# Custom functions can be added to the section bellow. The function has the following structure.
+# Custom functions can be added in a separate notebook NB_FMD_CUSTOM_DQ_CLEANSING
 # 
 # ```
 # def <functioname> (df, columns, args):
@@ -91,27 +93,73 @@ def dynamic_call_cleansing_function(df: DataFrame,
 
 # CELL ********************
 
-def handle_cleansing_functions(
-        df: DataFrame,
-        cleansing_rules: json):
+def normalize_cleansing_rules(cleansing_rules):
+    if cleansing_rules is None:
+        return []
 
-    if cleansing_rules is not None:
-        for cleansing_rule in cleansing_rules:
-            if 'function' not in cleansing_rule:
-                print(f"function doesn't exists in: {cleansing_rule}")
-                continue
-            if 'parameters' not in cleansing_rule:
-                cleansing_rule['parameters'] = None
-            if 'columns' not in cleansing_rule:
-                cleansing_rule['columns'] = None
-            
-            columns = re.split(';', cleansing_rule['columns'])
-            columns = [column.strip() for column in columns if column != ""]
+    # JSON string → Python object
+    if isinstance(cleansing_rules, str):
+        cleansing_rules = cleansing_rules.strip()
+        if not cleansing_rules:
+            return []
+        cleansing_rules = json.loads(cleansing_rules)
 
-            print (f"\n\nFunction: {cleansing_rule['function']}\nParameters: {cleansing_rule['parameters']}\nColumns: {cleansing_rule['columns']}")
-            df = dynamic_call_cleansing_function(df, cleansing_rule['function'], columns, cleansing_rule['parameters'])
-    else:
-        print(f"CleansingOptions doesn't exists in: {cleansing_rules}")
+    # Single dict → wrap in list
+    if isinstance(cleansing_rules, dict):
+        cleansing_rules = [cleansing_rules]
+
+    if not isinstance(cleansing_rules, list):
+        raise TypeError(
+            f"cleansing_rules must be a list of dicts, got {type(cleansing_rules).__name__}"
+        )
+
+    for i, rule in enumerate(cleansing_rules):
+        if not isinstance(rule, dict):
+            raise TypeError(
+                f"Rule at index {i} is not a dict (got {type(rule).__name__})"
+            )
+
+    return cleansing_rules
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+def handle_cleansing_functions(df: DataFrame, cleansing_rules):
+    cleansing_rules = normalize_cleansing_rules(cleansing_rules)
+
+    for rule in cleansing_rules:
+        function = rule.get("function")
+        if not function:
+            print(f"'function' missing in: {rule}")
+            continue
+
+        parameters = rule.get("parameters")
+        columns_raw = rule.get("columns")
+
+        columns = (
+            [c.strip() for c in columns_raw.split(";") if c.strip()]
+            if columns_raw else []
+        )
+
+        print(
+            f"\nFunction: {function}"
+            f"\nParameters: {parameters}"
+            f"\nColumns: {columns}"
+        )
+
+        df = dynamic_call_cleansing_function(
+            df,
+            function,
+            columns,
+            parameters
+        )
+
     return df
 
 # METADATA ********************
@@ -125,7 +173,7 @@ def handle_cleansing_functions(
 
 # # Cleansing functions
 # 
-# Different cleansing functions can be defined here. Add your own!
+
 
 # CELL ********************
 
@@ -160,7 +208,6 @@ def normalize_text(df: DataFrame, columns, args):
 
         df = df.withColumn(c, expr)
     return df
-
 
 # METADATA ********************
 
@@ -203,7 +250,6 @@ def fill_nulls(df: DataFrame, columns, args):
                 df = df.withColumn(c, coalesce(col(c), lit(default_date)))
     return df
 
-
 # METADATA ********************
 
 # META {
@@ -239,46 +285,6 @@ def parse_datetime(df: DataFrame, columns, args):
         if into and not keep_original and out_col != c:
             df = df.drop(c)
     return df
-
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-from pyspark.sql.functions import col, upper, lower
-
-def to_upper(df, columns, args):
-    #print(args['param1'])
-    for column in columns:
-        df = df.withColumn(column, upper(col(column)))
-    return df
-
-def to_lower(df, columns, args):
-    #print(args['param1'])
-    for column in columns:
-        df = df.withColumn(column, lower(col(column)))
-    return df
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# MARKDOWN ********************
-
-# # Execution
-
-# CELL ********************
-
-# apply rules to dataframe
-dfDataChanged = handle_cleansing_functions(dfDataChanged, cleansing_rules)
 
 # METADATA ********************
 
