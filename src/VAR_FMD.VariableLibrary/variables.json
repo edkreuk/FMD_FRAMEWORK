@@ -5,43 +5,43 @@
       "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_uri_name"
+      "value": ""
     },
     {
       "name": "key_vault_tenant_id",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_tenant_id"
+      "value": ""
     },
     {
       "name": "key_vault_client_id",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_client_id"
+      "value": ""
     },
     {
       "name": "key_vault_client_secret",
       "note": "",
       "type": "String",
-      "value": "val_key_vault_client_secret"
+      "value": ""
     },
     {
       "name": "lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
-      "value": true
+      "value": ""
     },
     {
       "name": "fmd_fabric_db_connection",
       "note": "",
       "type": "String",
-      "value": "nl7yhqnbrscude3yv6mas6bxpq-tndhi54vbs4urpccunwiydulzi.database.fabric.microsoft.com,1433"
+      "value": ""
     },
     {
       "name": "fmd_fabric_db_name",
       "note": "",
       "type": "String",
-      "value": "SQL_FMD_FRAMEWORK-075e5656-613d-41f4-89ed-63f6837c0ff6"
+      "value": ""
     }
   ]
 }

@@ -144,6 +144,11 @@
         "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
         "type": "DataPipeline"
     },
+   {
+        "name": "ENV_FMD.Environment",
+        "id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
+        "type": "Environment"
+    },
     {
         "name": "VAR_FMD.VariableLibrary",
         "id": "582c746d-d11d-960f-45fb-0f57937b1bf2",
@@ -193,10 +198,5 @@
                 "source": "fmd_fabric_db_name"
             }
         ]
-    },
-    {
-        "name": "ENV_FMD.Environment",
-        "id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
-        "type": "Environment"
     }
 ]
