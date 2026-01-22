@@ -160,8 +160,12 @@ def get_workspace_id_by_name(workspace_name):
     """
     Retrieves the workspace ID by its display name.
     """
-    result = run_fab_command(f"get {workspace_name}.Workspace -q id", capture_output=True, silently_continue=True)
-    return result
+    result = run_fab_command("api -X get workspaces/", capture_output=True, silently_continue=True)
+    workspaces = json.loads(result)["text"]["value"]
+    normalized_name = workspace_name.strip().lower()
+    match = next((w for w in workspaces if w['displayName'].strip().lower() == normalized_name), None)
+    return match['id'] if match else None
+
 def ensure_workspace_exists(workspace, workspace_name):
     """
     Ensures the workspace exists; creates it if not found.
@@ -189,6 +193,15 @@ def ensure_workspace_exists(workspace, workspace_name):
             print(f"✅ Workspace '{workspace_name}' created")
         except Exception as e:
             raise RuntimeError(f"❌ Failed to create workspace: {e}")
+
+        # Verify creation
+        workspace_id = get_workspace_id_by_name(workspace_name)
+        if workspace_id:
+            print(f" - Created workspace '{workspace_name}'. ID: {workspace_id}")
+            return workspace_id, "created"
+        else:
+            raise RuntimeError(f"Workspace '{workspace_name}' could not be created or found.")
+
 
 # -------------------------------
 # Item Utilities
