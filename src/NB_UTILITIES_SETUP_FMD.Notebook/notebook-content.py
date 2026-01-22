@@ -194,6 +194,15 @@ def ensure_workspace_exists(workspace, workspace_name):
         except Exception as e:
             raise RuntimeError(f"❌ Failed to create workspace: {e}")
 
+        # Verify creation
+        workspace_id = get_workspace_id_by_name(workspace_name)
+        if workspace_id:
+            print(f" - Created workspace '{workspace_name}'. ID: {workspace_id}")
+            return workspace_id, "created"
+        else:
+            raise RuntimeError(f"Workspace '{workspace_name}' could not be created or found.")
+
+
 # -------------------------------
 # Item Utilities
 # -------------------------------
