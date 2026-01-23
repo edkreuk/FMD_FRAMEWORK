@@ -231,7 +231,7 @@ def update_variable_library(folder_path, it_variables):
         variables_table.append(
             {
                 "name": it_variable.get("name"),
-                "note": it_variable.get("note"),
+                "note": "",
                 "type": it_variable.get("datatype"),
                 "value": new_variable,
             }
