@@ -260,7 +260,7 @@ elif schema_enabled  != True:
 # META }
 
 # CELL ********************
-
+#1
 #Read all incoming changes in Parquet format
 dfDataChanged= spark.read\
                 .format("delta") \
