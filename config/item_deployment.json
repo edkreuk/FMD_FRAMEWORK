@@ -179,12 +179,6 @@
                 "datatype": "String",
                 "source": "key_vault_client_secret"
             },
-              {
-                "name": "lakehouse_schema_enabled",
-                "type": "variable",
-                "datatype": "Boolean",
-                "source": "lakehouse_schema_enabled"
-            },
             {
                 "name": "fmd_fabric_db_connection",
                 "type": "variable",
