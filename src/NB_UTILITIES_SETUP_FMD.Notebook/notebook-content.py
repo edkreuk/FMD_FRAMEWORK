@@ -518,7 +518,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
     - name (str): Name of the item to deploy.
     - mapping_table (list): List to store ID mappings.
     - environment_name (str): Target environment name.
-    - connection_list (list): List of valid connection GUIDs.
+    - connections (list): List of valid connection GUIDs.
     - tasks (list): List to store task execution logs.
     - lakehouse_schema_enabled (bool): Flag to enable schema creation for lakehouses.
     - child (str, optional): Child item name if applicable.
@@ -564,8 +564,8 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
 
     elif "DataPipeline" in name:
         print(f"Replacing connections guid in {workspace_name}: {name}")
-        connection_list=get_existing_connections_by_id()
-        replace_ids_and_mark_inactive(tmp_path, mapping_table, environment_name, connection_list)
+        connections=get_existing_connections_by_id()
+        replace_ids_and_mark_inactive(tmp_path, mapping_table, environment_name, connections)
         result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
         #assign_item_description(workspace_name, name)
         new_id = get_item_id(workspace_name, name, 'id')
@@ -635,8 +635,8 @@ def get_existing_connections_by_id():
     Retrieves the connections ID 
     """
     result = run_fab_command("ls .connections -l -q [].{id:id}", capture_output=True, silently_continue=True)
-    connection_list = result[2:]
-    return connection_list
+    connections = result[2:]
+    return connections
 
 
 def create_or_get_fmd_connection(connection_name,connection_role, type):
