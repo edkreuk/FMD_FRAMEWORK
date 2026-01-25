@@ -19,7 +19,7 @@
 # -------------------------------
 # Deploy Utilities
 # -------------------------------
-#1
+
 def mapping_table_composite_key(row, keys):
     return tuple(row.get(k) for k in keys)
 
