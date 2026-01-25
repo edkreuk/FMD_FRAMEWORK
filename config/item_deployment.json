@@ -29,6 +29,11 @@
         "id": "d8d5cb97-a785-8863-406b-2bdea5c26d5c",
         "type": "Notebook"
     },
+        {
+        "name": "NB_FMD_DQ_CLEANSING.Notebook",
+        "id": "893b5a96-c402-aa9a-4302-33730740d27f",
+        "type": "Notebook"
+    },
     {
         "name": "PL_FMD_LDZ_COPY_FROM_CUSTOM_NB.DataPipeline",
         "id": "38f17b20-2d5a-8f67-4801-9c6bcb0f651b",
@@ -139,6 +144,11 @@
         "id": "1b6d7d0d-d04b-4bc2-a6da-7a876216561d",
         "type": "DataPipeline"
     },
+   {
+        "name": "ENV_FMD.Environment",
+        "id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
+        "type": "Environment"
+    },
     {
         "name": "VAR_FMD.VariableLibrary",
         "id": "582c746d-d11d-960f-45fb-0f57937b1bf2",
@@ -188,10 +198,5 @@
                 "source": "fmd_fabric_db_name"
             }
         ]
-    },
-    {
-        "name": "ENV_FMD.Environment",
-        "id": "4c613d65-f566-4bf3-83be-7d8c773793cd",
-        "type": "Environment"
     }
 ]

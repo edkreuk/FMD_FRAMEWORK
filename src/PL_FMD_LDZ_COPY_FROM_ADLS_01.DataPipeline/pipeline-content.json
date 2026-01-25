@@ -88,7 +88,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "fcae8862_bb0b_4925_ad3c_3a72764aa6e0",
+                      "name": "129756f8_384d_4701_915c_55c8eac8bc0c",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -877,7 +877,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT * FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ADLS_01'",
+              "value": "SELECT * FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ADLS_01'and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
               "type": "Expression"
             },
             "queryTimeout": "02:00:00",
@@ -1027,6 +1027,12 @@
         }
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

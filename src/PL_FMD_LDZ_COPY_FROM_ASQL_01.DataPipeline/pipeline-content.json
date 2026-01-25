@@ -81,7 +81,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "5f3566d1_6570_42bc_81c5_8ef26131a120",
+                      "name": "b787fbab_c58b_4357_9777_8edfd977c96e",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -1043,7 +1043,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ASQL_01'",
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ASQL_01'\nand WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
               "type": "Expression"
             },
             "queryTimeout": "02:00:00",
@@ -1098,7 +1098,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ASQL_02'",
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ASQL_02'and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
               "type": "Expression"
             },
             "queryTimeout": "02:00:00",
@@ -1210,7 +1210,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "ce0a5e74_2680_435c_8ce4_21008dd3a394",
+                      "name": "7e5ef157_871c_47f3_a8d4_32ed04cf5f9e",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -2151,6 +2151,12 @@
         }
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

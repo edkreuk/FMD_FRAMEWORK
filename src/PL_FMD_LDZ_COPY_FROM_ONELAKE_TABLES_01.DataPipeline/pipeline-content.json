@@ -79,7 +79,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "0e057f5e_b3a1_45c8_b5a0_d19145426417",
+                      "name": "03d214bb_0296_4eed_b1a1_8fcc14e15837",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -865,7 +865,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ONELAKE_TABLES_01'",
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='ONELAKE_TABLES_01'\nand WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
               "type": "Expression"
             },
             "queryTimeout": "02:00:00",
@@ -1015,6 +1015,12 @@
         }
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

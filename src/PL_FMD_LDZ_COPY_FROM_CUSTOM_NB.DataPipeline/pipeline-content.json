@@ -850,7 +850,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='NOTEBOOK'",
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='NOTEBOOK'\nand WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -1017,6 +1017,12 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

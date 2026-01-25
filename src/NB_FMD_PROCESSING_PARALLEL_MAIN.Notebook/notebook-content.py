@@ -155,7 +155,7 @@ starttime = datetime.now()
 
 # CELL ********************
 
-nb_name = 'NB_FMD_DQ_CLEANSING'
+nb_name = 'NB_FMD_CUSTOM_DQ_CLEANSING'
 nb_exists = False
 
 try:
@@ -186,7 +186,7 @@ if not nb_exists:
     }
 
     cell_code = """
-    # Implement custom cleanings fucntion here
+    # Implement custom cleansings function here
 
     #def <functienaam> (df, columns, args):
     #    print(args['<custom parameter name>']) # use of custom parameters
