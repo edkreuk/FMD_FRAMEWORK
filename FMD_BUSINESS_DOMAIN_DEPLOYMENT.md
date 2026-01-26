@@ -8,7 +8,7 @@ Author: edkreuk
 
 # Deploy the FMD Business Domain Framework in Microsoft Fabric
 
-![FMD Overview](/Images/FMD_Domain_Overview.png)
+![FMD Overview](/Images/FMD_DOMAIN_OVERVIEW.png)
 
 This article describes how to deploy the Business Domains in Microsoft Fabric. Follow these steps to configure your environment, set up required connections, and apply deployment settings.
 
