@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
+  "variables": [
+    {
+      "name": "fmd_fabric_db_connection",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "fmd_fabric_db_name",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "fmd_config_workspace_guid",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "fmd_config_database_guid",
+      "note": "",
+      "type": "String",
+      "value": ""
+    }
+  ]
+}
