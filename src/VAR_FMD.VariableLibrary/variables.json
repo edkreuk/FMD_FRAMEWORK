@@ -30,18 +30,6 @@
       "note": "",
       "type": "Boolean",
       "value": ""
-    },
-    {
-      "name": "fmd_fabric_db_connection",
-      "note": "",
-      "type": "String",
-      "value": ""
-    },
-    {
-      "name": "fmd_fabric_db_name",
-      "note": "",
-      "type": "String",
-      "value": ""
     }
   ]
 }

@@ -184,18 +184,6 @@
                 "type": "variable",
                 "datatype": "Boolean",
                 "source": "lakehouse_schema_enabled"
-            },
-            {
-                "name": "fmd_fabric_db_connection",
-                "type": "variable",
-                "datatype": "String",
-                "source": "fmd_fabric_db_connection"
-            },
-            {
-                "name": "fmd_fabric_db_name",
-                "type": "variable",
-                "datatype": "String",
-                "source": "fmd_fabric_db_name"
             }
         ]
     }

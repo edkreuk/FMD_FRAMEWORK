@@ -16,7 +16,8 @@
 
 # CELL ********************
 
-#
+config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
+default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
 
 # METADATA ********************
 
@@ -45,12 +46,12 @@ TargetLakehouseName =''
 TargetSchema = ""
 TargetName = ""
 cleansing_rules = []
-
+key_vault =default_settings.key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=''
-database=''
-schema_enabled = ''
+connstring=config_settings.fmd_fabric_db_connection
+database=config_settings.fmd_fabric_db_name
+schema_enabled =default_settings.lakehouse_schema_enabled
 EntityLayer='Silver'
 result_data=''
 

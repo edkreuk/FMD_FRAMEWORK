@@ -37,17 +37,6 @@ from py4j.protocol import Py4JJavaError
 # META   "language_group": "synapse_pyspark"
 # META }
 
-# CELL ********************
-
-variable_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
 # PARAMETERS CELL ********************
 
 ###############################Target Parameters###############################
@@ -63,12 +52,10 @@ CustomNotebookName = "NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE"
 TriggerGuid = ""
 TriggerTime = ""
 TriggerType = ""
-key_vault =variable_settings.key_vault_uri_name
+
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=variable_settings.fmd_fabric_db_connection
-database=variable_settings.fmd_fabric_db_name
-schema_enabled =variable_settings.lakehouse_schema_enabled
+
 result_data=''
 
 # METADATA ********************
@@ -175,8 +162,6 @@ notebook_params["PipelineParentRunGuid"] = PipelineParentRunGuid
 notebook_params["PipelineRunGuid"] = PipelineRunGuid
 notebook_params["NotebookExecutionId"] = NotebookExecutionId
 notebook_params["driver"] = driver
-notebook_params["connstring"] = connstring
-notebook_params["database"] = database
 notebook_params["EntityId"] = EntityId 
 notebook_params["EntityLayer"] = EntityLayer 
 notebook_params["DataSourceName"] = DataSourceName 
