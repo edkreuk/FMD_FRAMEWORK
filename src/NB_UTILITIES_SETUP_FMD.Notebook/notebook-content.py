@@ -572,7 +572,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
     if "Notebook" in name:
         cli_parameter += " --format .py"
         result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f {cli_parameter}",capture_output=True, silently_continue=True)
-        #assign_item_description(workspace_name, name)  #added to Notebook import to speed up deployment
+        assign_item_description(workspace_name, name)  #added to Notebook import to speed up deployment
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Notebooks')
         mapping_type='Notebook'
@@ -587,7 +587,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
 
                     else:
                         result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P", capture_output=True, silently_continue=True)
-                        #assign_item_description(workspace_name, name)
+                        assign_item_description(workspace_name, name)
                     print(f"✅ {name} Created/Imported'")
                 except Exception as e:
                     raise RuntimeError(f"❌ Failed to create Lakehouse: {e}")
@@ -602,7 +602,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         connection_list=get_existing_connections_by_id()
         replace_ids_and_mark_inactive(tmp_path, mapping_table, environment_name, connection_list)
         result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
-        #assign_item_description(workspace_name, name)
+        assign_item_description(workspace_name, name)
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='DataPipelines')
         mapping_type='DataPipeline'
