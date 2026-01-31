@@ -242,7 +242,10 @@
               "typeProperties": {
                 "parameters": {
                   "DataSourceType": "NOTEBOOK",
-                  "Data_WorkspaceGuid": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+                  "Data_WorkspaceGuid": {
+                    "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                    "type": "Expression"
+                  }
                 },
                 "waitOnCompletion": true,
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -280,7 +283,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='NOTEBOOK' group by DatasourceType",
+              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='NOTEBOOK' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}' group by DatasourceType",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -290,7 +293,7 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "e0bfdffc_6660_420e_8109_48860d6e6547",
+              "name": "f55d3fb4_ed83_4b53_accc_b7e46705d062",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -442,6 +445,11 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

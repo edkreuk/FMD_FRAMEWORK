@@ -241,7 +241,11 @@
               "type": "InvokePipeline",
               "typeProperties": {
                 "parameters": {
-                  "DataSourceType": "ADF"
+                  "DataSourceType": "ADF",
+                  "Data_WorkspaceGuid": {
+                    "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                    "type": "Expression"
+                  }
                 },
                 "waitOnCompletion": true,
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -279,7 +283,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='ADF' group by DatasourceType",
+              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='ADF' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'group by DatasourceType",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -289,7 +293,7 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "d16b337a_c9a3_4b77_93d9_eb0f8edecfa6",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -441,6 +445,11 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

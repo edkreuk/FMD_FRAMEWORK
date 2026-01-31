@@ -241,7 +241,11 @@
               "type": "InvokePipeline",
               "typeProperties": {
                 "parameters": {
-                  "DataSourceType": "SFTP"
+                  "DataSourceType": "SFTP",
+                  "Data_WorkspaceGuid": {
+                    "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                    "type": "Expression"
+                  }
                 },
                 "waitOnCompletion": true,
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -279,7 +283,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='SFTP' group by DatasourceType",
+              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='SFTP' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}' group by DatasourceType",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -289,7 +293,7 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "6be0ec1b_b406_48b0_873b_389cebf9598c",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -441,6 +445,11 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

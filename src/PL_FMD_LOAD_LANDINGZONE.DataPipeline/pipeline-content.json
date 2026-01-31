@@ -28,6 +28,10 @@
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
                               "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -59,6 +63,10 @@
                           "parameters": {
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -92,6 +100,10 @@
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
                               "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -123,6 +135,10 @@
                           "parameters": {
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -156,6 +172,10 @@
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
                               "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -188,6 +208,10 @@
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
                               "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -216,7 +240,16 @@
                       {
                         "type": "InvokePipeline",
                         "typeProperties": {
-                          "parameters": {},
+                          "parameters": {
+                            "ConnectionType": {
+                              "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            }
+                          },
                           "waitOnCompletion": true,
                           "workspaceId": "00000000-0000-0000-0000-000000000000",
                           "pipelineId": "4ee59a0f-ce5b-81d5-4477-eeac0e61c8a5",
@@ -246,6 +279,10 @@
                           "parameters": {
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -532,7 +569,10 @@
         "typeProperties": {
           "source": {
             "type": "FabricSqlDatabaseSource",
-            "sqlReaderQuery": "SELECT distinct     [ConnectionType] FROM [execution].[vw_LoadSourceToLandingzone]",
+            "sqlReaderQuery": {
+              "value": "SELECT distinct     [ConnectionType] FROM [execution].[vw_LoadSourceToLandingzone] where  WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
+              "type": "Expression"
+            },
             "partitionOption": "None",
             "queryTimeout": "02:00:00"
           },
@@ -540,7 +580,7 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "82679b7e_2db2_4110_b4e6_ad6e201573ef",
+              "name": "7375cd95_93c0_4b85_940e_692635efad1f",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -575,6 +615,12 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",
