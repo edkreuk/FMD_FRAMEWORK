@@ -82,15 +82,10 @@ result_data=''
 # CELL ********************
 
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 import json
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
 from delta.tables import *
-from notebookutils import mssparkutils
-import uuid
-import struct
-import pyodbc
+from pyspark.sql.functions import sha2, concat_ws, md5, StringType,current_timestamp
 
 # METADATA ********************
 

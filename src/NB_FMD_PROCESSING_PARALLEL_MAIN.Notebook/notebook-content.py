@@ -24,7 +24,7 @@
 
 from json import loads, dumps
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 NotebookExecutionId = str(uuid.uuid4())
 
 
@@ -408,7 +408,7 @@ except Exception as e:
 # CELL ********************
 
 TotalRuntime = str((datetime.now() - starttime))
-notebookutils.mssparkutils.notebook.exit(exit_value)
+notebookutils.notebook.exit(exit_value)
 
 # METADATA ********************
 

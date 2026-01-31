@@ -25,7 +25,7 @@
 import uuid
 import requests
 
-from datetime import datetime
+from datetime import datetime, timezone
 from json import loads, dumps
 from py4j.protocol import Py4JJavaError
 
@@ -229,7 +229,7 @@ if fail:
 # CELL ********************
 
 TotalRuntime = str((datetime.now() - starttime))
-notebookutils.mssparkutils.notebook.exit(result)
+notebookutils.notebook.exit(result)
 
 # METADATA ********************
 

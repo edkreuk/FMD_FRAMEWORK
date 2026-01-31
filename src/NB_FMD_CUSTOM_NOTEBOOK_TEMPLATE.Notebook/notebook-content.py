@@ -45,9 +45,8 @@ default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
 
 import json
 import pandas as pd
-
 from pyspark.sql import DataFrame
-from datetime import datetime
+from datetime import datetime, timezone
 
 # METADATA ********************
 
@@ -107,7 +106,7 @@ result_data=''
 
 # CELL ********************
 
-TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+TriggerTime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 StartNotebookActivity = (

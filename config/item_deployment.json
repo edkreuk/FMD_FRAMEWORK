@@ -204,8 +204,7 @@
                 "type": "variable",
                 "datatype": "String",
                 "source": "fmd_fabric_db_name"
-            }
-            ,
+            },
             {
                 "name": "fmd_config_database_guid",
                 "type": "variable",
