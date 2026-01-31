@@ -650,6 +650,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         variable_parameters["fmd_fabric_db_connection"]=server
         variable_parameters["fmd_fabric_db_name"]=database_name
         variable_parameters["fmd_config_database_guid"]=new_id
+        variable_parameters["fmd_config_workspace_guid"]=workspace_id
         upsert_mapping(mapping_table, {"Description":deployment_item['name'] , "environment": 'config',"ItemType": 'SQLDatabase', "old_id": deployment_item["endpoint"], "new_id": server}, keys=("Description","environment", "ItemType","old_id"))
         upsert_mapping(mapping_table, {"Description":deployment_item['name'] , "environment": 'config',"ItemType": 'SQLDatabase', "old_id": deployment_item["name"], "new_id": configuration['DatabaseName']}, keys=("Description","environment", "ItemType","old_id"))
 
