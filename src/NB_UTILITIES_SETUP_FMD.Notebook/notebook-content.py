@@ -654,6 +654,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         upsert_mapping(mapping_table, {"Description":deployment_item['name'] , "environment": 'config',"ItemType": 'SQLDatabase', "old_id": deployment_item["name"], "new_id": configuration['DatabaseName']}, keys=("Description","environment", "ItemType","old_id"))
 
         mapping_type='SQLDatabase'
+        return server, database_name
     if 'result' in locals() and result is not None:
         print(result)
     else:
