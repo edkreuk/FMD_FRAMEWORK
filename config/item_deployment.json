@@ -184,8 +184,16 @@
                 "type": "variable",
                 "datatype": "Boolean",
                 "source": "lakehouse_schema_enabled"
-            },
-            {
+            }
+        ]
+    }
+    ,
+    {
+        "name": "VAR_CONFIG_FMD.VariableLibrary",
+        "id": "9c0c1230-53f7-b12e-4143-105fa972eb57",
+        "type": "VariableLibrary",
+         "variables": [
+                       {
                 "name": "fmd_fabric_db_connection",
                 "type": "variable",
                 "datatype": "String",
@@ -196,6 +204,18 @@
                 "type": "variable",
                 "datatype": "String",
                 "source": "fmd_fabric_db_name"
+            },
+            {
+                "name": "fmd_config_database_guid",
+                "type": "variable",
+                "datatype": "String",
+                "source": "fmd_config_database_guid"
+            },
+              {
+                "name": "fmd_config_workspace_guid",
+                "type": "variable",
+                "datatype": "String",
+                "source": "fmd_config_workspace_guid"
             }
         ]
     }

@@ -17,7 +17,8 @@
 
 # CELL ********************
 
-variable_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
+config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
+default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
 
 # METADATA ********************
 
@@ -56,14 +57,14 @@ EscapeCharacter = '"'
 Encoding = 'UTF-8'
 first_row_is_header = True
 infer_schema = True
-
+key_vault =default_settings.key_vault_uri_name
 cleansing_rules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=variable_settings.fmd_fabric_db_connection
-database=variable_settings.fmd_fabric_db_name
-schema_enabled = variable_settings.lakehouse_schema_enabled
+connstring=config_settings.fmd_fabric_db_connection
+database=config_settings.fmd_fabric_db_name
+schema_enabled =default_settings.lakehouse_schema_enabled
 EntityLayer='Bronze'
 result_data=''
 
@@ -81,15 +82,10 @@ result_data=''
 # CELL ********************
 
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 import json
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
 from delta.tables import *
-from notebookutils import mssparkutils
-import uuid
-import struct
-import pyodbc
+from pyspark.sql.functions import sha2, concat_ws, md5, StringType,current_timestamp
 
 # METADATA ********************
 

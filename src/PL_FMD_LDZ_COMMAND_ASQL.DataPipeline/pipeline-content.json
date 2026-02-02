@@ -92,8 +92,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -202,8 +202,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -241,7 +241,11 @@
               "type": "InvokePipeline",
               "typeProperties": {
                 "parameters": {
-                  "DataSourceType": "ASQL_01"
+                  "DataSourceType": "ASQL_01",
+                  "Data_WorkspaceGuid": {
+                    "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                    "type": "Expression"
+                  }
                 },
                 "waitOnCompletion": true,
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -279,7 +283,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='SQL' group by DatasourceType",
+              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='SQL' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'group by DatasourceType",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -289,12 +293,12 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "70de7fb4_dba4_4146_bb44_0b430669ebf5",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
                 },
                 "externalReferences": {
                   "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -414,8 +418,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -441,6 +445,11 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",
@@ -452,15 +461,15 @@
         "variableName": "lakehouse_schema_enabled",
         "libraryName": "VAR_FMD"
       },
-      "VAR_FMD_fmd_fabric_db_connection": {
+      "VAR_CONFIG_FMD_fmd_config_database_guid": {
         "type": "String",
-        "variableName": "fmd_fabric_db_connection",
-        "libraryName": "VAR_FMD"
+        "variableName": "fmd_config_database_guid",
+        "libraryName": "VAR_CONFIG_FMD"
       },
-      "VAR_FMD_fmd_fabric_db_name": {
+      "VAR_CONFIG_FMD_fmd_config_workspace_guid": {
         "type": "String",
-        "variableName": "fmd_fabric_db_name",
-        "libraryName": "VAR_FMD"
+        "variableName": "fmd_config_workspace_guid",
+        "libraryName": "VAR_CONFIG_FMD"
       }
     }
   }

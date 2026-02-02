@@ -25,12 +25,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_uri_name": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
-                              "type": "Expression"
-                            },
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -61,12 +61,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_uri_name": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
-                              "type": "Expression"
-                            },
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -97,12 +97,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_uri_name": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
-                              "type": "Expression"
-                            },
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -133,12 +133,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
-                              "type": "Expression"
-                            },
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -169,12 +169,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
-                              "type": "Expression"
-                            },
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -205,12 +205,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "key_vault_name": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_key_vault_uri_name",
-                              "type": "Expression"
-                            },
                             "ConnectionType": {
                               "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -240,7 +240,16 @@
                       {
                         "type": "InvokePipeline",
                         "typeProperties": {
-                          "parameters": {},
+                          "parameters": {
+                            "ConnectionType": {
+                              "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            }
+                          },
                           "waitOnCompletion": true,
                           "workspaceId": "00000000-0000-0000-0000-000000000000",
                           "pipelineId": "4ee59a0f-ce5b-81d5-4477-eeac0e61c8a5",
@@ -268,12 +277,12 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "FMD_CONNECTION": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_fmd_fabric_db_connection",
+                            "ConnectionType": {
+                              "value": "@toUpper(item().ConnectionType)",
                               "type": "Expression"
                             },
-                            "FMD_DATABASE": {
-                              "value": "@pipeline().libraryVariables.VAR_FMD_fmd_fabric_db_name",
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
                             }
                           },
@@ -419,8 +428,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -529,8 +538,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -560,7 +569,10 @@
         "typeProperties": {
           "source": {
             "type": "FabricSqlDatabaseSource",
-            "sqlReaderQuery": "SELECT distinct     [ConnectionType] FROM [execution].[vw_LoadSourceToLandingzone]",
+            "sqlReaderQuery": {
+              "value": "SELECT distinct     [ConnectionType] FROM [execution].[vw_LoadSourceToLandingzone] where  WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
+              "type": "Expression"
+            },
             "partitionOption": "None",
             "queryTimeout": "02:00:00"
           },
@@ -568,12 +580,12 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "7375cd95_93c0_4b85_940e_692635efad1f",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
                 },
                 "externalReferences": {
                   "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -603,21 +615,32 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",
         "variableName": "key_vault_uri_name",
         "libraryName": "VAR_FMD"
       },
-      "VAR_FMD_fmd_fabric_db_connection": {
-        "type": "String",
-        "variableName": "fmd_fabric_db_connection",
+      "VAR_FMD_lakehouse_schema_enabled": {
+        "type": "Bool",
+        "variableName": "lakehouse_schema_enabled",
         "libraryName": "VAR_FMD"
       },
-      "VAR_FMD_fmd_fabric_db_name": {
+      "VAR_CONFIG_FMD_fmd_config_database_guid": {
         "type": "String",
-        "variableName": "fmd_fabric_db_name",
-        "libraryName": "VAR_FMD"
+        "variableName": "fmd_config_database_guid",
+        "libraryName": "VAR_CONFIG_FMD"
+      },
+      "VAR_CONFIG_FMD_fmd_config_workspace_guid": {
+        "type": "String",
+        "variableName": "fmd_config_workspace_guid",
+        "libraryName": "VAR_CONFIG_FMD"
       }
     }
   }

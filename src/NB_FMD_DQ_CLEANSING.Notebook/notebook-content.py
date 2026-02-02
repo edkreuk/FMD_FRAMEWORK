@@ -177,8 +177,17 @@ def handle_cleansing_functions(df: DataFrame, cleansing_rules):
 
 # CELL ********************
 
-from pyspark.sql.functions import col, trim, regexp_replace, lower, upper, initcap, when, length, lit
+from pyspark.sql.functions import col, trim, regexp_replace, lower, upper, initcap, when, length, lit, coalesce,to_date, to_timestamp, when
 from pyspark.sql import DataFrame
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
 
 def normalize_text(df: DataFrame, columns, args):
     """
@@ -218,8 +227,6 @@ def normalize_text(df: DataFrame, columns, args):
 
 # CELL ********************
 
-from pyspark.sql.functions import coalesce, lit
-
 def fill_nulls(df: DataFrame, columns, args):
     """
     Args:
@@ -258,8 +265,6 @@ def fill_nulls(df: DataFrame, columns, args):
 # META }
 
 # CELL ********************
-
-from pyspark.sql.functions import to_date, to_timestamp, when
 
 def parse_datetime(df: DataFrame, columns, args):
     """

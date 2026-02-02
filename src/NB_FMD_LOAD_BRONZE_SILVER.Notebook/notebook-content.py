@@ -16,7 +16,8 @@
 
 # CELL ********************
 
-#
+config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
+default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
 
 # METADATA ********************
 
@@ -45,12 +46,12 @@ TargetLakehouseName =''
 TargetSchema = ""
 TargetName = ""
 cleansing_rules = []
-
+key_vault =default_settings.key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=''
-database=''
-schema_enabled = ''
+connstring=config_settings.fmd_fabric_db_connection
+database=config_settings.fmd_fabric_db_name
+schema_enabled =default_settings.lakehouse_schema_enabled
 EntityLayer='Silver'
 result_data=''
 
@@ -68,15 +69,11 @@ result_data=''
 # CELL ********************
 
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 import json
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
 from delta.tables import *
-from notebookutils import mssparkutils
-import uuid
-import struct
-import pyodbc
+from pyspark.sql.functions import sha2, concat_ws, md5, StringType,current_timestamp, expr
+
 
 # METADATA ********************
 
@@ -452,8 +449,21 @@ columns_original = {f"original.{column}" for column in dfDataOriginal.columns if
 # Define columns to insert and delete
 columns_to_insert_deletes = {f"changes.{column}" for column in dfDataOriginal.columns if column not in ('HashedPKColumn', 'Action')}
 
-# Join DataFrames for inserts and deletes
-# delete -> update table to close existing record
+#### Join DataFrames for deletes
+#
+# Here, we identify all of the records that are:
+#   1. NOT in the incoming changes, but IN the original
+#   2. IN the incoming changes, but DELETED in the original
+# 
+# Both require updates.
+#
+# For 1:
+#   This requires the original row to be set to IsDeleted=True
+#
+# For 2:
+#   This requires the original row to be set to IsCurrent=False
+#   These rows are accompanied by inserts, which will be identified seperately (in df_inserts) 
+####
 df_deletes = (
     dfDataOriginal.alias('original')
     .join(
@@ -478,7 +488,16 @@ df_deletes = (
     .withColumn('IsDeleted', lit(True))
 )
 
-# Process updated records (new rows)
+#### Process updated records (new rows)
+#
+# Here, we identify all of the records that are:
+#   - IN the incoming changes, AND IN the original, but
+#     with different content, i.e. different HashedNonKeyColumns
+#
+# Here, we isolate the rows from the incoming changes (new) because we 
+# need to INSERT the new rows.
+#
+####
 df_updates_new = (
     dfDataOriginal.alias('original')
     .join(
@@ -499,7 +518,16 @@ df_updates_new = (
     .withColumn('IsDeleted', lit(False))
 )
 
-# Process updated records (old rows)
+#### Process updated records (old rows)
+#
+# Here, we identify all of the records that are:
+#   - IN the incoming changes, AND IN the original, but
+#     with different content, i.e. different HashedNonKeyColumns
+#
+# Here, we isolate the rows from the original (old) because we 
+# need to UPDATE the old rows.
+#
+####
 df_updates_old = (
     dfDataOriginal.alias('original')
     .join(
@@ -522,7 +550,14 @@ df_updates_old = (
     .withColumn('IsDeleted', lit(False))
 )
 
-# Process inserted records
+#### Process inserted records
+#
+# Here, we identify all of the records that are:
+#   - IN the incoming changes, and NOT IN the original
+#
+# We need to INSERT these rows.
+#
+####
 df_inserts = (
     dfDataChanged.alias('changes')
     .join(
@@ -542,14 +577,27 @@ df_inserts = (
     .withColumn('IsDeleted', lit(False))
 )
 
-# Final merged DataFrame
+### Final merged DataFrame
+#
+# Here, we merge all of the changed we plan to do: inserts, updates, and deletes.
+# The operation that is listed under 'Action' identifies what happens:
+#
+# For rows marked as D:
+#     If the current row IS NOT marked as IsDeleted: we set IsDeleted to True.
+#     If the current row IS marked as IsDeleted: we set IsCurrent to False
+#
+# For rows marked as U:
+#     The current row is set to IsCurrent=False
+#
+# For rows marked as I:
+#     The row is inserted with IsCurrent=True
+#
 dfDataChanged = (
     df_deletes
     .unionByName(df_updates_new)
     .unionByName(df_updates_old)
     .unionByName(df_inserts)
 )
-
 
 # METADATA ********************
 
@@ -579,19 +627,32 @@ deltaTable = DeltaTable.forPath(spark, f'{target_data_path}')
 
 merge = deltaTable.alias('original') \
     .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn = updates.HashedPKColumn and original.RecordStartDate = updates.RecordStartDate') \
-    .whenMatchedUpdate(  # handle deletes
+    .whenMatchedUpdate(
+            #
+            # Handle rows to be (soft-) deleted: 
+            # These rows have action 'D' and are NOT deleted in the original
+            #
             condition="original.IsCurrent == True AND original.IsDeleted == False AND updates.Action = 'D'",
             set={
                 "IsDeleted": lit(True),
                 "RecordEndDate": col('updates.RecordEndDate')
             }) \
-    .whenMatchedUpdate(  # handle updates
+    .whenMatchedUpdate(
+            #
+            # Handle rows to be updated.
+            # These rows have either action 'D' and ARE deleted in the original (so IsCurrent needs to be set to False)
+            # Or these have action 'U' and, are accompanied by inserts, but IsCurrent must be set to False. 
+            #
         condition="updates.HashedNonKeyColumns == original.HashedNonKeyColumns and original.IsCurrent = 1  ",
         set={
             "IsCurrent": lit(0),
             "RecordEndDate": col('updates.RecordStartDate')
         }) \
     .whenNotMatchedInsert(
+            #
+            # Handle inserts.
+            # These rows have action 'I' and must be inserted.
+            #
         values={**columns_to_insert,
                 "HashedPKColumn": col("updates.HashedPKColumn"),
                 "HashedNonKeyColumns": col("updates.HashedNonKeyColumns"),

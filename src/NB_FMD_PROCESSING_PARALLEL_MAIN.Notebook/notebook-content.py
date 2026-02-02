@@ -24,20 +24,9 @@
 
 from json import loads, dumps
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 NotebookExecutionId = str(uuid.uuid4())
 
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-variable_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
 
 # METADATA ********************
 
@@ -55,16 +44,13 @@ PipelineGuid = ""
 TriggerGuid = ""
 TriggerTime = ""
 TriggerType = ""
-key_vault =variable_settings.key_vault_uri_name
 
 notebook_entities = ""
 
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=variable_settings.fmd_fabric_db_connection
-database=variable_settings.fmd_fabric_db_name
-schema_enabled =variable_settings.lakehouse_schema_enabled
+
 
 # METADATA ********************
 
@@ -290,9 +276,7 @@ for i, item in enumerate( path_data):
     item["params"]["NotebookExecutionId"] = NotebookExecutionId
     item["params"]["useRootDefaultLakehouse"] = useRootDefaultLakehouse
     item["params"]["driver"] = driver
-    item["params"]["connstring"] = connstring
-    item["params"]["database"] = database
-    item["params"]["schema_enabled"] = schema_enabled
+
 
 
 
@@ -424,7 +408,7 @@ except Exception as e:
 # CELL ********************
 
 TotalRuntime = str((datetime.now() - starttime))
-notebookutils.mssparkutils.notebook.exit(exit_value)
+notebookutils.notebook.exit(exit_value)
 
 # METADATA ********************
 

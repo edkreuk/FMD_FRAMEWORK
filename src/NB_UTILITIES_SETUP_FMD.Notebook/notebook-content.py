@@ -16,6 +16,43 @@
 
 # CELL ********************
 
+variable_parameters = {
+    "key_vault_uri_name": key_vault_uri_name,
+    "key_vault_tenant_id": key_vault_tenant_id,
+    "key_vault_client_id": key_vault_client_id,
+    "key_vault_client_secret": key_vault_client_secret,
+    "lakehouse_schema_enabled": lakehouse_schema_enabled
+}
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# Workspace icon definition. Setting the icons to None will delete the existing icon of the workspaces specified.
+workspace_icon_def = {
+    "icons": {
+        "code": "fmd_code_icon.png",
+        "data": "fmd_data_icon.png",
+        "config": "fmd_config_icon.png",
+        "reporting": "fmd_reporting_icon.png",
+        "business_domain": "fmd_gold_icon.png"
+    }
+}
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
 # -------------------------------
 # Deploy Utilities
 # -------------------------------
@@ -497,8 +534,7 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
     assign_workspace_roles(workspace,workspace_name)
     create_workspace_identity(workspace_name)
 
-    if "CODE" in workspace_name.upper():
-        assign_workspace_identity_role(workspace_name)  #required to support Workspace identity in Fabric Pipelines connectionb
+    assign_workspace_identity_role(workspace_name)  #required to support Workspace identity in Fabric Pipelines connectionb
 
     if create_domains:
         assign_fabric_domain(domain_name, workspace_name) 
@@ -536,7 +572,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
     if "Notebook" in name:
         cli_parameter += " --format .py"
         result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f {cli_parameter}",capture_output=True, silently_continue=True)
-        #assign_item_description(workspace_name, name)  #added to Notebook import to speed up deployment
+        assign_item_description(workspace_name, name)  #added to Notebook import to speed up deployment
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Notebooks')
         mapping_type='Notebook'
@@ -548,16 +584,15 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
                     print(f"Creating Lakehouse: {name}")
                     if lakehouse_schema_enabled:
                         result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P enableschemas=true",capture_output=True, silently_continue=True)
-                        #assign_item_description(workspace_name, name)
+
                     else:
                         result = run_fab_command(f"create {workspace_name}.Workspace/{name} -P", capture_output=True, silently_continue=True)
-                        #assign_item_description(workspace_name, name)
+                        assign_item_description(workspace_name, name)
                     print(f"✅ {name} Created/Imported'")
                 except Exception as e:
                     raise RuntimeError(f"❌ Failed to create Lakehouse: {e}")
         else:
              result=('Lakehouse already exists, skip creation')
-
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Lakehouses')
         mapping_type='Lakehouse'
@@ -567,7 +602,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         connection_list=get_existing_connections_by_id()
         replace_ids_and_mark_inactive(tmp_path, mapping_table, environment_name, connection_list)
         result = run_fab_command(f"import / {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
-        #assign_item_description(workspace_name, name)
+        assign_item_description(workspace_name, name)
         new_id = get_item_id(workspace_name, name, 'id')
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='DataPipelines')
         mapping_type='DataPipeline'
@@ -609,9 +644,23 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         except Exception as e:
             raise RuntimeError(f"❌ Failed to create database: {e}")
         new_id = get_item_id(workspace_name, name, 'id')
-        mapping_type='SQLDatabase'
+        server = get_item_id(workspace_name, name, 'properties.serverFqdn')
+        database_name = get_item_id(workspace_name, name, 'properties.databaseName')
+        assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='Database')
+        variable_parameters["fmd_fabric_db_connection"]=server
+        variable_parameters["fmd_fabric_db_name"]=database_name
+        variable_parameters["fmd_config_database_guid"]=new_id
+        variable_parameters["fmd_config_workspace_guid"]=workspace_id
+        upsert_mapping(mapping_table, {"Description":deployment_item['name'] , "environment": 'config',"ItemType": 'SQLDatabase', "old_id": deployment_item["endpoint"], "new_id": server}, keys=("Description","environment", "ItemType","old_id"))
+        upsert_mapping(mapping_table, {"Description":deployment_item['name'] , "environment": 'config',"ItemType": 'SQLDatabase', "old_id": deployment_item["name"], "new_id": configuration['DatabaseName']}, keys=("Description","environment", "ItemType","old_id"))
 
-    print(result)
+        mapping_type='SQLDatabase'
+        return server, database_name
+    if 'result' in locals() and result is not None:
+        print(result)
+    else:
+        print("No result produced for this item/path")
+
     if it:
         mapping_table.append({"Description": name,"environment": environment_name,"ItemType": mapping_type, "old_id": it["id"],"new_id": new_id})
 

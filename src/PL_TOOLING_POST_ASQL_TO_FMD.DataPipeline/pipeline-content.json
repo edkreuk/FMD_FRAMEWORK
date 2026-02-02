@@ -177,13 +177,13 @@
                 "datasetSettings": {
                   "annotations": [],
                   "connectionSettings": {
-                    "name": "SQL_FMD_FRAMEWORK",
+                    "name": "eb9ebb48_2f31_44f4_998e_cac9d58ae96b",
                     "properties": {
                       "annotations": [],
                       "type": "FabricSqlDatabase",
                       "typeProperties": {
-                        "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
-                        "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                        "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid",
+                        "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid"
                       },
                       "externalReferences": {
                         "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -318,13 +318,13 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "0c38593c_1cbd_4053_a501_9b581bc62c81",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid",
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid"
                 },
                 "externalReferences": {
                   "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -422,13 +422,13 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "1dfd4157_b0a5_4f27_944e_99ce98820474",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid",
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid"
                 },
                 "externalReferences": {
                   "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -475,13 +475,13 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "0180045e_a101_439f_9c36_f01ade60b9af",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca",
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6"
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid",
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid"
                 },
                 "externalReferences": {
                   "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -537,6 +537,18 @@
       },
       "test": {
         "type": "Array"
+      }
+    },
+    "libraryVariables": {
+      "VAR_CONFIG_FMD_fmd_config_workspace_guid": {
+        "type": "String",
+        "variableName": "fmd_config_workspace_guid",
+        "libraryName": "VAR_CONFIG_FMD"
+      },
+      "VAR_CONFIG_FMD_fmd_config_database_guid": {
+        "type": "String",
+        "variableName": "fmd_config_database_guid",
+        "libraryName": "VAR_CONFIG_FMD"
       }
     }
   }

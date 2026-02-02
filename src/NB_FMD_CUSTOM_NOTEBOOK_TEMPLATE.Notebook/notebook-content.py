@@ -25,6 +25,18 @@
 # 
 # Make a copy of this notebook, every time you re deploy the framework this notebook will be overwritten
 
+# CELL ********************
+
+config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
+default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ## Imports
@@ -33,9 +45,8 @@
 
 import json
 import pandas as pd
-
 from pyspark.sql import DataFrame
-from datetime import datetime
+from datetime import datetime, timezone
 
 # METADATA ********************
 
@@ -74,12 +85,12 @@ TargetFileName = ""
 TargetLakehouseGuid = ""
 WorkspaceGuid = ""
 LastLoadValue = ""
-
+key_vault =default_settings.key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
-connstring=''
-database=''
-schema_enabled = ''
+connstring=config_settings.fmd_fabric_db_connection
+database=config_settings.fmd_fabric_db_name
+schema_enabled =default_settings.lakehouse_schema_enabled
 result_data=''
 
 # METADATA ********************
@@ -95,7 +106,7 @@ result_data=''
 
 # CELL ********************
 
-TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+TriggerTime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 StartNotebookActivity = (

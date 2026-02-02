@@ -92,8 +92,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -202,8 +202,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -234,7 +234,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='ONELAKE' group by DatasourceType",
+              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='ONELAKE' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'group by DatasourceType",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -244,12 +244,12 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "dcaf4017_30dd_40f3_b069_ef24c0a9e02f",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
-                  "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-                  "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
                 },
                 "externalReferences": {
                   "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -302,7 +302,11 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "DataSourceType": "ONELAKE_TABLES_01"
+                            "DataSourceType": "ONELAKE_TABLES_01",
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            }
                           },
                           "waitOnCompletion": true,
                           "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -331,7 +335,11 @@
                         "type": "InvokePipeline",
                         "typeProperties": {
                           "parameters": {
-                            "DataSourceType": "ONELAKE_FILES_01"
+                            "DataSourceType": "ONELAKE_FILES_01",
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            }
                           },
                           "waitOnCompletion": true,
                           "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -462,8 +470,8 @@
           "properties": {
             "type": "FabricSqlDatabase",
             "typeProperties": {
-              "artifactId": "075e5656-613d-41f4-89ed-63f6837c0ff6",
-              "workspaceId": "7774469b-0c95-48b9-bc42-a36c8c0e8bca"
+              "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+              "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
             },
             "externalReferences": {
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
@@ -489,11 +497,31 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",
         "variableName": "key_vault_uri_name",
         "libraryName": "VAR_FMD"
+      },
+      "VAR_FMD_lakehouse_schema_enabled": {
+        "type": "Bool",
+        "variableName": "lakehouse_schema_enabled",
+        "libraryName": "VAR_FMD"
+      },
+      "VAR_CONFIG_FMD_fmd_config_database_guid": {
+        "type": "String",
+        "variableName": "fmd_config_database_guid",
+        "libraryName": "VAR_CONFIG_FMD"
+      },
+      "VAR_CONFIG_FMD_fmd_config_workspace_guid": {
+        "type": "String",
+        "variableName": "fmd_config_workspace_guid",
+        "libraryName": "VAR_CONFIG_FMD"
       }
     }
   }

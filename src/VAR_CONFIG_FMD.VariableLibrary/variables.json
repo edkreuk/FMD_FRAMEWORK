@@ -2,33 +2,27 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
   "variables": [
     {
-      "name": "key_vault_uri_name",
+      "name": "fmd_fabric_db_connection",
       "note": "",
       "type": "String",
       "value": ""
     },
     {
-      "name": "key_vault_tenant_id",
+      "name": "fmd_fabric_db_name",
       "note": "",
       "type": "String",
       "value": ""
     },
     {
-      "name": "key_vault_client_id",
+      "name": "fmd_config_workspace_guid",
       "note": "",
       "type": "String",
       "value": ""
     },
     {
-      "name": "key_vault_client_secret",
+      "name": "fmd_config_database_guid",
       "note": "",
       "type": "String",
-      "value": ""
-    },
-    {
-      "name": "lakehouse_schema_enabled",
-      "note": "",
-      "type": "Boolean",
       "value": ""
     }
   ]

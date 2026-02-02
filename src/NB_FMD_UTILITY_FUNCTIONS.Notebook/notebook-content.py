@@ -17,7 +17,7 @@
 # CELL ********************
 
 import struct, pyodbc
-from datetime import datetime
+
 
 # METADATA ********************
 
