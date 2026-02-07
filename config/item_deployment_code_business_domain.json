@@ -28,7 +28,8 @@
         "name": "VAR_GOLD_CODE_FMD.VariableLibrary",
         "id": "622086c9-2b9b-b2ca-4963-13b0a688d8bb",
         "type": "VariableLibrary",
-        "variables": [
+         "variables": [
+           
             {
                 "name": "key_vault_uri_name",
                 "type": "variable",
@@ -36,6 +37,31 @@
                 "source": "key_vault_uri_name"
             },
             {
+                "name": "key_vault_tenant_id",
+                "type": "variable",
+                "datatype": "String",
+                "source": "key_vault_tenant_id"
+            },
+            {
+                "name": "key_vault_client_id",
+                "type": "variable",
+                "datatype": "String",
+                "source": "key_vault_client_id"
+            },
+            {
+                "name": "key_vault_client_secret",
+                "type": "variable",
+                "datatype": "String",
+                "source": "key_vault_client_secret"
+            }
+        ]
+    },
+    {
+        "name": "VAR_GOLD_SHORTCUTS_FMD.VariableLibrary",
+        "id": "85572f93-658e-bd43-4aed-cbcf84a593aa",
+        "type": "VariableLibrary",
+        "variables": [
+                        {
                 "name": "SourceWorkspaceId",
                 "type": "variable",
                 "datatype": "String",

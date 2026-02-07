@@ -2,25 +2,37 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
   "variables": [
     {
-      "name": "key_vault_uri_name",
+      "name": "SourceWorkspaceId",
       "note": "",
       "type": "String",
       "value": ""
     },
     {
-      "name": "key_vault_tenant_id",
+      "name": "SourceLakehouseId",
       "note": "",
       "type": "String",
       "value": ""
     },
     {
-      "name": "key_vault_client_id",
+      "name": "SourceSchema",
       "note": "",
       "type": "String",
       "value": ""
     },
     {
-      "name": "key_vault_client_secret",
+      "name": "Shortcut_TargetWorkspaceId",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "Shortcut_TargetLakehouseId",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "Shortcut_TargetSchema",
       "note": "",
       "type": "String",
       "value": ""
