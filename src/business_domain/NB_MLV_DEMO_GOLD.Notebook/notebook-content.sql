@@ -22,8 +22,8 @@
 
 -- MARKDOWN ********************
 
--- # Create materialized lake views 
--- 1. Use this notebook to create materialized lake views. 
+-- # CREATE or REPLACE materialized lake views 
+-- 1. Use this notebook to CREATE or REPLACE materialized lake views. 
 -- 2. Select **Run all** to run the notebook. 
 -- 3. When the notebook run is completed, return to your lakehouse and refresh your materialized lake views graph. 
 -- 
@@ -43,9 +43,8 @@ CREATE SCHEMA IF NOT EXISTS gold
 
 -- CELL ********************
 
-DROP MATERIALIZED LAKE VIEW IF EXISTS gold.FactOrderLines;
-CREATE MATERIALIZED LAKE VIEW gold.FactOrderLines AS 
-
+CREATE or REPLACE MATERIALIZED LAKE VIEW gold.FactOrderLines 
+AS 
 SELECT      SOL.OrderLineID,
 			SOL.OrderID,
             SO.CustomerID,
@@ -74,8 +73,8 @@ where SOL.IsCurrent=1 and SO.IsCurrent=1
 
 -- CELL ********************
 
-DROP MATERIALIZED LAKE VIEW IF EXISTS gold.DimOrders;
-CREATE MATERIALIZED LAKE VIEW gold.DimOrders AS 
+CREATE or REPLACE MATERIALIZED LAKE VIEW gold.DimOrders 
+AS 
 SELECT     OrderID,
 			
 			CustomerPurchaseOrderNumber,
@@ -95,8 +94,8 @@ where IsCurrent=1
 
 -- CELL ********************
 
-DROP MATERIALIZED LAKE VIEW IF EXISTS gold.DimCustomer;
-CREATE MATERIALIZED LAKE VIEW gold.DimCustomer AS 
+CREATE or REPLACE MATERIALIZED LAKE VIEW gold.DimCustomer 
+AS 
 SELECT CustomerID
       ,CustomerName
       ,BG.BuyingGroupName
@@ -124,8 +123,8 @@ where C.IsCurrent=1 and BG.IsCurrent=1
 
 -- CELL ********************
 
-DROP MATERIALIZED LAKE VIEW IF EXISTS gold.DimPackageType;
-CREATE MATERIALIZED LAKE VIEW gold.DimPackageType AS 
+CREATE or REPLACE MATERIALIZED LAKE VIEW gold.DimPackageType 
+AS 
 SELECT PackageTypeID
       ,PackageTypeName
 
@@ -141,8 +140,8 @@ where IsCurrent=1
 
 -- CELL ********************
 
-DROP MATERIALIZED LAKE VIEW IF EXISTS gold.DimStockItems;
-CREATE MATERIALIZED LAKE VIEW gold.DimStockItems AS 
+CREATE or REPLACE MATERIALIZED LAKE VIEW gold.DimStockItems 
+AS 
 SELECT StockItemID
       ,StockItemName
       ,Brand

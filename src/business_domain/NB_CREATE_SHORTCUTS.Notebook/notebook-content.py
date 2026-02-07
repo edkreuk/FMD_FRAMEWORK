@@ -18,7 +18,7 @@
 
 # # Notebook to create shortcuts in Gold
 # 
-# Don't forget to change the parameters in the **VAR_GOLD_COLD_FMD** library
+# Don't forget to change the parameters in the **VAR_GOLD_SHORTCUTS_FMD** library
 # 
 # 
 # More details: https://github.com/edkreuk/FMD_FRAMEWORK
@@ -42,7 +42,7 @@ import notebookutils
 
 ShortcutNames=['Sales_BuyingGroups','Sales_CustomerCategories','Sales_InvoiceLines','Sales_Invoices','Sales_Orders','Sales_OrderLines','Sales_vCustomers','Warehouse_PackageTypes','Warehouse_StockItems' ]         #Tablenames of the to be created shortcuts, same name will be used for destination
 
-ShortcutSettings=notebookutils.variableLibrary.getLibrary("VAR_GOLD_CODE_FMD")
+ShortcutSettings=notebookutils.variableLibrary.getLibrary("VAR_GOLD_SHORTCUTS_FMD")
 
 # METADATA ********************
 
