@@ -282,12 +282,34 @@ elif schema_enabled != True:
 
 # CELL ********************
 
+if not mssparkutils.fs.exists(source_changes_data_path):
+    print("❌ Source file not found. Exiting Notebook")
+    execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
+    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    end_audit_time =  str(datetime.now())
+    start_audit_time =str(start_audit_time)
+    result_data = {
+    "Action" : "End", "CopyOutput":{
+        "Total Runtime": TotalRuntime,
+        "TargetSchema": TargetSchema,
+        "TargetName" : TargetName,
+        "SourceFilePath" : SourceFilePath,
+        "SourceFileName" : 'FILE NOT FOUND',
+        "LandingzoneEntityId" : LandingzoneEntityId,
+        "EntityId" : BronzeLayerEntityId,
+        "StartTime" : start_audit_time,
+        "EndTime" : end_audit_time
+
+    }
+    }
+    execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    
+    notebookutils.notebook.exit(result_data)
 #Read all incoming changes in Parquet format
 dfDataChanged= spark.read\
                 .format(SourceFileType) \
                 .option("header","true") \
                 .load(f"{source_changes_data_path}")
-
 
 # METADATA ********************
 
