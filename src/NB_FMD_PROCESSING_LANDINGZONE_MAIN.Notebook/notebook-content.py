@@ -18,7 +18,28 @@
 
 # MARKDOWN ********************
 
-# # Parameters
+# # FMD Processing Landing Zone Main Notebook
+# 
+# ## Overview
+# This notebook orchestrates the execution of custom notebooks for landing zone data processing in the FMD framework. It serves as a wrapper that prepares execution parameters and invokes custom data extraction notebooks to load data from external sources into the Landing Zone.
+# 
+# ## Key Features
+# - **Custom Notebook Execution**: Invokes user-defined custom notebooks for data extraction
+# - **Parameter Management**: Prepares and passes all required parameters to child notebooks
+# - **Error Handling**: Captures and handles notebook execution failures with detailed error reporting
+# - **Audit Integration**: Tracks execution with pipeline run GUIDs and trigger information
+# - **Flexible Configuration**: Supports customizable notebook names and last load values for incremental loads
+# 
+# ## Process Flow
+# 1. Initialize parameters (entity, target paths, custom notebook name)
+# 2. Format and validate GUIDs for pipeline and trigger tracking
+# 3. Prepare notebook parameters including audit metadata
+# 4. Execute the specified custom notebook with timeout (900 seconds)
+# 5. Handle execution results and errors
+# 6. Return execution results to calling pipeline
+# 
+# ## Parameters
+
 
 # CELL ********************
 

@@ -15,6 +15,33 @@
 # META   }
 # META }
 
+# MARKDOWN ********************
+
+# # FMD Load Landing Zone to Bronze Notebook
+# 
+# ## Overview
+# This notebook handles the data loading process from the Landing Zone to the Bronze layer in the FMD framework. It processes source files, applies data quality checks, performs cleansing, and loads data into Bronze Delta tables.
+# 
+# ## Key Features
+# - **Source File Validation**: Checks if source files exist before processing
+# - **Data Quality Checks**: Validates primary keys and detects duplicates
+# - **Cleansing Rules**: Applies configurable cleansing rules from the framework database
+# - **Change Detection**: Uses hash columns to detect changes in data
+# - **Incremental Loading**: Supports both full and incremental load patterns
+# - **Audit Logging**: Tracks execution details in the framework database
+# - **Delta Lake Integration**: Writes data to Delta tables with optimization settings
+# 
+# ## Process Flow
+# 1. Load libraries and configuration settings
+# 2. Set up audit logging and database connections
+# 3. Read source file from Landing Zone (Parquet/CSV)
+# 4. Perform data quality checks (PK validation, duplicate detection)
+# 5. Apply cleansing rules from framework configuration
+# 6. Add hash columns for change tracking
+# 7. Execute incremental or full load to Bronze Delta table
+# 8. Update processing status and complete audit logging
+
+
 # CELL ********************
 
 config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
@@ -282,7 +309,7 @@ elif schema_enabled != True:
 
 # CELL ********************
 
-if not mssparkutils.fs.exists(source_changes_data_path):
+if not notebookutils.fs.exists(source_changes_data_path):
     print("❌ Source file not found. Exiting Notebook")
     execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
     TotalRuntime = str((datetime.now() - start_audit_time)) 

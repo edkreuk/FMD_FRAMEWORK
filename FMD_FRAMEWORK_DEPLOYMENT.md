@@ -40,9 +40,9 @@ In case you need to use a security group add the security group to above setting
 Add Workspace identity(after deployment) or Service Principal to the security groups
 
 
-### Managed identity or Service Principal used for execution must have the following role assigned:
+### Workspace identity or Service Principal used for execution must have the following role assigned:
 - Workspace Contributor role on the workspace (Workspace Identity is automatically assigned during deployment, Service principal must be assigned manually)
-- Managed identity or Service Principal must be added to the correct security groups which have been assigned in the Prerequisite step
+- Workspace identity or Service Principal must be added to the correct security groups which have been assigned in the Prerequisite step
 
 ## Deployment steps
 
@@ -59,7 +59,7 @@ Set up the following connections and note their Connection IDs for later configu
 | Connection name              | Connection type            | Authentication                                    |Remarks |
 |------------------------------|----------------------------|---------------------------------------------------|--------|
 | CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines      | OAuth2/Service Principal/Workspace Identity       |  Connection is automatically created during deployment      |
-| CON_FMD_FABRIC_SQL           | Fabric SQL database        | OAuth2/Service Principal                          |  Connection needs to be created manually due to limitations      |
+| CON_FMD_FABRIC_SQL           | Fabric SQL database        | OAuth2                        |  Connection needs to be created manually due to limitations      |
 | CON_FMD_FABRIC_NOTEBOOKS     | Fabric Notebooks           | OAuth2/Service Principal/Workspace Identity       |  For future use     |
 
 If you use Azure Data Factory Pipelines, create this additional connection:
@@ -185,10 +185,6 @@ workspace_roles_configuration = [
     }
 ]
 ```
-
-
-
-
 
 **Workspace configuration**  
 ```python

@@ -14,6 +14,38 @@
 # META   }
 # META }
 
+# MARKDOWN ********************
+
+# # FMD Load Bronze to Silver Notebook
+# 
+# ## Overview
+# This notebook handles the data transformation and loading process from the Bronze layer to the Silver layer in the FMD framework. It implements Slowly Changing Dimension (SCD) Type 2 logic to track historical changes while applying data quality checks and cleansing rules.
+# 
+# ## Key Features
+# - **SCD Type 2 Implementation**: Maintains complete history of records with versioning and temporal tracking
+# - **Change Detection**: Uses hashed columns to identify inserts, updates, and deletes
+# - **Data Quality & Cleansing**: Applies configurable cleansing rules from the framework database
+# - **Soft Deletes**: Marks deleted records with IsDeleted flag while preserving history
+# - **Temporal Tracking**: Maintains RecordStartDate, RecordEndDate, RecordModifiedDate, and IsCurrent flags
+# - **V-Order Optimization**: Enables V-Order for improved query performance on Silver tables
+# - **Change Data Feed**: Enables CDC capabilities for downstream consumers
+# - **Audit Logging**: Tracks execution details in the framework database
+# 
+# ## SCD Type 2 Operations
+# - **Inserts**: New records marked as IsCurrent=True with RecordEndDate='9999-12-31'
+# - **Updates**: Old version marked as IsCurrent=False, new version inserted with IsCurrent=True
+# - **Deletes**: Records marked as IsDeleted=True and IsCurrent=False
+# 
+# ## Process Flow
+# 1. Load configuration and Bronze source data
+# 2. Apply cleansing rules from framework configuration
+# 3. Calculate hash columns for change detection
+# 4. Add SCD Type 2 tracking columns
+# 5. Identify changes (inserts, updates, deletes) by comparing with existing Silver data
+# 6. Execute Delta merge operation applying SCD Type 2 logic
+# 7. Optimize and vacuum Delta table
+# 8. Update processing status and complete audit logging
+
 # CELL ********************
 
 config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")

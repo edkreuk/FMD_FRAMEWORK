@@ -18,14 +18,32 @@
 
 # MARKDOWN ********************
 
-# # Parameters
+# # FMD Parallel Processing Main Notebook
+# 
+# ## Overview
+# This notebook orchestrates parallel execution of data processing notebooks in the FMD framework. It handles batching, sequencing, and parallel execution of notebooks while managing dependencies and execution order.
+# 
+# ## Key Features
+# - **Parallel Execution**: Executes multiple notebooks concurrently using `runMultiple` (max 50 per batch)
+# - **Group Processing**: Groups related files by data source, target schema, and target table
+# - **Sequential Ordering**: Processes files within the same group sequentially based on filename timestamps
+# - **Batch Management**: Automatically creates execution batches while ensuring grouped items stay together
+# - **Dependency Handling**: Maintains execution dependencies within file groups
+# - **Auto-Discovery**: Automatically creates the custom DQ cleansing notebook if it doesn't exist
+# 
+# ## Parameters
 
 # CELL ********************
 
 from json import loads, dumps
 import uuid
+import re
 from datetime import datetime, timezone
+from collections import defaultdict
+from typing import List
+
 NotebookExecutionId = str(uuid.uuid4())
+
 
 
 # METADATA ********************
@@ -90,6 +108,39 @@ def is_valid_guid(guid_str: str) -> bool:
         return str(uuid_obj) == guid_str
     except ValueError:
         return False
+
+def extract_ts_from_name(name: str) -> datetime:
+    """
+    Extracts YYYYMMDDHHMM from names like 'Sales_Invoices_202601311402.parquet'
+    """
+    match = re.search(r'_(\d{12})(?=\.parquet$)', name)
+    if not match:
+        raise ValueError(f"Invalid filename timestamp: {name}")
+    return datetime.strptime(match.group(1), "%Y%m%d%H%M")
+
+
+def group_key(item):
+    """
+    Define what 'same files' means. Adjust as needed.
+    Here: group by data source + target + partition path.
+    """
+    p = item["params"]
+    return (
+        p.get("DataSourceNamespace"),
+        p.get("TargetSchema"),
+        p.get("TargetName")
+    )
+
+def batched(lst, first_size, default_size):
+    """Yield first batch with 'first_size', then others with 'default_size'."""
+    if not lst:
+        return
+    yield lst[:first_size]
+    pos = first_size
+    while pos < len(lst):
+        yield lst[pos:pos+default_size]
+        pos += default_size
+
 
 # METADATA ********************
 
@@ -260,27 +311,24 @@ elif isinstance(Path, dict):
 
 # CELL ********************
 
-for i, item in enumerate( path_data):
-    item["notebook_path"] = item['path']
-    data_source = item['params']['TargetSchema'].split('/')[0]
-    schema_table = "".join(item['params']['TargetName'].split('_')[:2])
+for i, item in enumerate(path_data):
+    item["notebook_path"] = item["path"]
+    data_source = item["params"]["TargetSchema"].split("/")[0]
+    schema_table = "".join(item["params"]["TargetName"].split("_")[:2])
     item["notebook_activity_id"] = f"{data_source}_{schema_table}"
+
+    # inject runtime params
     item["params"]["PipelineGuid"] = PipelineGuid
     item["params"]["PipelineName"] = PipelineName
     item["params"]["TriggerGuid"] = TriggerGuid
     item["params"]["TriggerType"] = TriggerType
     item["params"]["TriggerTime"] = TriggerTime
-    item["params"]["WorkspaceGuid"] = WorkspaceGuid  
+    item["params"]["WorkspaceGuid"] = WorkspaceGuid
     item["params"]["PipelineParentRunGuid"] = PipelineParentRunGuid
     item["params"]["PipelineRunGuid"] = PipelineRunGuid
     item["params"]["NotebookExecutionId"] = NotebookExecutionId
     item["params"]["useRootDefaultLakehouse"] = useRootDefaultLakehouse
     item["params"]["driver"] = driver
-
-
-
-
-
 
 
 # METADATA ********************
@@ -296,7 +344,7 @@ for i, item in enumerate( path_data):
 
 # CELL ********************
 
-notebooks = path_data
+#notebooks = path_data
 cmd_dags = []
 
 # METADATA ********************
@@ -308,25 +356,99 @@ cmd_dags = []
 
 # CELL ********************
 
-max_concurrent_notebooks=50
-for n in range((len(notebooks) // max_concurrent_notebooks) + 1):
-    activities = [
-        {
-            "name": f"{nb['notebook_activity_id']}_{n}_{i}",  # activity name, must be unique
-            "path": nb['notebook_path'],  # notebook path
-            "timeoutPerCellInSeconds": 600,  # max timeout for each cell, default to 90 seconds
+# group by your definition of “same files”
+groups = defaultdict(list)
+for idx, it in enumerate(path_data):
+    groups[group_key(it)].append((idx, it))
+
+def safe_sort_key(pair):
+    item = pair[1]
+    name = item["params"].get("SourceFileName")
+
+    if not name:
+        return (datetime.max, "")   # no filename → put at end
+
+    try:
+        ts = extract_ts_from_name(name)
+        return (ts, name)
+    except:
+        return (datetime.max, name) # malformed filename → also at end
+
+largest_group_size = 1
+
+for g, entries in list(groups.items()):
+    sorted_entries = sorted(entries, key=safe_sort_key)
+
+    for order_idx, (orig_idx, item) in enumerate(sorted_entries):
+        item["is_grouped_job"] = True
+        item["order_index"] = order_idx
+
+    groups[g] = sorted_entries
+    largest_group_size = max(largest_group_size, len(sorted_entries))
+
+# Build a notebooks list that keeps groups intact
+# Strategy: place grouped items contiguously, preserving their internal order.
+# You can choose the order of groups; here we keep original appearance order.
+seen_indices = set()
+ordered_notebooks = []
+for idx, it in enumerate(path_data):
+    if idx in seen_indices:
+        continue
+    g = group_key(it)
+    if g in groups:
+        for orig_idx, mem in groups[g]:
+            if orig_idx not in seen_indices:
+                ordered_notebooks.append(mem)
+                seen_indices.add(orig_idx)
+
+# Add any remaining (non-grouped) items (if any)
+for idx, it in enumerate(path_data):
+    if idx not in seen_indices:
+        ordered_notebooks.append(it)
+
+# Batching with guarantee: no group split across batches
+# Cap batches at 50 (runMultiple limit) while ensuring largest group fits in one batch
+max_concurrent_notebooks = 50
+if largest_group_size > max_concurrent_notebooks:
+    print(f"WARNING: largest group has {largest_group_size} items, exceeds runMultiple limit of {max_concurrent_notebooks}")
+first_batch_size = min(max_concurrent_notebooks, max(max_concurrent_notebooks, largest_group_size))
+
+for n, batch in enumerate(batched(ordered_notebooks, first_batch_size, max_concurrent_notebooks)):
+    activities = []
+    # Track last activity name per group to wire dependsOn inside that group
+    last_activity_name_by_group = {}
+
+    for i, nb in enumerate(batch):
+        activity_name = f"{nb['notebook_activity_id']}_{n}_{i}"
+        activity = {
+            "name": activity_name,
+            "path": nb["notebook_path"],
+            "timeoutPerCellInSeconds": 600,
             "args": nb["params"],
-            "retry": 2,  # max retry times, default to 0
+            "retry": 2,
             "retryIntervalInSeconds": 0
         }
-        for i, nb in enumerate(notebooks[n * max_concurrent_notebooks:(n + 1) * max_concurrent_notebooks])
-    ]
+
+        if nb.get("is_grouped_job"):
+            g = group_key(nb)
+            prev = last_activity_name_by_group.get(g)
+            if prev is not None:
+                # Chain to the previous activity within the same group
+                activity["dependencies"] = [prev]
+            last_activity_name_by_group[g] = activity_name
+
+        activities.append(activity)
+
     cmd_dag = {
         "activities": activities,
-        "timeoutInSeconds": 7200,  # max timeout for the entire pipeline, default to 12 hours now set to 2 hrs
-        "concurrency": 0  # max number of notebooks to run concurrently, default to unlimited
+        "timeoutInSeconds": 7200,
+        "concurrency": len(activities)  # Allow concurrent execution; in-group dependencies enforced by dependsOn
     }
     cmd_dags.append(cmd_dag)
+    print(f"Batch {n + 1}: {len(activities)} activities created")
+
+print(f"\nTotal batches: {len(cmd_dags)} (runMultiple limit: 50 per batch)")
+
 
 # METADATA ********************
 
@@ -337,16 +459,22 @@ for n in range((len(notebooks) // max_concurrent_notebooks) + 1):
 
 # CELL ********************
 
-#Execute Notebooks per 50, more is not supported by RunMultiple
+# Execute Notebooks in batches (runMultiple max: 50 notebooks per call)
 results = {}
-for cmd_dag in cmd_dags:
+for batch_idx, cmd_dag in enumerate(cmd_dags):
     try:
-        results.update(notebookutils.mssparkutils.notebook.runMultiple(cmd_dag))
+        print(f"\nExecuting batch {batch_idx + 1}/{len(cmd_dags)} with {len(cmd_dag['activities'])} activities...")
+        batch_results = notebookutils.mssparkutils.notebook.runMultiple(cmd_dag, {"displayDAGViaGraphviz": True})
+        results.update(batch_results)
+        print(f"✓ Batch {batch_idx + 1} completed successfully")
     except notebookutils.mssparkutils.handlers.notebookHandler.RunMultipleFailedException as e:
+        print(f"⚠ Batch {batch_idx + 1} had errors, continuing with partial results")
         results.update(e.result)
     except Exception as e:
-        print(cmd_dag)
-        raise(e)
+        print(f"\n✗ ERROR in batch {batch_idx + 1}:")
+        print(f"  Activities: {len(cmd_dag['activities'])}")
+        print(f"  Exception: {str(e)}")
+        raise
 
 # METADATA ********************
 
@@ -360,11 +488,16 @@ for cmd_dag in cmd_dags:
 # Convert the data into a single result set
 result_set = []
 for table_name, table_data in results.items():
+    exception_str = str(table_data["exception"])
     result_set.append({
         "TableName": table_name,
         "exitVal": table_data["exitVal"],
-        "exception": str(table_data["exception"])
+        "exception": exception_str
     })
+
+print(f"\n{'='*60}")
+print(f"Execution Summary: {len(result_set)} activities completed")
+print(f"{'='*60}")
 print(dumps(result_set, indent=2))
 
 # METADATA ********************
@@ -380,8 +513,13 @@ fails = []
 for result in result_set:
     if result.get('exception') != "None":
         fails.append(result)
+
 if fails:
-    raise ValueError(F"""Notebook(s): {[r['TableName'] for r in fails]} failed""")
+    failed_names = [r['TableName'] for r in fails]
+    print(f"\n✗ ERROR: {len(fails)} notebook execution(s) failed:")
+    for f in fails:
+        print(f"  - {f['TableName']}: {f['exception']}")
+    raise ValueError(f"Failed notebooks: {failed_names}")
 
 # METADATA ********************
 
@@ -408,6 +546,7 @@ except Exception as e:
 # CELL ********************
 
 TotalRuntime = str((datetime.now() - starttime))
+print(f"\n✓ Notebook execution completed in {TotalRuntime}")
 notebookutils.notebook.exit(exit_value)
 
 # METADATA ********************

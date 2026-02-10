@@ -23,28 +23,19 @@ The FMD Framework enables organizations to streamline data operations by leverag
 ## Video with the Data Factory Team
 
 [![Watch the FMD Framework overview](https://img.youtube.com/vi/UzqSFajSvtY/0.jpg)](https://www.youtube.com/watch?v=UzqSFajSvtY&t=829s)
-🚀 Why the FMD Framework?
-Modern data platforms demand agility, scalability, and consistency. FMD simplifies these challenges by enabling:
 
-Dynamic, metadata‑driven pipelines
-Consistent orchestration across ingestion, processing, and publishing
-Centralized configuration for all data entities
-Alignment with Microsoft Fabric Lakehouse & Medallion Architecture
-Reduced engineering effort through reusable patterns
-Faster delivery with standardized, tested components
+Watch this conversation with the Azure Data Factory team for a walkthrough of the concepts described in [🚀 Why the FMD Framework?](#-why-the-fmd-framework).
 
-FMD lets teams deliver more with less code, fewer errors, and dramatically faster setup.
-
-## 🧩 Key Features
-### ✔ Metadata‑Driven Orchestration
-Pipeline behavior is fully configured using metadata tables: source details, transformation logic, load type, timestamp columns, schema handling, and more.
-
-### ✔ End‑to‑End Fabric Integration
-Built natively for **Microsoft Fabric Lakehouse**, leveraging notebooks, SQL, Delta Tables, and Fabric pipelines.
+- Dynamic, metadata‑driven pipelines
+- Consistent orchestration across ingestion, processing, and publishing
+- Centralized configuration for all data entities
+- Alignment with Microsoft Fabric Lakehouse & Medallion Architecture
+- Reduced engineering effort through reusable patterns
+- Faster delivery with standardized, tested components
 
 ### ✔ Dynamic Pipelines
 Automatically adjusts pipeline execution based on metadata—ideal for large‑scale, multi‑source environments.
-
+## Key Features
 ### ✔ Scalable & Extensible
 Modular design allows custom logic, new transformations, and custom patterns without breaking existing workloads.
 
@@ -94,7 +85,7 @@ Review the **[Business Domain Deployment Framework Deployment Guide](./FMD_BUSIN
 
 ## 📚 Documentation
 Full overview & tutorials: https://erwindekreuk.com/fmd-framework/
-
+| **[FMD Integration Framework reference](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Integration)** | Overview on how to add sources and demo data to the FMD Framework |
 ## 📦 Use Cases
 - Enterprise‑grade ingestion frameworks  
 - Reusable ingestion + transformation patterns  
@@ -113,9 +104,11 @@ Contributions, enhancements, and feature requests are welcome.  To contribute:
 5. Create a pull request and add documentation on what you have changed.
 
 📝 License
-This project is released under the MIT License. - see the [LICENSE](LICENSE) file for details.
+Contributions, enhancements, and feature requests are welcome. To contribute:
 
 ***
 
 **Contributors:**  
 [Erwin de Kreuk](https://www.linkedin.com/in/erwindekreuk/)  
+## License
+This project is released under the MIT License. See the [LICENSE](LICENSE) file for details.
