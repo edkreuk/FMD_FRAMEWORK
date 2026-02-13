@@ -242,7 +242,7 @@ Execute the **notebook** to apply your configuration and deploy the framework.
 
 ---
 
-Check out the [wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki) for more information and detailed guidance on using the FMD Framework and how to load demo data.
+Check out the [wiki]([https://github.com/edkreuk/FMD_FRAMEWORK/wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Integration/_edit#data-processing)) for more information and detailed guidance on using the FMD Framework and how to load demo data.
 
 
 
