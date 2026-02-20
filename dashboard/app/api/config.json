@@ -1,0 +1,21 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8787,
+    "static_dir": "../dist"
+  },
+  "fabric": {
+    "tenant_id": "ca81e9fd-06dd-49cf-b5a9-ee7441ff5303",
+    "client_id": "ac937c5d-4bdd-438f-be8b-84a850021d2d",
+    "client_secret": "${FABRIC_CLIENT_SECRET}"
+  },
+  "sql": {
+    "server": "7xuydsw5a3hutnnj5z2ed72tam-mhwnfrrtsrmuhgfc2b5tety7li.database.fabric.microsoft.com,1433",
+    "database": "SQL_INTEGRATION_FRAMEWORK-027d772b-cfc0-472f-a3a6-fafd3f584f4f",
+    "driver": "ODBC Driver 18 for SQL Server"
+  },
+  "logging": {
+    "file": "fmd-dashboard.log",
+    "level": "INFO"
+  }
+}
