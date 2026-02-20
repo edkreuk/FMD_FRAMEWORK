@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CLAUDE DESIGN SYSTEM — All 12 Phases
+   FMD Pipeline Dashboard
+   ============================================================ */
+
+@theme inline {
+  /* --- Border Radius (Phase 1) --- */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Color Tokens (OKLCH via CSS custom properties) --- */
+  --color-background: oklch(var(--background));
+  --color-foreground: oklch(var(--foreground));
+  --color-card: oklch(var(--card));
+  --color-card-foreground: oklch(var(--card-foreground));
+  --color-popover: oklch(var(--popover));
+  --color-popover-foreground: oklch(var(--popover-foreground));
+  --color-primary: oklch(var(--primary));
+  --color-primary-foreground: oklch(var(--primary-foreground));
+  --color-secondary: oklch(var(--secondary));
+  --color-secondary-foreground: oklch(var(--secondary-foreground));
+  --color-muted: oklch(var(--muted));
+  --color-muted-foreground: oklch(var(--muted-foreground));
+  --color-accent: oklch(var(--accent));
+  --color-accent-foreground: oklch(var(--accent-foreground));
+  --color-destructive: oklch(var(--destructive));
+  --color-destructive-foreground: oklch(var(--destructive-foreground));
+  --color-success: oklch(var(--success));
+  --color-success-foreground: oklch(var(--success-foreground));
+  --color-warning: oklch(var(--warning));
+  --color-warning-foreground: oklch(var(--warning-foreground));
+  --color-info: oklch(var(--info));
+  --color-info-foreground: oklch(var(--info-foreground));
+  --color-border: oklch(var(--border));
+  --color-input: oklch(var(--input));
+  --color-ring: oklch(var(--ring));
+  --color-surface: oklch(var(--surface));
+
+  /* Chart colors */
+  --color-chart-1: oklch(var(--chart-1));
+  --color-chart-2: oklch(var(--chart-2));
+  --color-chart-3: oklch(var(--chart-3));
+  --color-chart-4: oklch(var(--chart-4));
+  --color-chart-5: oklch(var(--chart-5));
+
+  /* Sidebar */
+  --color-sidebar: oklch(var(--sidebar));
+  --color-sidebar-foreground: oklch(var(--sidebar-foreground));
+  --color-sidebar-primary: oklch(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: oklch(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: oklch(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: oklch(var(--sidebar-accent-foreground));
+  --color-sidebar-border: oklch(var(--sidebar-border));
+  --color-sidebar-ring: oklch(var(--sidebar-ring));
+
+  /* Brand Colors (static, theme-independent) */
+  --color-claude-orange: oklch(0.65 0.15 45);
+  --color-claude-blue: oklch(0.62 0.1 230);
+  --color-claude-green: oklch(0.58 0.1 145);
+
+  /* --- Typography (Phase 3/4) --- */
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+
+  /* --- Animation (Phase 7) --- */
+  --ease-claude: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.165, 0.85, 0.45, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-smooth: 300ms;
+  --duration-slow: 400ms;
+}
+
+/* ============================================================
+   PHASE 1 & 2: Light Theme (default in :root) + Dark override
+   Using OKLCH color space throughout
+   ============================================================ */
+
+:root {
+  /* OKLCH application tokens — Light theme
+     Precisely computed from CDS hex values:
+     Page #F5F5F0 (L:0.969), Surface #FFFFFF (L:1.000), Sidebar #F0EFEA (L:0.952) */
+  --background: 0.969 0.007 107;
+  --foreground: 0.15 0.006 92;
+  --card: 1.000 0.000 90;
+  --card-foreground: 0.15 0.006 92;
+  --popover: 1.000 0.000 90;
+  --popover-foreground: 0.15 0.006 92;
+  --primary: 0.554 0.126 43;
+  --primary-foreground: 0.99 0.003 90;
+  --secondary: 0.955 0.007 107;
+  --secondary-foreground: 0.35 0.01 92;
+  --muted: 0.945 0.007 100;
+  --muted-foreground: 0.525 0.003 85;
+  --accent: 0.955 0.007 107;
+  --accent-foreground: 0.15 0.006 92;
+  --destructive: 0.52 0.17 28;
+  --destructive-foreground: 0.99 0.003 90;
+  --success: 0.55 0.15 150;
+  --success-foreground: 0.99 0.003 90;
+  --warning: 0.65 0.12 85;
+  --warning-foreground: 0.15 0.006 92;
+  --info: 0.55 0.1 230;
+  --info-foreground: 0.99 0.003 90;
+  --border: 0.92 0.007 100;
+  --input: 0.92 0.007 100;
+  --ring: 0.554 0.126 43;
+  --surface: 1.000 0.000 90;
+
+  /* Charts — Light */
+  --chart-1: 0.554 0.126 43;
+  --chart-2: 0.62 0.1 230;
+  --chart-3: 0.58 0.1 145;
+  --chart-4: 0.72 0.12 45;
+  --chart-5: 0.55 0.08 230;
+
+  /* Sidebar — Light (matches #F0EFEA) */
+  --sidebar: 0.952 0.007 97;
+  --sidebar-foreground: 0.15 0.006 92;
+  --sidebar-primary: 0.554 0.126 43;
+  --sidebar-primary-foreground: 0.99 0.003 90;
+  --sidebar-accent: 0.960 0.007 107;
+  --sidebar-accent-foreground: 0.15 0.006 92;
+  --sidebar-border: 0.92 0.007 100;
+  --sidebar-ring: 0.554 0.126 43;
+
+  /* CDS Backgrounds — Light */
+  --bg-primary: #F5F5F0;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F0EFEA;
+  --bg-surface: #FFFFFF;
+  --bg-hover: #F5F5F0;
+  --bg-active: #E0DDD6;
+  --bg-code: #F5F3EE;
+  --bg-muted: #ECECF0;
+
+  /* CDS Text — Light */
+  --text-primary: #1A1A18;
+  --text-secondary: #6B6A68;
+  --text-muted: #9A9893;
+  --text-faint: #8A8985;
+  --text-inverse: #FFFFFF;
+
+  /* CDS Accent (same both themes) */
+  --cl-accent: #AE5630;
+  --cl-accent-hover: #C4633A;
+  --accent-brand: #C15F3C;
+  --accent-soft: rgba(174, 86, 48, 0.1);
+
+  /* CDS Borders — Light */
+  --cl-border: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.12);
+  --border-focus: rgba(0, 0, 0, 0.18);
+  --border-subtle: rgba(0, 0, 0, 0.04);
+
+  /* CDS Semantic — Light */
+  --cl-success: #2D8547;
+  --success-soft: rgba(45, 133, 71, 0.1);
+  --cl-warning: #B8860B;
+  --warning-soft: rgba(184, 134, 11, 0.1);
+  --cl-error: #D4183D;
+  --error-soft: rgba(212, 24, 61, 0.1);
+  --cl-info: #1C6BBB;
+  --info-soft: rgba(28, 107, 187, 0.1);
+
+  /* Shadows — Light (Phase 6) */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 0 0 0.5px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.08);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.1);
+  --shadow-composer: 0 0.25rem 1.25rem rgba(0,0,0,0.035), 0 0 0 0.5px rgba(0,0,0,0.08);
+  --shadow-composer-hover: 0 0.25rem 1.25rem rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.12);
+  --shadow-composer-focus: 0 0.25rem 1.25rem rgba(0,0,0,0.075), 0 0 0 0.5px rgba(0,0,0,0.15);
+  --shadow-modal: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+
+  /* Status Indicators — OKLCH (Phase 8) */
+  --status-running: oklch(0.65 0.15 45);
+  --status-idle: oklch(0.6 0.006 60);
+  --status-listening: oklch(0.62 0.1 230);
+  --status-drafting: oklch(0.58 0.1 145);
+  --status-waiting: oklch(0.75 0.12 85);
+  --status-error: oklch(0.6 0.17 28);
+}
+
+/* Dark theme */
+.dark {
+  /* OKLCH application tokens — Dark
+     Precisely computed from CDS hex values + Cowork UI colors:
+     Page #2B2A27 (L:0.285), Nav #242422 (L:0.260), Surface #1F1E1B (L:0.235)
+     Input #30302E (L:0.309), Tertiary #333230 (L:0.317) */
+  --background: 0.285 0.006 92;
+  --foreground: 0.949 0.000 90;
+  --card: 0.235 0.006 92;
+  --card-foreground: 0.949 0.000 90;
+  --popover: 0.235 0.006 92;
+  --popover-foreground: 0.949 0.000 90;
+  --primary: 0.554 0.126 43;
+  --primary-foreground: 0.98 0.003 90;
+  --secondary: 0.309 0.004 107;
+  --secondary-foreground: 0.85 0.005 90;
+  --muted: 0.317 0.004 85;
+  --muted-foreground: 0.680 0.008 89;
+  --accent: 0.309 0.004 107;
+  --accent-foreground: 0.949 0.000 90;
+  --destructive: 0.55 0.2 25;
+  --destructive-foreground: 0.98 0.003 90;
+  --success: 0.65 0.15 150;
+  --success-foreground: 0.235 0.006 92;
+  --warning: 0.75 0.12 85;
+  --warning-foreground: 0.235 0.006 92;
+  --info: 0.65 0.1 230;
+  --info-foreground: 0.235 0.006 92;
+  --border: 0.344 0.003 107;
+  --input: 0.309 0.004 107;
+  --ring: 0.554 0.126 43;
+  --surface: 0.235 0.006 92;
+
+  /* Charts — Dark */
+  --chart-1: 0.554 0.126 43;
+  --chart-2: 0.62 0.1 230;
+  --chart-3: 0.58 0.1 145;
+  --chart-4: 0.72 0.12 45;
+  --chart-5: 0.55 0.08 230;
+
+  /* Sidebar — Dark (Cowork nav #242422) */
+  --sidebar: 0.260 0.004 107;
+  --sidebar-foreground: 0.949 0.000 90;
+  --sidebar-primary: 0.554 0.126 43;
+  --sidebar-primary-foreground: 0.98 0.003 90;
+  --sidebar-accent: 0.309 0.004 107;
+  --sidebar-accent-foreground: 0.949 0.000 90;
+  --sidebar-border: 0.344 0.003 107;
+  --sidebar-ring: 0.554 0.126 43;
+
+  /* CDS Backgrounds — Dark (Cowork-calibrated) */
+  --bg-primary: #2B2A27;
+  --bg-secondary: #242422;
+  --bg-tertiary: #333230;
+  --bg-surface: #1F1E1B;
+  --bg-hover: #393937;
+  --bg-active: #3D3C39;
+  --bg-code: #1F1E1B;
+  --bg-muted: #30302E;
+
+  /* CDS Text — Dark (Cowork-calibrated) */
+  --text-primary: #EEEEEE;
+  --text-secondary: #BEC0B6;
+  --text-muted: #9A9893;
+  --text-faint: #6B6A68;
+  --text-inverse: #2B2A27;
+
+  /* CDS Accent — Dark (Cowork-calibrated) */
+  --cl-accent: #AE5630;
+  --cl-accent-hover: #C6613F;
+  --accent-brand: #C15F3C;
+  --accent-soft: rgba(174, 86, 48, 0.15);
+
+  /* CDS Borders — Dark */
+  --cl-border: rgba(108, 106, 96, 0.25);
+  --border-light: rgba(108, 106, 96, 0.40);
+  --border-focus: rgba(108, 106, 96, 0.50);
+  --border-subtle: rgba(108, 106, 96, 0.15);
+
+  /* CDS Semantic — Dark */
+  --cl-success: #5FB87A;
+  --success-soft: rgba(95, 184, 122, 0.12);
+  --cl-warning: #D4A84A;
+  --warning-soft: rgba(212, 168, 74, 0.12);
+  --cl-error: #E05555;
+  --error-soft: rgba(224, 85, 85, 0.12);
+  --cl-info: #5A9ED4;
+  --info-soft: rgba(90, 158, 212, 0.12);
+
+  /* Shadows — Dark (Phase 6) */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2), 0 0 0 0.5px rgba(108,106,96,0.08);
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(108,106,96,0.1);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(108,106,96,0.15);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(108,106,96,0.12);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(108,106,96,0.2);
+  --shadow-composer: 0 0.25rem 1.25rem rgba(0,0,0,0.4), 0 0 0 0.5px rgba(108,106,96,0.15);
+  --shadow-composer-hover: 0 0.25rem 1.25rem rgba(0,0,0,0.4), 0 0 0 0.5px rgba(108,106,96,0.3);
+  --shadow-composer-focus: 0 0.25rem 1.25rem rgba(0,0,0,0.5), 0 0 0 0.5px rgba(108,106,96,0.3);
+  --shadow-modal: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,106,96,0.2);
+}
+
+/* ============================================================
+   PHASE 7: Keyframe Animations
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cl-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes cl-thinking {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   PHASE 8: Status Indicators (OKLCH)
+   ============================================================ */
+
+.status-running   { background: var(--status-running); }
+.status-idle      { background: var(--status-idle); }
+.status-listening { background: var(--status-listening); }
+.status-drafting  { background: var(--status-drafting); }
+.status-waiting   { background: var(--status-waiting); animation: pulse-status 2s ease-in-out infinite; }
+.status-error     { background: var(--status-error); }
+
+/* ============================================================
+   PHASE 9: Scrollbar Styling
+   ============================================================ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--cl-border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cl-border) transparent;
+}
+
+/* ============================================================
+   PHASE 10: Modal & Overlay Patterns
+   ============================================================ */
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+}
+
+.modal-content {
+  background: var(--bg-surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-modal);
+  max-width: 500px;
+  padding: 24px;
+  animation: fadeIn 200ms var(--ease-claude);
+}
+
+/* ============================================================
+   PHASE 12: Base Layer & Reset
+   ============================================================ */
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.5;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Cowork-inspired subtle grid background on main content area */
+  .cowork-grid {
+    background-image:
+      linear-gradient(var(--cl-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--cl-border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--cl-accent);
+    outline-offset: 2px;
+  }
+}

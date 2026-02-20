@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMD Framework - Pipeline Flow Explorer</title>
+<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+<script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+<style>
+  :root {
+    --bg-primary: #0f0f1a;
+    --bg-secondary: #161625;
+    --bg-card: rgba(255,255,255,0.04);
+    --bg-card-hover: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.08);
+    --border-active: rgba(233,69,96,0.5);
+    --text: #eaeaea;
+    --text-muted: #8a8a9a;
+    --text-dim: #5a5a6a;
+    --accent: #e94560;
+    --accent-glow: rgba(233,69,96,0.3);
+    --blue: #4a9eff;
+    --green: #00d26a;
+    --orange: #ff9f43;
+    --purple: #a855f7;
+    --cyan: #22d3ee;
+    --yellow: #fbbf24;
+    --teal: #2dd4bf;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    grid-template-rows: 56px 1fr;
+    height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .header-subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { background: var(--bg-card-hover); color: var(--text); }
+  .btn.active { border-color: var(--accent); color: var(--accent); background: rgba(233,69,96,0.1); }
+
+  /* Toggle switch */
+  .toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    margin: 0 4px;
+    height: 100%;
+  }
+
+  .toggle-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+
+  .toggle-label.active { color: var(--accent); font-weight: 600; }
+
+  .toggle-track {
+    position: relative;
+    width: 44px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .toggle-track.exec { background: rgba(233,69,96,0.2); border-color: var(--accent); }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .toggle-track.exec .toggle-thumb {
+    left: 24px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  /* Main graph area */
+  .graph-container {
+    position: relative;
+    background: var(--bg-primary);
+    overflow: hidden;
+  }
+
+  #cy {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Layer labels / legend */
+  .layer-labels {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .layer-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    font-size: 11px;
+    color: var(--text-muted);
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .layer-label:hover { background: rgba(0,0,0,0.8); color: var(--text); }
+  .layer-label.highlighted { border-color: var(--accent); color: var(--text); }
+
+  .layer-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Mode badge */
+  .mode-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 5;
+    pointer-events: none;
+    transition: all 0.3s;
+    backdrop-filter: blur(8px);
+  }
+
+  .mode-badge.tech {
+    background: rgba(74,158,255,0.15);
+    color: var(--blue);
+    border: 1px solid rgba(74,158,255,0.3);
+  }
+
+  .mode-badge.exec {
+    background: rgba(233,69,96,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(233,69,96,0.3);
+  }
+
+  /* Hint overlay */
+  .hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 5;
+    pointer-events: none;
+    transition: opacity 0.5s;
+  }
+
+  /* Right panel */
+  .panel {
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .panel-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .panel-tab:hover { color: var(--text); }
+  .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .panel-content::-webkit-scrollbar { width: 4px; }
+  .panel-content::-webkit-scrollbar-track { background: transparent; }
+  .panel-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Detail view */
+  .detail-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: var(--text-dim);
+    gap: 8px;
+  }
+
+  .detail-empty svg { opacity: 0.3; }
+  .detail-empty p { font-size: 13px; line-height: 1.6; }
+
+  .detail-header { margin-bottom: 16px; }
+
+  .detail-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .detail-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    word-break: break-word;
+  }
+
+  .detail-tech-name {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Consolas', 'Courier New', monospace;
+    margin-top: 4px;
+    padding: 3px 6px;
+    background: var(--bg-card);
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  .detail-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .detail-section { margin-top: 16px; }
+
+  .detail-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .detail-path {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .path-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: var(--bg-card);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+
+  .path-item:hover { background: var(--bg-card-hover); border-color: var(--border); }
+  .path-item.current { border-color: var(--accent); background: rgba(233,69,96,0.08); }
+
+  .path-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .path-arrow {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 10px;
+    padding: 0 10px;
+  }
+
+  .detail-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .meta-item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--bg-card);
+  }
+
+  .meta-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* Matrix view */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+
+  .matrix-table th {
+    text-align: left;
+    padding: 6px 8px;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg-secondary);
+    z-index: 1;
+  }
+
+  .matrix-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .matrix-table tr:hover td {
+    background: var(--bg-card);
+    color: var(--text);
+  }
+
+  .matrix-type-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .stat-val {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* Search */
+  .search-bar {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus { border-color: var(--accent); }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-header, .detail-section {
+    animation: fadeIn 0.2s ease-out;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">FMD <span>Flow Explorer</span></div>
+      <div class="header-subtitle">Interactive Pipeline Dependency Map</div>
+    </div>
+    <div class="header-actions">
+      <div class="toggle-group">
+        <span class="toggle-label active" id="lblTech">Technical</span>
+        <div class="toggle-track" id="modeToggle">
+          <div class="toggle-thumb"></div>
+        </div>
+        <span class="toggle-label" id="lblExec">Executive</span>
+      </div>
+      <button class="btn" id="btnFit" title="Fit to screen">Fit View</button>
+      <button class="btn" id="btnReset" title="Clear selection">Clear</button>
+      <button class="btn" id="btnLayout" title="Re-layout">Re-Layout</button>
+    </div>
+  </header>
+
+  <div class="graph-container">
+    <div class="layer-labels" id="legend"></div>
+    <div class="mode-badge tech" id="modeBadge">Technical View</div>
+    <div id="cy"></div>
+    <div class="hint" id="hint">Click any node to trace its full data path</div>
+  </div>
+
+  <div class="panel">
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="statNodes">0</span><span class="stat-label">Nodes</span></div>
+      <div class="stat"><span class="stat-val" id="statEdges">0</span><span class="stat-label">Edges</span></div>
+      <div class="stat"><span class="stat-val" id="statPath">0</span><span class="stat-label">In Path</span></div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" id="searchInput" placeholder="Search nodes..." />
+    </div>
+    <div class="panel-tabs">
+      <div class="panel-tab active" data-tab="detail">Details</div>
+      <div class="panel-tab" data-tab="matrix">Audit Matrix</div>
+    </div>
+    <div class="panel-content" id="panelContent">
+      <div class="detail-empty" id="detailEmpty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <p>Select a node to see its details<br/>and trace its full data path</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// NODE TYPE DEFINITIONS
+// ============================================================================
+
+const NODE_TYPES = {
+  source:       { label: 'SQL Source',            color: '#ff6b6b', shape: 'round-rectangle' },
+  connection:   { label: 'Connection',            color: '#ffa94d', shape: 'round-rectangle' },
+  datasource:   { label: 'Data Source',           color: '#ffd43b', shape: 'round-rectangle' },
+  orch:         { label: 'Orchestrator Pipeline', color: '#e94560', shape: 'round-hexagon' },
+  command:      { label: 'Command Pipeline',      color: '#ff8787', shape: 'round-hexagon' },
+  copy:         { label: 'Copy Pipeline',         color: '#f783ac', shape: 'round-hexagon' },
+  lakehouse:    { label: 'Lakehouse',             color: '#4a9eff', shape: 'barrel' },
+  notebook:     { label: 'Notebook',              color: '#a855f7', shape: 'round-diamond' },
+  config:       { label: 'Config / Variable Lib', color: '#22d3ee', shape: 'round-rectangle' },
+  tooling:      { label: 'Tooling Pipeline',      color: '#2dd4bf', shape: 'round-hexagon' },
+};
+
+// ============================================================================
+// NODES — Each has BOTH a technical label AND a friendly (exec) label
+// ============================================================================
+
+const nodes = [
+  // Sources
+  { id: 'src_powerdata', type: 'source', techLabel: 'SQL2019Dev\nIPC_PowerData', execLabel: 'PowerData\nDatabase', desc: 'Production PowerData database on SQL Server 2019. Contains core business intelligence and reporting data.', layer: 'Source' },
+  { id: 'src_m3fdb',     type: 'source', techLabel: 'M3Dev-DB1\nM3FDBTST',      execLabel: 'M3 ERP\nDatabase',     desc: 'M3 ERP (Infor) foundation database. Master data for customers, vendors, items, and transactions.', layer: 'Source' },
+  { id: 'src_m3etl',     type: 'source', techLabel: 'SQL2016Dev\nM3TST-ETL',    execLabel: 'M3 ETL\nStaging DB',   desc: 'M3 ETL staging database. Pre-processed extracts optimized for downstream analytics.', layer: 'Source' },
+  { id: 'src_mes',       type: 'source', techLabel: 'SQL2012Test\nMES',          execLabel: 'Manufacturing\n(MES)',  desc: 'Manufacturing Execution System. Production orders, work centers, quality metrics, shop floor data.', layer: 'Source' },
+
+  // Gateway Connections
+  { id: 'con_powerdata',  type: 'connection', techLabel: 'CON_FMD_\nSQL2019DEV_POWERDATA', execLabel: 'PowerData\nGateway Link',      desc: 'On-premises data gateway connection to the PowerData SQL Server instance.', layer: 'Connection' },
+  { id: 'con_m3fdb',      type: 'connection', techLabel: 'CON_FMD_\nM3DEV_M3FDBTST',      execLabel: 'M3 ERP\nGateway Link',         desc: 'On-premises data gateway connection to the M3 ERP SQL Server instance.', layer: 'Connection' },
+  { id: 'con_m3etl',      type: 'connection', techLabel: 'CON_FMD_\nSQL2016DEV_M3TSTETL',  execLabel: 'M3 ETL\nGateway Link',         desc: 'On-premises data gateway connection to the M3 ETL SQL Server instance.', layer: 'Connection' },
+  { id: 'con_mes',        type: 'connection', techLabel: 'CON_FMD_\nSQL2012TEST_MES',      execLabel: 'MES\nGateway Link',            desc: 'On-premises data gateway connection to the MES SQL Server instance.', layer: 'Connection' },
+
+  // Framework Connections
+  { id: 'con_fabric_sql',       type: 'connection', techLabel: 'CON_FMD_\nFABRIC_SQL',       execLabel: 'Config DB\nConnection',    desc: 'Internal Fabric connection to the framework metadata database.', layer: 'Connection' },
+  { id: 'con_fabric_pipelines', type: 'connection', techLabel: 'CON_FMD_\nFABRIC_PIPELINES', execLabel: 'Pipeline\nInvoker',        desc: 'Internal connection used by pipelines to call other pipelines.', layer: 'Connection' },
+  { id: 'con_fabric_notebooks', type: 'connection', techLabel: 'CON_FMD_\nFABRIC_NOTEBOOKS', execLabel: 'Notebook\nInvoker',        desc: 'Internal connection used by pipelines to launch notebooks.', layer: 'Connection' },
+  { id: 'con_onelake',          type: 'connection', techLabel: 'CON_FMD_\nONELAKE',          execLabel: 'OneLake\nInternal',        desc: 'Internal OneLake connection for lakehouse-to-lakehouse data movement.', layer: 'Connection' },
+
+  // Data Sources
+  { id: 'ds_powerdata', type: 'datasource', techLabel: 'DS: IPC_PowerData\n(ASQL_01)', execLabel: 'PowerData\nSQL Source',    desc: 'Registered data source for PowerData. Routes to the SQL Server copy pipeline at runtime.', layer: 'DataSource', dsType: 'ASQL_01' },
+  { id: 'ds_m3fdb',     type: 'datasource', techLabel: 'DS: M3FDBTST\n(ASQL_01)',     execLabel: 'M3 ERP\nSQL Source',       desc: 'Registered data source for M3 ERP. Routes to the SQL Server copy pipeline at runtime.', layer: 'DataSource', dsType: 'ASQL_01' },
+  { id: 'ds_m3etl',     type: 'datasource', techLabel: 'DS: M3TST-ETL\n(ASQL_01)',    execLabel: 'M3 ETL\nSQL Source',       desc: 'Registered data source for M3 ETL. Routes to the SQL Server copy pipeline at runtime.', layer: 'DataSource', dsType: 'ASQL_01' },
+  { id: 'ds_mes',       type: 'datasource', techLabel: 'DS: MES\n(ASQL_01)',           execLabel: 'MES\nSQL Source',          desc: 'Registered data source for MES. Routes to the SQL Server copy pipeline at runtime.', layer: 'DataSource', dsType: 'ASQL_01' },
+  { id: 'ds_onelake_t', type: 'datasource', techLabel: 'DS: OneLake\n(TABLES)',        execLabel: 'OneLake\nTable Source',    desc: 'OneLake Tables data source for internal Delta table transfers between lakehouses.', layer: 'DataSource', dsType: 'ONELAKE_TABLES_01' },
+  { id: 'ds_onelake_f', type: 'datasource', techLabel: 'DS: OneLake\n(FILES)',         execLabel: 'OneLake\nFile Source',     desc: 'OneLake Files data source for file-based transfers between lakehouses.', layer: 'DataSource', dsType: 'ONELAKE_FILES_01' },
+
+  // Orchestration Pipelines
+  { id: 'pl_load_all', type: 'orch', techLabel: 'PL_FMD_\nLOAD_ALL',          execLabel: 'Run Everything\n(Master)',         desc: 'Master orchestrator. Runs the entire pipeline chain end-to-end: ingest from sources, process to Bronze, transform to Silver.', layer: 'Orchestration' },
+  { id: 'pl_load_ldz', type: 'orch', techLabel: 'PL_FMD_\nLOAD_LANDINGZONE', execLabel: 'Ingest from\nSources',             desc: 'Reads the metadata database to find all active entities, then routes each one to the correct source connector (SQL, Oracle, FTP, etc.).', layer: 'Orchestration' },
+  { id: 'pl_load_brz', type: 'orch', techLabel: 'PL_FMD_\nLOAD_BRONZE',      execLabel: 'Process to\nBronze',               desc: 'Takes raw ingested files from Landing Zone and converts them into structured Bronze Delta tables. No business logic yet.', layer: 'Orchestration' },
+  { id: 'pl_load_slv', type: 'orch', techLabel: 'PL_FMD_\nLOAD_SILVER',      execLabel: 'Transform to\nSilver',             desc: 'Applies business rules, data quality checks, and transformations to produce clean, analytics-ready Silver tables.', layer: 'Orchestration' },
+
+  // Command Pipelines
+  { id: 'pl_cmd_asql',    type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_ASQL',    execLabel: 'Route SQL\nServer Data',    desc: 'Routes all SQL Server entities (PowerData, M3, MES) to the SQL copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_oracle',  type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_ORACLE',  execLabel: 'Route Oracle\nData',        desc: 'Routes Oracle database entities to the Oracle copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_adls',    type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_ADLS',    execLabel: 'Route Azure\nStorage Data', desc: 'Routes Azure Data Lake Storage files to the ADLS copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_ftp',     type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_FTP',     execLabel: 'Route FTP\nFiles',          desc: 'Routes FTP server files to the FTP copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_sftp',    type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_SFTP',    execLabel: 'Route Secure\nFTP Files',   desc: 'Routes SFTP server files to the SFTP copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_onelake', type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_ONELAKE', execLabel: 'Route OneLake\nData',       desc: 'Routes internal OneLake data to the OneLake copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_adf',     type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_ADF',     execLabel: 'Route Azure\nData Factory', desc: 'Routes ADF pipeline outputs to the ADF copy pipeline.', layer: 'Command' },
+  { id: 'pl_cmd_nb',      type: 'command', techLabel: 'PL_FMD_LDZ_\nCOMMAND_NOTEBOOK', execLabel: 'Route Custom\nNotebook',   desc: 'Routes custom notebook-based ingestion to the notebook pipeline.', layer: 'Command' },
+
+  // Copy Pipelines
+  { id: 'pl_copy_asql',      type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_ASQL_01',         execLabel: 'Copy SQL\nTables',           desc: 'Connects to SQL Server via gateway, runs SELECT queries, writes Parquet files to Landing Zone.', layer: 'Copy' },
+  { id: 'pl_copy_oracle',    type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_ORACLE_01',       execLabel: 'Copy Oracle\nTables',        desc: 'Connects to Oracle database, extracts table data into Landing Zone.', layer: 'Copy' },
+  { id: 'pl_copy_adls',      type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_ADLS_01',         execLabel: 'Copy Azure\nStorage Files',  desc: 'Downloads files from Azure Data Lake Storage Gen2 into Landing Zone.', layer: 'Copy' },
+  { id: 'pl_copy_ftp',       type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_FTP_01',          execLabel: 'Copy FTP\nFiles',            desc: 'Downloads files from FTP servers into Landing Zone.', layer: 'Copy' },
+  { id: 'pl_copy_sftp',      type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_SFTP_01',         execLabel: 'Copy Secure\nFTP Files',     desc: 'Downloads files from SFTP servers into Landing Zone.', layer: 'Copy' },
+  { id: 'pl_copy_onelake_t', type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_ONELAKE_TABLES',  execLabel: 'Copy OneLake\nTables',       desc: 'Copies Delta tables from other OneLake lakehouse locations.', layer: 'Copy' },
+  { id: 'pl_copy_onelake_f', type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_ONELAKE_FILES',   execLabel: 'Copy OneLake\nFiles',        desc: 'Copies raw files from other OneLake file locations.', layer: 'Copy' },
+  { id: 'pl_copy_adf',       type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_ADF',             execLabel: 'Pull from\nData Factory',    desc: 'Triggers an Azure Data Factory pipeline and captures its output.', layer: 'Copy' },
+  { id: 'pl_copy_nb',        type: 'copy', techLabel: 'PL_FMD_LDZ_COPY_\nFROM_CUSTOM_NB',       execLabel: 'Run Custom\nIngestion',      desc: 'Executes a user-defined Spark notebook for custom data ingestion logic.', layer: 'Copy' },
+
+  // Lakehouses
+  { id: 'lh_ldz',    type: 'lakehouse', techLabel: 'LH_DATA_\nLANDINGZONE', execLabel: 'Raw Data\nLanding Zone',       desc: 'Where source data first arrives. Raw Parquet files organized by source system. No transformations applied.', layer: 'Landing Zone' },
+  { id: 'lh_bronze', type: 'lakehouse', techLabel: 'LH_BRONZE_\nLAYER',     execLabel: 'Structured Data\n(Bronze)',     desc: 'Raw data converted to structured Delta Lake tables. Schema enforced, data typed, but no business logic applied yet.', layer: 'Bronze' },
+  { id: 'lh_silver', type: 'lakehouse', techLabel: 'LH_SILVER_\nLAYER',     execLabel: 'Clean Data\n(Silver)',          desc: 'Business-ready data. Transformations applied, quality validated, ready for reporting and analytics.', layer: 'Silver' },
+
+  // Notebooks
+  { id: 'nb_ldz_brz',  type: 'notebook', techLabel: 'NB_FMD_LOAD_\nLANDING_BRONZE',       execLabel: 'Convert Raw\nto Structured',     desc: 'Reads Parquet files from Landing Zone, applies schema, writes Delta tables to Bronze lakehouse.', layer: 'Bronze' },
+  { id: 'nb_brz_slv',  type: 'notebook', techLabel: 'NB_FMD_LOAD_\nBRONZE_SILVER',        execLabel: 'Apply Business\nRules',          desc: 'Reads Bronze tables, applies business transformations, and writes cleansed data to Silver lakehouse.', layer: 'Silver' },
+  { id: 'nb_dq',       type: 'notebook', techLabel: 'NB_FMD_\nDQ_CLEANSING',              execLabel: 'Data Quality\nChecks',            desc: 'Runs data validation rules, flags bad records, applies cleansing logic, and writes quality metrics.', layer: 'Silver' },
+  { id: 'nb_parallel', type: 'notebook', techLabel: 'NB_FMD_PROCESSING_\nPARALLEL_MAIN',  execLabel: 'Parallel\nProcessor',             desc: 'Runs multiple entities concurrently for faster throughput. Used by both Bronze and Silver pipelines.', layer: 'Processing' },
+  { id: 'nb_ldz_main', type: 'notebook', techLabel: 'NB_FMD_PROCESSING_\nLDZ_MAIN',       execLabel: 'Batch Ingestion\nCoordinator',    desc: 'Coordinates multi-entity batch ingestion into Landing Zone.', layer: 'Processing' },
+  { id: 'nb_utility',  type: 'notebook', techLabel: 'NB_FMD_\nUTILITY_FUNCTIONS',         execLabel: 'Shared\nHelper Code',             desc: 'Common functions used by all notebooks: connection management, Spark utilities, logging, etc.', layer: 'Shared' },
+
+  // Configuration
+  { id: 'sql_fmd',     type: 'config', techLabel: 'SQL_FMD_\nFRAMEWORK',  execLabel: 'Framework\nConfig DB',        desc: 'The brain of the framework. Stores all metadata: which sources to connect to, which tables to pull, how to transform them, and where to put them.', layer: 'Config' },
+  { id: 'var_fmd',     type: 'config', techLabel: 'VAR_FMD',               execLabel: 'Security\nSecrets',           desc: 'Stores sensitive configuration: Key Vault URI, tenant ID, client credentials. Never hardcoded in pipelines.', layer: 'Config' },
+  { id: 'var_cfg_fmd', type: 'config', techLabel: 'VAR_CONFIG_\nFMD',      execLabel: 'Framework\nSettings',         desc: 'Framework runtime settings: database connection string, workspace GUIDs, database GUIDs.', layer: 'Config' },
+  { id: 'env_fmd',     type: 'config', techLabel: 'ENV_FMD',               execLabel: 'Spark\nEnvironment',          desc: 'Defines the Spark runtime: Python version, Spark version, and required library dependencies.', layer: 'Config' },
+
+  // Tooling
+  { id: 'pl_tooling', type: 'tooling', techLabel: 'PL_TOOLING_\nPOST_ASQL_TO_FMD', execLabel: 'SQL Query\nUtility', desc: 'Utility pipeline for ad-hoc SQL query execution against the framework database.', layer: 'Tooling' },
+];
+
+// ============================================================================
+// EDGES
+// ============================================================================
+
+const edges = [
+  // Source -> Connection
+  { source: 'src_powerdata', target: 'con_powerdata', label: 'gateway' },
+  { source: 'src_m3fdb',     target: 'con_m3fdb',     label: 'gateway' },
+  { source: 'src_m3etl',     target: 'con_m3etl',     label: 'gateway' },
+  { source: 'src_mes',       target: 'con_mes',       label: 'gateway' },
+
+  // Connection -> DataSource
+  { source: 'con_powerdata', target: 'ds_powerdata' },
+  { source: 'con_m3fdb',     target: 'ds_m3fdb' },
+  { source: 'con_m3etl',     target: 'ds_m3etl' },
+  { source: 'con_mes',       target: 'ds_mes' },
+  { source: 'con_onelake',   target: 'ds_onelake_t' },
+  { source: 'con_onelake',   target: 'ds_onelake_f' },
+
+  // Master orchestrator
+  { source: 'pl_load_all', target: 'pl_load_ldz', label: 'step 1' },
+  { source: 'pl_load_all', target: 'pl_load_brz', label: 'step 2' },
+  { source: 'pl_load_all', target: 'pl_load_slv', label: 'step 3' },
+
+  // Metadata DB feeds orchestration
+  { source: 'sql_fmd', target: 'pl_load_ldz', label: 'metadata', style: 'dashed' },
+  { source: 'sql_fmd', target: 'pl_load_brz', label: 'metadata', style: 'dashed' },
+  { source: 'sql_fmd', target: 'pl_load_slv', label: 'metadata', style: 'dashed' },
+
+  // LDZ orchestrator -> Command pipelines
+  { source: 'pl_load_ldz', target: 'pl_cmd_asql' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_oracle' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_adls' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_ftp' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_sftp' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_onelake' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_adf' },
+  { source: 'pl_load_ldz', target: 'pl_cmd_nb' },
+
+  // Command -> Copy pipelines
+  { source: 'pl_cmd_asql',    target: 'pl_copy_asql' },
+  { source: 'pl_cmd_oracle',  target: 'pl_copy_oracle' },
+  { source: 'pl_cmd_adls',    target: 'pl_copy_adls' },
+  { source: 'pl_cmd_ftp',     target: 'pl_copy_ftp' },
+  { source: 'pl_cmd_sftp',    target: 'pl_copy_sftp' },
+  { source: 'pl_cmd_onelake', target: 'pl_copy_onelake_t' },
+  { source: 'pl_cmd_onelake', target: 'pl_copy_onelake_f' },
+  { source: 'pl_cmd_adf',     target: 'pl_copy_adf' },
+  { source: 'pl_cmd_nb',      target: 'pl_copy_nb' },
+
+  // DataSources feed into copy pipelines
+  { source: 'ds_powerdata', target: 'pl_copy_asql', label: 'feeds', style: 'dashed' },
+  { source: 'ds_m3fdb',     target: 'pl_copy_asql', label: 'feeds', style: 'dashed' },
+  { source: 'ds_m3etl',     target: 'pl_copy_asql', label: 'feeds', style: 'dashed' },
+  { source: 'ds_mes',       target: 'pl_copy_asql', label: 'feeds', style: 'dashed' },
+  { source: 'ds_onelake_t', target: 'pl_copy_onelake_t', label: 'feeds', style: 'dashed' },
+  { source: 'ds_onelake_f', target: 'pl_copy_onelake_f', label: 'feeds', style: 'dashed' },
+
+  // Copy pipelines -> Landing Zone
+  { source: 'pl_copy_asql',      target: 'lh_ldz' },
+  { source: 'pl_copy_oracle',    target: 'lh_ldz' },
+  { source: 'pl_copy_adls',      target: 'lh_ldz' },
+  { source: 'pl_copy_ftp',       target: 'lh_ldz' },
+  { source: 'pl_copy_sftp',      target: 'lh_ldz' },
+  { source: 'pl_copy_onelake_t', target: 'lh_ldz' },
+  { source: 'pl_copy_onelake_f', target: 'lh_ldz' },
+  { source: 'pl_copy_adf',       target: 'lh_ldz' },
+  { source: 'pl_copy_nb',        target: 'lh_ldz' },
+
+  // Bronze processing
+  { source: 'pl_load_brz', target: 'nb_ldz_brz', label: 'invokes' },
+  { source: 'pl_load_brz', target: 'nb_parallel', label: 'invokes' },
+  { source: 'lh_ldz',      target: 'nb_ldz_brz', label: 'reads' },
+  { source: 'nb_ldz_brz',  target: 'lh_bronze',  label: 'writes' },
+
+  // Silver processing
+  { source: 'pl_load_slv', target: 'nb_brz_slv', label: 'invokes' },
+  { source: 'pl_load_slv', target: 'nb_dq',      label: 'invokes' },
+  { source: 'pl_load_slv', target: 'nb_parallel', label: 'invokes' },
+  { source: 'lh_bronze',   target: 'nb_brz_slv', label: 'reads' },
+  { source: 'nb_brz_slv',  target: 'lh_silver',  label: 'writes' },
+  { source: 'nb_dq',       target: 'lh_silver',  label: 'validates' },
+
+  // Utility notebook
+  { source: 'nb_utility', target: 'nb_ldz_brz', label: '%run', style: 'dashed' },
+  { source: 'nb_utility', target: 'nb_brz_slv', label: '%run', style: 'dashed' },
+  { source: 'nb_utility', target: 'nb_dq',      label: '%run', style: 'dashed' },
+
+  // Variable libraries
+  { source: 'var_fmd',     target: 'pl_load_all', label: 'config', style: 'dashed' },
+  { source: 'var_cfg_fmd', target: 'pl_load_all', label: 'config', style: 'dashed' },
+
+  // Config connections
+  { source: 'con_fabric_sql',       target: 'sql_fmd', style: 'dashed' },
+  { source: 'con_fabric_pipelines', target: 'pl_load_all', label: 'invoke', style: 'dashed' },
+  { source: 'con_fabric_notebooks', target: 'nb_ldz_brz',  label: 'invoke', style: 'dashed' },
+
+  // Tooling
+  { source: 'pl_tooling', target: 'sql_fmd', label: 'writes' },
+];
+
+
+// ============================================================================
+// LABEL MODE STATE
+// ============================================================================
+
+let labelMode = 'tech'; // 'tech' or 'exec'
+
+function getLabelForNode(n) {
+  return labelMode === 'exec' ? n.execLabel : n.techLabel;
+}
+
+
+// ============================================================================
+// BUILD CYTOSCAPE
+// ============================================================================
+
+const cyElements = [];
+
+nodes.forEach(n => {
+  const t = NODE_TYPES[n.type];
+  cyElements.push({
+    group: 'nodes',
+    data: {
+      id: n.id,
+      label: n.techLabel,
+      techLabel: n.techLabel,
+      execLabel: n.execLabel,
+      nodeType: n.type,
+      color: t.color,
+      nodeShape: t.shape,
+      desc: n.desc,
+      layer: n.layer,
+      ...n
+    }
+  });
+});
+
+edges.forEach((e, i) => {
+  cyElements.push({
+    group: 'edges',
+    data: {
+      id: `e${i}`,
+      source: e.source,
+      target: e.target,
+      label: e.label || '',
+      edgeStyle: e.style || 'solid'
+    }
+  });
+});
+
+const cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements: cyElements,
+  style: [
+    {
+      selector: 'node',
+      style: {
+        'label': 'data(label)',
+        'text-wrap': 'wrap',
+        'text-valign': 'center',
+        'text-halign': 'center',
+        'font-size': '8px',
+        'font-weight': '600',
+        'font-family': '-apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif',
+        'color': '#fff',
+        'text-outline-color': '#000',
+        'text-outline-width': '1px',
+        'background-color': 'data(color)',
+        'background-opacity': 0.85,
+        'border-width': '2px',
+        'border-color': 'data(color)',
+        'border-opacity': 0.4,
+        'shape': 'data(nodeShape)',
+        'width': 120,
+        'height': 52,
+        'padding': '6px',
+        'transition-property': 'background-opacity, border-opacity, border-width, opacity, width, height',
+        'transition-duration': '0.2s',
+      }
+    },
+    { selector: 'node[nodeType="source"]',    style: { 'width': 110, 'height': 48 } },
+    { selector: 'node[nodeType="orch"]',      style: { 'width': 130, 'height': 56, 'font-size': '9px' } },
+    { selector: 'node[nodeType="lakehouse"]', style: { 'width': 130, 'height': 60, 'font-size': '10px', 'font-weight': '700' } },
+    { selector: 'node[nodeType="config"]',    style: { 'width': 100, 'height': 44, 'font-size': '7px' } },
+    { selector: 'node[nodeType="notebook"]',  style: { 'width': 130, 'height': 52 } },
+    {
+      selector: 'edge',
+      style: {
+        'width': 1.5,
+        'line-color': 'rgba(255,255,255,0.12)',
+        'target-arrow-color': 'rgba(255,255,255,0.12)',
+        'target-arrow-shape': 'triangle',
+        'arrow-scale': 0.8,
+        'curve-style': 'bezier',
+        'label': 'data(label)',
+        'font-size': '7px',
+        'color': 'rgba(255,255,255,0.25)',
+        'text-rotation': 'autorotate',
+        'text-outline-color': '#0f0f1a',
+        'text-outline-width': '2px',
+        'transition-property': 'line-color, target-arrow-color, width, opacity',
+        'transition-duration': '0.2s',
+      }
+    },
+    { selector: 'edge[edgeStyle="dashed"]', style: { 'line-style': 'dashed', 'line-dash-pattern': [6, 4] } },
+
+    // Highlighted
+    {
+      selector: 'node.highlighted',
+      style: {
+        'background-opacity': 1,
+        'border-opacity': 1,
+        'border-width': '3px',
+        'z-index': 10,
+      }
+    },
+    {
+      selector: 'node.selected-node',
+      style: {
+        'background-opacity': 1,
+        'border-color': '#e94560',
+        'border-width': '4px',
+        'border-opacity': 1,
+        'z-index': 20,
+        'overlay-color': '#e94560',
+        'overlay-opacity': 0.08,
+        'overlay-padding': 8,
+      }
+    },
+    {
+      selector: 'edge.highlighted',
+      style: {
+        'line-color': '#e94560',
+        'target-arrow-color': '#e94560',
+        'width': 3,
+        'z-index': 10,
+        'color': 'rgba(255,255,255,0.6)',
+      }
+    },
+    // Animated flow dots on highlighted edges
+    {
+      selector: 'edge.flow-animated',
+      style: {
+        'line-color': '#e94560',
+        'target-arrow-color': '#e94560',
+        'width': 3,
+        'z-index': 10,
+        'color': 'rgba(255,255,255,0.6)',
+      }
+    },
+    // Dimmed
+    { selector: 'node.dimmed', style: { 'opacity': 0.12 } },
+    { selector: 'edge.dimmed', style: { 'opacity': 0.04 } },
+    // Search
+    {
+      selector: 'node.search-match',
+      style: {
+        'border-color': '#ffd43b',
+        'border-width': '3px',
+        'border-opacity': 1,
+        'background-opacity': 1,
+      }
+    },
+  ],
+  layout: {
+    name: 'dagre',
+    rankDir: 'LR',
+    nodeSep: 30,
+    rankSep: 80,
+    edgeSep: 15,
+    animate: true,
+    animationDuration: 600,
+    fit: true,
+    padding: 40,
+  },
+  minZoom: 0.15,
+  maxZoom: 3,
+  wheelSensitivity: 0.3,
+});
+
+
+// ============================================================================
+// ANIMATED FLOW DOTS
+// ============================================================================
+
+let flowAnimationId = null;
+let flowDots = [];
+
+function startFlowAnimation(highlightedEdges) {
+  stopFlowAnimation();
+
+  const canvas = document.createElement('canvas');
+  const graphContainer = document.querySelector('.graph-container');
+  canvas.id = 'flowCanvas';
+  canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4;';
+  canvas.width = graphContainer.offsetWidth * window.devicePixelRatio;
+  canvas.height = graphContainer.offsetHeight * window.devicePixelRatio;
+  canvas.style.width = graphContainer.offsetWidth + 'px';
+  canvas.style.height = graphContainer.offsetHeight + 'px';
+  graphContainer.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  // Create dots for each highlighted edge
+  flowDots = [];
+  highlightedEdges.forEach(edge => {
+    const srcPos = edge.source().renderedPosition();
+    const tgtPos = edge.target().renderedPosition();
+    // Stagger 3 dots per edge
+    for (let i = 0; i < 3; i++) {
+      flowDots.push({
+        srcX: srcPos.x, srcY: srcPos.y,
+        tgtX: tgtPos.x, tgtY: tgtPos.y,
+        progress: (i * 0.33) % 1,
+        speed: 0.004 + Math.random() * 0.002,
+        edge: edge,
+      });
+    }
+  });
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    flowDots.forEach(dot => {
+      // Update positions from current render (handles pan/zoom)
+      const src = dot.edge.source().renderedPosition();
+      const tgt = dot.edge.target().renderedPosition();
+      dot.srcX = src.x; dot.srcY = src.y;
+      dot.tgtX = tgt.x; dot.tgtY = tgt.y;
+
+      dot.progress += dot.speed;
+      if (dot.progress > 1) dot.progress -= 1;
+
+      const x = dot.srcX + (dot.tgtX - dot.srcX) * dot.progress;
+      const y = dot.srcY + (dot.tgtY - dot.srcY) * dot.progress;
+
+      // Glow
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, 8);
+      gradient.addColorStop(0, 'rgba(233,69,96,0.8)');
+      gradient.addColorStop(0.5, 'rgba(233,69,96,0.2)');
+      gradient.addColorStop(1, 'rgba(233,69,96,0)');
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Core dot
+      ctx.beginPath();
+      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+    });
+
+    flowAnimationId = requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+
+function stopFlowAnimation() {
+  if (flowAnimationId) {
+    cancelAnimationFrame(flowAnimationId);
+    flowAnimationId = null;
+  }
+  flowDots = [];
+  const canvas = document.getElementById('flowCanvas');
+  if (canvas) canvas.remove();
+}
+
+
+// ============================================================================
+// NODE INTERACTION
+// ============================================================================
+
+let selectedNode = null;
+
+function getFullPath(nodeId) {
+  const upstream = [];
+  const downstream = [];
+  const visitedUp = new Set();
+  const visitedDown = new Set();
+
+  function walkUp(id) {
+    if (visitedUp.has(id)) return;
+    visitedUp.add(id);
+    cy.getElementById(id).predecessors('node').forEach(p => {
+      upstream.push(p.id());
+      walkUp(p.id());
+    });
+  }
+  walkUp(nodeId);
+
+  function walkDown(id) {
+    if (visitedDown.has(id)) return;
+    visitedDown.add(id);
+    cy.getElementById(id).successors('node').forEach(s => {
+      downstream.push(s.id());
+      walkDown(s.id());
+    });
+  }
+  walkDown(nodeId);
+
+  return { upstream: [...new Set(upstream)], downstream: [...new Set(downstream)] };
+}
+
+function highlightPath(nodeId) {
+  cy.elements().removeClass('highlighted selected-node dimmed flow-animated');
+  stopFlowAnimation();
+
+  const node = cy.getElementById(nodeId);
+  const predecessors = node.predecessors();
+  const successors = node.successors();
+  const connected = predecessors.union(successors).union(node);
+
+  cy.elements().addClass('dimmed');
+  connected.removeClass('dimmed');
+  connected.nodes().addClass('highlighted');
+  connected.edges().addClass('highlighted flow-animated');
+  node.addClass('selected-node').removeClass('highlighted');
+
+  document.getElementById('statPath').textContent = connected.nodes().length;
+  document.getElementById('hint').style.opacity = '0';
+
+  // Start animated flow dots
+  startFlowAnimation(connected.edges());
+}
+
+function clearHighlight() {
+  cy.elements().removeClass('highlighted selected-node dimmed search-match flow-animated');
+  stopFlowAnimation();
+  selectedNode = null;
+  document.getElementById('statPath').textContent = '0';
+  document.getElementById('hint').style.opacity = '1';
+  showDetailEmpty();
+}
+
+function showDetailEmpty() {
+  document.getElementById('panelContent').innerHTML = `
+    <div class="detail-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <p>Select a node to see its details<br/>and trace its full data path</p>
+    </div>`;
+}
+
+function showNodeDetail(nodeId) {
+  const node = cy.getElementById(nodeId);
+  const data = node.data();
+  const t = NODE_TYPES[data.nodeType];
+  const { upstream, downstream } = getFullPath(nodeId);
+
+  const orderedPath = [...upstream.reverse(), nodeId, ...downstream];
+  const seen = new Set();
+  const uniquePath = orderedPath.filter(id => {
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+
+  const pathHtml = uniquePath.map(id => {
+    const n = cy.getElementById(id).data();
+    const nt = NODE_TYPES[n.nodeType];
+    const isCurrent = id === nodeId;
+    const displayLabel = labelMode === 'exec' ? n.execLabel : n.techLabel;
+    return `<div class="path-item ${isCurrent ? 'current' : ''}" onclick="selectNode('${id}')">
+      <span class="path-dot" style="background:${nt.color}"></span>
+      <span>${displayLabel.replace(/\n/g, ' ')}</span>
+    </div>`;
+  }).join('<div class="path-arrow">&#x25BC;</div>');
+
+  const predecessorNodes = node.predecessors('node');
+  const successorNodes = node.successors('node');
+
+  // Always show friendly name as title, tech name below
+  const displayName = data.execLabel.replace(/\n/g, ' ');
+  const techName = data.techLabel.replace(/\n/g, ' ');
+
+  document.getElementById('panelContent').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-type" style="background:${t.color}20; color:${t.color}; border:1px solid ${t.color}40">
+        <span class="path-dot" style="background:${t.color}"></span>
+        ${t.label}
+      </div>
+      <div class="detail-name">${displayName}</div>
+      <div class="detail-tech-name">${techName}</div>
+      <div class="detail-desc">${data.desc}</div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-meta">
+        <div class="meta-item">
+          <div class="meta-label">Layer</div>
+          <div class="meta-value">${data.layer}</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Type</div>
+          <div class="meta-value">${t.label.split(' ')[0]}</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Upstream</div>
+          <div class="meta-value" style="color:var(--green)">${predecessorNodes.length}</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Downstream</div>
+          <div class="meta-value" style="color:var(--blue)">${successorNodes.length}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Full Data Path (${uniquePath.length} nodes)</div>
+      <div class="detail-path">${pathHtml}</div>
+    </div>
+  `;
+}
+
+function selectNode(nodeId) {
+  selectedNode = nodeId;
+  highlightPath(nodeId);
+  showNodeDetail(nodeId);
+}
+
+cy.on('tap', 'node', function(e) {
+  selectNode(e.target.id());
+});
+
+cy.on('tap', function(e) {
+  if (e.target === cy) clearHighlight();
+});
+
+cy.on('dbltap', 'node', function(e) {
+  cy.animate({ center: { eles: e.target }, zoom: 1.5 }, { duration: 400 });
+});
+
+
+// ============================================================================
+// LABEL MODE TOGGLE
+// ============================================================================
+
+const modeToggle = document.getElementById('modeToggle');
+const lblTech = document.getElementById('lblTech');
+const lblExec = document.getElementById('lblExec');
+const modeBadge = document.getElementById('modeBadge');
+
+function setLabelMode(mode) {
+  labelMode = mode;
+
+  // Update toggle UI
+  if (mode === 'exec') {
+    modeToggle.classList.add('exec');
+    lblTech.classList.remove('active');
+    lblExec.classList.add('active');
+    modeBadge.className = 'mode-badge exec';
+    modeBadge.textContent = 'Executive View';
+  } else {
+    modeToggle.classList.remove('exec');
+    lblTech.classList.add('active');
+    lblExec.classList.remove('active');
+    modeBadge.className = 'mode-badge tech';
+    modeBadge.textContent = 'Technical View';
+  }
+
+  // Update all node labels in the graph
+  cy.nodes().forEach(n => {
+    const newLabel = mode === 'exec' ? n.data('execLabel') : n.data('techLabel');
+    n.data('label', newLabel);
+  });
+
+  // Refresh detail panel if a node is selected
+  if (selectedNode) showNodeDetail(selectedNode);
+  if (currentTab === 'matrix') showMatrixView();
+}
+
+modeToggle.addEventListener('click', () => {
+  setLabelMode(labelMode === 'tech' ? 'exec' : 'tech');
+});
+lblTech.addEventListener('click', () => setLabelMode('tech'));
+lblExec.addEventListener('click', () => setLabelMode('exec'));
+
+
+// ============================================================================
+// LEGEND
+// ============================================================================
+
+const legendEl = document.getElementById('legend');
+Object.entries(NODE_TYPES).forEach(([key, val]) => {
+  const el = document.createElement('div');
+  el.className = 'layer-label';
+  el.innerHTML = `<span class="layer-dot" style="background:${val.color}"></span>${val.label}`;
+  el.onclick = () => {
+    clearHighlight();
+    cy.elements().addClass('dimmed');
+    const typeNodes = cy.nodes(`[nodeType="${key}"]`);
+    typeNodes.removeClass('dimmed').addClass('highlighted');
+    typeNodes.connectedEdges().removeClass('dimmed');
+    document.getElementById('statPath').textContent = typeNodes.length;
+    el.classList.toggle('highlighted');
+  };
+  legendEl.appendChild(el);
+});
+
+
+// ============================================================================
+// SEARCH
+// ============================================================================
+
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  cy.nodes().removeClass('search-match');
+  if (!q) return;
+  cy.nodes().forEach(n => {
+    const techLabel = (n.data('techLabel') || '').toLowerCase();
+    const execLabel = (n.data('execLabel') || '').toLowerCase();
+    const desc = (n.data('desc') || '').toLowerCase();
+    const layer = (n.data('layer') || '').toLowerCase();
+    if (techLabel.includes(q) || execLabel.includes(q) || desc.includes(q) || layer.includes(q)) {
+      n.addClass('search-match');
+    }
+  });
+});
+
+
+// ============================================================================
+// AUDIT MATRIX TAB
+// ============================================================================
+
+function showMatrixView() {
+  const rows = nodes.map(n => {
+    const t = NODE_TYPES[n.type];
+    const preds = cy.getElementById(n.id).predecessors('node').length;
+    const succs = cy.getElementById(n.id).successors('node').length;
+    const displayLabel = labelMode === 'exec' ? n.execLabel : n.techLabel;
+    return `<tr onclick="selectNode('${n.id}'); switchTab('detail')">
+      <td><span class="matrix-type-badge" style="background:${t.color}30;color:${t.color}">${t.label}</span></td>
+      <td style="color:var(--text);font-weight:600;font-size:11px">${displayLabel.replace(/\n/g, ' ')}</td>
+      <td>${n.layer}</td>
+      <td style="text-align:center">${preds}</td>
+      <td style="text-align:center">${succs}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('panelContent').innerHTML = `
+    <table class="matrix-table">
+      <thead><tr><th>Type</th><th>Name</th><th>Layer</th><th>In</th><th>Out</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+
+// ============================================================================
+// PANEL TABS
+// ============================================================================
+
+let currentTab = 'detail';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  if (tab === 'detail') {
+    if (selectedNode) showNodeDetail(selectedNode);
+    else showDetailEmpty();
+  } else if (tab === 'matrix') {
+    showMatrixView();
+  }
+}
+
+document.querySelectorAll('.panel-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+
+// ============================================================================
+// TOOLBAR
+// ============================================================================
+
+document.getElementById('btnFit').addEventListener('click', () => {
+  cy.animate({ fit: { padding: 40 } }, { duration: 400 });
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  clearHighlight();
+  searchInput.value = '';
+  cy.nodes().removeClass('search-match');
+});
+
+document.getElementById('btnLayout').addEventListener('click', () => {
+  cy.layout({
+    name: 'dagre', rankDir: 'LR', nodeSep: 30, rankSep: 80, edgeSep: 15,
+    animate: true, animationDuration: 600, fit: true, padding: 40,
+  }).run();
+});
+
+
+// ============================================================================
+// RESIZE HANDLER (for flow animation canvas)
+// ============================================================================
+
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('flowCanvas');
+  if (canvas) {
+    const container = document.querySelector('.graph-container');
+    canvas.width = container.offsetWidth * window.devicePixelRatio;
+    canvas.height = container.offsetHeight * window.devicePixelRatio;
+    canvas.style.width = container.offsetWidth + 'px';
+    canvas.style.height = container.offsetHeight + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
+});
+
+
+// ============================================================================
+// INIT STATS
+// ============================================================================
+
+document.getElementById('statNodes').textContent = cy.nodes().length;
+document.getElementById('statEdges').textContent = cy.edges().length;
+
+</script>
+</body>
+</html>
