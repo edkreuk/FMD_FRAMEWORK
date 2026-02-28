@@ -332,11 +332,46 @@ if not notebookutils.fs.exists(source_changes_data_path):
     execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
     
     notebookutils.notebook.exit(result_data)
-#Read all incoming changes in Parquet format
-dfDataChanged= spark.read\
-                .format(SourceFileType) \
-                .option("header","true") \
-                .load(f"{source_changes_data_path}")
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+if SourceFileType=='csv':
+    dfDataChanged = (
+        spark.read
+            .option("header", True)            # first row has column names
+            .option("inferSchema", True)       # ask Spark to infer types
+            .option("samplingRatio", 0.1)      # sample 10% of rows; omit to scan fully
+            .csv(f"{source_changes_data_path}")
+    )
+elif SourceFileType=='xlsx':
+    # Basic read: entire first sheet, header row present, types inferred
+    import pandas as pd
+    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "false")
+    pdf = pd.read_excel(f"{source_changes_data_path}", engine="openpyxl")
+    dfDataChanged = spark.createDataFrame(pdf)
+
+elif SourceFileType=='xls':
+    # Basic read: entire first sheet, header row present, types inferred
+    import pandas as pd
+    spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "false")
+    pdf = pd.read_excel(f"{source_changes_data_path}", engine="xlrd")
+    dfDataChanged = spark.createDataFrame(pdf)
+
+else:
+    #Read all incoming changes in Parquet format
+    dfDataChanged= spark.read\
+                    .format(SourceFileType) \
+                    .option("header","true") \
+                    .load(f"{source_changes_data_path}")
+
 
 # METADATA ********************
 
