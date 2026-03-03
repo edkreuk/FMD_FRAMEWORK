@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+build/
+*.tgz
+
+# IDE / Editor
+.windsurf/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+nul
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+miro_board.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OpenMemory
+.windsurf/rules/openmemory.md
+openmemory.md
