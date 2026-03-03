@@ -4,7 +4,8 @@
 
 # META {
 # META   "kernel_info": {
-# META     "name": "synapse_pyspark"
+# META     "name": "jupyter",
+# META     "jupyter_kernel_name": "python3.11"
 # META   },
 # META   "dependencies": {}
 # META }
@@ -28,7 +29,7 @@ variable_parameters = {
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
+# META   "language_group": "jupyter_python"
 # META }
 
 # CELL ********************
@@ -48,7 +49,7 @@ workspace_icon_def = {
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
+# META   "language_group": "jupyter_python"
 # META }
 
 # CELL ********************
@@ -72,7 +73,7 @@ def upsert_mapping(mapping_table, new_item, keys=("Description","environment", "
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
+# META   "language_group": "jupyter_python"
 # META }
 
 # CELL ********************
@@ -671,7 +672,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
+# META   "language_group": "jupyter_python"
 # META }
 
 # CELL ********************
@@ -721,7 +722,7 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
+# META   "language_group": "jupyter_python"
 # META }
 
 # CELL ********************
@@ -862,5 +863,5 @@ def add_letter_to_base64_png(base64_png, letter, font_size=20, text_color="black
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
+# META   "language_group": "jupyter_python"
 # META }
