@@ -18,7 +18,7 @@
             },
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "7eadea32_d3b5_4b09_bc02_7780dd4af9bb",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -325,6 +325,9 @@
                   }
                 },
                 "sessionTag": "fmd_framework"
+              },
+              "externalReferences": {
+                "connection": "5929775e-aff1-430c-b56e-f855d0bc63b8"
               },
               "policy": {
                 "timeout": "0.01:00:00",
