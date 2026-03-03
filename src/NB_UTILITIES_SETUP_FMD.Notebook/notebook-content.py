@@ -691,7 +691,11 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
                 print("AzureDataFactory can't created automated yet to CLI limitations, please create manual")
             elif type =='FabricDataPipelines':
                 run_fab_command(f"""create .connections/{connection_name}.Connection 
-                    -P connectionDetails.type=FabricDataPipelines,connectionDetails.creationMethod=FabricDataPipelines.Actions,connectionDetails.parameters.dummy=x,credentialDetails.type=WorkspaceIdentity""")
+                    -P connectionDetails.type=FabricDataPipelines,connectionDetails.creationMethod=FabricDataPipelines.Actions,credentialDetails.type=WorkspaceIdentity""")
+                print(f"✅ {connection_name} Created")
+            elif type =='Notebooks':
+                run_fab_command(f"""create .connections/{connection_name}.Connection 
+                    -P connectionDetails.type=Notebook,connectionDetails.creationMethod=Notebook.Actions,credentialDetails.type=WorkspaceIdentity""")
                 print(f"✅ {connection_name} Created")
         except Exception as e:
             print(f"❌ Failed to create connection: {e}")
