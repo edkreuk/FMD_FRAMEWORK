@@ -46,6 +46,7 @@
 # 7. Optimize and vacuum Delta table
 # 8. Update processing status and complete audit logging
 
+
 # CELL ********************
 
 config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
@@ -591,22 +592,23 @@ df_updates_old = (
 #
 ####
 df_inserts = (
-    dfDataChanged.alias('changes')
+    dfDataChanged.alias("changes")
     .join(
-        dfDataOriginal.alias('original'),
-        (dfDataChanged.HashedPKColumn == dfDataOriginal.HashedPKColumn) &
-        (dfDataOriginal.IsDeleted.cast('boolean') == lit(False).cast('boolean')),
-        how='left'
+        dfDataOriginal.alias("original"),
+        (F.col("changes.HashedPKColumn") == F.col("original.HashedPKColumn")) &
+        (F.col("original.IsCurrent") == True) &
+        (F.col("original.IsDeleted") == False),
+        how="left"
     )
-    .where("original.HashedPKColumn is null")
+    .where(F.col("original.HashedPKColumn").isNull())
     .select(
-        "changes.HashedPKColumn",
-        lit('I').alias('Action'),
+        F.col("changes.HashedPKColumn"),
+        F.lit("I").alias("Action"),
         *columns_to_insert_deletes
     )
-    .withColumn('RecordEndDate', lit('9999-12-31').cast('timestamp'))
-    .withColumn('IsCurrent', lit(True))
-    .withColumn('IsDeleted', lit(False))
+    .withColumn("RecordEndDate", F.lit("9999-12-31").cast("timestamp"))
+    .withColumn("IsCurrent", F.lit(True))
+    .withColumn("IsDeleted", F.lit(False))
 )
 
 ### Final merged DataFrame
