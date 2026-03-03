@@ -587,6 +587,9 @@
                 },
                 "sessionTag": "FMD_Landingzone"
               },
+              "externalReferences": {
+                "connection": "5929775e-aff1-430c-b56e-f855d0bc63b8"
+              },
               "policy": {
                 "timeout": "0.12:00:00",
                 "retry": 0,
@@ -864,7 +867,7 @@
             },
             "schema": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "bcd28be4_7851_46aa_b7bf_7b36cf219a67",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -1019,8 +1022,7 @@
     ],
     "parameters": {
       "Data_WorkspaceGuid": {
-        "type": "string",
-        "defaultValue": ""
+        "type": "string"
       }
     },
     "libraryVariables": {
