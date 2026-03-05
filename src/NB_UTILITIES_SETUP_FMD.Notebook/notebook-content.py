@@ -457,6 +457,20 @@ def assign_workspace_identity_role(workspace_name):
     except Exception as e:
         print(f"❌ Failed to assign managed identity: {e}")
 
+def assign_identity_role_to_different_workspace(source_workspace_identity,workspace_name ):
+    """
+    Assigns role to _workspace identity in the workspace.
+    source_workspace_identity= workspace identity(code workspace)
+    workspace_name=workspace to assign identity(data workspace)
+    """
+    workspace_path = f"/{workspace_name}.workspace"
+    servicePrincipalId= run_fab_command(f"ls {source_workspace_identity}.Workspace/.managedidentities -l --query [0].servicePrincipalId", capture_output=True, silently_continue=True)
+    try:
+        run_fab_command(f'acl set "{workspace_path}" -I {servicePrincipalId} -R Contributor -f', capture_output=True, silently_continue=True)
+        print(f"✅ Managed identity assigned to contributor role in '{workspace_name}'")
+    except Exception as e:
+        print(f"❌ Failed to assign managed identity: {e}")
+
 # -------------------------------
 # Folder Handling
 # -------------------------------
