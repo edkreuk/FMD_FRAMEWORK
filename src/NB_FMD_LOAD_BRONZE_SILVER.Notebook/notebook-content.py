@@ -595,20 +595,20 @@ df_inserts = (
     dfDataChanged.alias("changes")
     .join(
         dfDataOriginal.alias("original"),
-        (F.col("changes.HashedPKColumn") == F.col("original.HashedPKColumn")) &
-        (F.col("original.IsCurrent") == True) &
-        (F.col("original.IsDeleted") == False),
+        (col("changes.HashedPKColumn") == col("original.HashedPKColumn")) &
+        (col("original.IsCurrent") == True) &
+        (col("original.IsDeleted") == False),
         how="left"
     )
-    .where(F.col("original.HashedPKColumn").isNull())
+    .where(col("original.HashedPKColumn").isNull())
     .select(
-        F.col("changes.HashedPKColumn"),
-        F.lit("I").alias("Action"),
+        col("changes.HashedPKColumn"),
+        lit("I").alias("Action"),
         *columns_to_insert_deletes
     )
-    .withColumn("RecordEndDate", F.lit("9999-12-31").cast("timestamp"))
-    .withColumn("IsCurrent", F.lit(True))
-    .withColumn("IsDeleted", F.lit(False))
+    .withColumn("RecordEndDate", lit("9999-12-31").cast("timestamp"))
+    .withColumn("IsCurrent", lit(True))
+    .withColumn("IsDeleted", lit(False))
 )
 
 ### Final merged DataFrame
