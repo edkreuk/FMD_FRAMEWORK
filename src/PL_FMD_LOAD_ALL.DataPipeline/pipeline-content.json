@@ -4,7 +4,12 @@
       {
         "type": "InvokePipeline",
         "typeProperties": {
-          "parameters": {},
+          "parameters": {
+            "Data_WorkspaceGuid": {
+              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+              "type": "Expression"
+            }
+          },
           "waitOnCompletion": true,
           "workspaceId": "00000000-0000-0000-0000-000000000000",
           "pipelineId": "5d74cbab-2d1e-4b8a-a438-86cbab219dc9",
@@ -33,7 +38,12 @@
       {
         "type": "InvokePipeline",
         "typeProperties": {
-          "parameters": {},
+          "parameters": {
+            "Data_WorkspaceGuid": {
+              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+              "type": "Expression"
+            }
+          },
           "waitOnCompletion": true,
           "workspaceId": "00000000-0000-0000-0000-000000000000",
           "pipelineId": "693d01c3-999c-4022-9da6-a94134c7e57e",
@@ -524,7 +534,12 @@
       {
         "type": "InvokePipeline",
         "typeProperties": {
-          "parameters": {},
+          "parameters": {
+            "Data_WorkspaceGuid": {
+              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+              "type": "Expression"
+            }
+          },
           "waitOnCompletion": true,
           "workspaceId": "00000000-0000-0000-0000-000000000000",
           "pipelineId": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
@@ -668,6 +683,12 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",

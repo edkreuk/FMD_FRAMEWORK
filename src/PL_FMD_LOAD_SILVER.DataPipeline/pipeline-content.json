@@ -7,6 +7,15 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderStoredProcedureName": "[execution].[sp_GetSilverlayerEntity]",
+            "storedProcedureParameters": {
+              "WorkspaceId": {
+                "value": {
+                  "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                  "type": "Expression"
+                },
+                "type": "Guid"
+              }
+            },
             "partitionOption": "None",
             "queryTimeout": "02:00:00"
           },
@@ -18,7 +27,7 @@
             },
             "schema": [],
             "connectionSettings": {
-              "name": "7eadea32_d3b5_4b09_bc02_7780dd4af9bb",
+              "name": "4e3d685d_3698_42a7_944e_423527dd395d",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {
@@ -491,6 +500,11 @@
         ]
       }
     ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string"
+      }
+    },
     "libraryVariables": {
       "VAR_FMD_key_vault_uri_name": {
         "type": "String",
