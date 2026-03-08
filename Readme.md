@@ -26,13 +26,6 @@ The FMD Framework enables organizations to streamline data operations by leverag
 
 Watch this conversation with the Azure Data Factory team for a walkthrough of the concepts described in [🚀 Why the FMD Framework?](#-why-the-fmd-framework).
 
-- Dynamic, metadata‑driven pipelines
-- Consistent orchestration across ingestion, processing, and publishing
-- Centralized configuration for all data entities
-- Alignment with Microsoft Fabric Lakehouse & Medallion Architecture
-- Reduced engineering effort through reusable patterns
-- Faster delivery with standardized, tested components
-
 ### ✔ Dynamic Pipelines
 Automatically adjusts pipeline execution based on metadata—ideal for large‑scale, multi‑source environments.
 ## Key Features
