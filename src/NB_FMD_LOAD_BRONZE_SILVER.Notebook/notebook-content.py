@@ -79,6 +79,7 @@ TargetLakehouseName =''
 TargetSchema = ""
 TargetName = ""
 cleansing_rules = []
+dq_rules = []
 key_vault =default_settings.key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
@@ -210,6 +211,10 @@ EndNotebookActivity = (
 )
 GetCleansingRule = (
     f"[execution].[sp_GetSilverCleansingRule]"
+    f"@SilverLayerEntityId = \"{SilverLayerEntityId}\""
+)
+GetDQRule = (
+    f"[execution].[sp_GetSilverDQRule]"
     f"@SilverLayerEntityId = \"{SilverLayerEntityId}\""
 )
 
@@ -361,6 +366,61 @@ if rules_str != None :
 # CELL ********************
 
 dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ### Perform Data Quality Rules
+
+# CELL ********************
+
+if dq_rules == "":
+    dq_rules = []
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+DQRules=execute_with_outputs(GetDQRule, driver, connstring, database)
+dq_rules_str = None
+# Extract the string
+dq_rules_str = DQRules["result_sets"][0][0]["DQRules"]
+if dq_rules_str != None :
+# Convert JSON text → Python dict/list
+    dq_rules = json.loads(dq_rules_str)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+%run NB_FMD_DQ_RULES
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+dfDataChanged=handle_dq_rules(dfDataChanged,dq_rules)
 
 # METADATA ********************
 

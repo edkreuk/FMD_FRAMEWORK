@@ -44,6 +44,7 @@ The FMD Framework uses a modular architecture that separates data, code, and orc
 - **[Medallion architecture](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Medallion-architecture)**
 - **[Supported data sources](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Supported-data-sources)**
 - **[Data Cleansing](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Cleansing)**
+- **[Data Quality Rules](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Quality-Rules)**
 - **[Logging and auditing](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Logging-and-auditing)**  
 - **[Variable Library](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Variable-Library)**
 - **[Data Pipelines and Notebooks](https://github.com/edkreuk/FMD_FRAMEWORK/wiki/Data-Pipelines-and-Notebooks)**
