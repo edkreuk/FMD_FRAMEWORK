@@ -512,7 +512,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # CELL ********************
 
-if dq_rules == "":
+if not dq_rules:
     dq_rules = []
 
 # METADATA ********************
@@ -528,7 +528,7 @@ DQRules=execute_with_outputs(GetDQRule, driver, connstring, database)
 dq_rules_str = None
 # Extract the string
 dq_rules_str = DQRules["result_sets"][0][0]["DQRules"]
-if dq_rules_str != None :
+if dq_rules_str is not None :
 # Convert JSON text → Python dict/list
     dq_rules = json.loads(dq_rules_str)
 
