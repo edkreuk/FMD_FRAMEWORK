@@ -115,14 +115,14 @@ def normalize_dq_rules(dq_rules):
     if dq_rules is None:
         return []
 
-    # JSON string → Python object
+    # JSON string -> Python object
     if isinstance(dq_rules, str):
         dq_rules = dq_rules.strip()
         if not dq_rules:
             return []
         dq_rules = json.loads(dq_rules)
 
-    # Single dict → wrap in list
+    # Single dict -> wrap in list
     if isinstance(dq_rules, dict):
         dq_rules = [dq_rules]
 

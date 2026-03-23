@@ -224,11 +224,11 @@ EndNotebookActivity = (
     f"@EntityLayer = \"{EntityLayer}\""
 )
 GetCleansingRule = (
-    f"[execution].[sp_GetBronzeCleansingRule]"
+    f"[execution].[sp_GetBronzeCleansingRule] "
     f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
 )
 GetDQRule = (
-    f"[execution].[sp_GetBronzeDQRule]"
+    f"[execution].[sp_GetBronzeDQRule] "
     f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
 )
 
@@ -528,8 +528,8 @@ DQRules=execute_with_outputs(GetDQRule, driver, connstring, database)
 dq_rules_str = None
 # Extract the string
 dq_rules_str = DQRules["result_sets"][0][0]["DQRules"]
-if dq_rules_str is not None :
-# Convert JSON text → Python dict/list
+if dq_rules_str is not None:
+# Convert JSON text to Python dict/list
     dq_rules = json.loads(dq_rules_str)
 
 # METADATA ********************
