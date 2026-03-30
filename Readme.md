@@ -62,6 +62,7 @@ To get started:
 6. Refer to **[wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki)** for data model, pipelines, and logging.
 
 ## Business Domain Deployment
+A modular extension of the Fabric Metadata‑Driven Framework (FMD) designed to simplify, standardize, and automate deployment of Business Domains within Microsoft Fabric. 
 Review the **[Business Domain Deployment Framework Deployment Guide](./FMD_BUSINESS_DOMAIN_DEPLOYMENT.md)**.
 
 

@@ -305,6 +305,42 @@
                         "dependsOn": []
                       }
                     ]
+                  },
+                  {
+                    "value": "AzureSqlMI",
+                    "activities": [
+                      {
+                        "type": "InvokePipeline",
+                        "typeProperties": {
+                          "parameters": {
+                            "ConnectionType": {
+                              "value": "@toUpper(item().ConnectionType)",
+                              "type": "Expression"
+                            },
+                            "Data_WorkspaceGuid": {
+                              "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            }
+                          },
+                          "waitOnCompletion": true,
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "pipelineId": "39304935-0c83-becd-4627-81954eb64a9a",
+                          "operationType": "InvokeFabricPipeline"
+                        },
+                        "externalReferences": {
+                          "connection": "6d8146c6-a438-47df-94e2-540c552eb6d7"
+                        },
+                        "policy": {
+                          "timeout": "0.01:00:00",
+                          "retry": 0,
+                          "retryIntervalInSeconds": 30,
+                          "secureInput": false,
+                          "secureOutput": false
+                        },
+                        "name": "PL_FMD_LDZ_COMMAND_SQLMI",
+                        "dependsOn": []
+                      }
+                    ]
                   }
                 ],
                 "defaultActivities": [
@@ -580,7 +616,7 @@
             "type": "FabricSqlDatabaseTable",
             "schema": [],
             "connectionSettings": {
-              "name": "7375cd95_93c0_4b85_940e_692635efad1f",
+              "name": "da3c5dd2_a97b_4628_ba1b_29597831bc3c",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {

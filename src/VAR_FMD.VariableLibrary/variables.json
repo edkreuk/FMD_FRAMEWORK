@@ -5,31 +5,31 @@
       "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": ""
+      "value": "val_key_vault_uri_name"
     },
     {
       "name": "key_vault_tenant_id",
       "note": "",
       "type": "String",
-      "value": ""
+      "value": "val_key_vault_tenant_id"
     },
     {
       "name": "key_vault_client_id",
       "note": "",
       "type": "String",
-      "value": ""
+      "value": "val_key_vault_client_id"
     },
     {
       "name": "key_vault_client_secret",
       "note": "",
       "type": "String",
-      "value": ""
+      "value": "val_key_vault_client_secret"
     },
     {
       "name": "lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
-      "value": ""
+      "value": true
     }
   ]
 }
