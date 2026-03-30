@@ -40,7 +40,7 @@
                 "source": {
                   "type": "BinarySource",
                   "storeSettings": {
-                    "type": "LakehouseReadSettings",
+                    "type": "AzureBlobStorageReadSettings",
                     "recursive": true
                   },
                   "formatSettings": {
@@ -79,13 +79,13 @@
                 "sink": {
                   "type": "BinarySink",
                   "storeSettings": {
-                    "type": "LakehouseWriteSettings",
+                    "type": "AzureBlobStorageWriteSettings",
                     "copyBehavior": "PreserveHierarchy"
                   },
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "c8f1bbad_21c5_4665_b1be_c99d36214d4f",
+                      "name": "5a38b760_a100_46d4_b607_e7ef427dfd97",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -874,7 +874,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "ea796e96_30a1_4c08_a497_64f220db48df",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
@@ -1016,8 +1016,7 @@
     ],
     "parameters": {
       "Data_WorkspaceGuid": {
-        "type": "string",
-        "defaultValue": ""
+        "type": "string"
       }
     },
     "libraryVariables": {
