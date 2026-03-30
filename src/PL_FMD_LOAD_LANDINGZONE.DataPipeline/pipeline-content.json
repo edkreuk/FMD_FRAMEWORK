@@ -307,7 +307,7 @@
                     ]
                   },
                   {
-                    "value": "AzureSqlMI",
+                    "value": "AZURESQLMI",
                     "activities": [
                       {
                         "type": "InvokePipeline",
