@@ -169,6 +169,14 @@
                         "value": "@pipeline().parameters.Data_WorkspaceGuid",
                         "type": "Expression"
                       }
+                    },
+                    "TargetName": {
+                      "type": "String",
+                      "value": "@item().SourceName"
+                    },
+                    "TargetSchema": {
+                      "type": "String",
+                      "value": "@item().SourceSchema"
                     }
                   },
                   "queryTimeout": "02:00:00",
@@ -177,7 +185,7 @@
                 "datasetSettings": {
                   "annotations": [],
                   "connectionSettings": {
-                    "name": "eb9ebb48_2f31_44f4_998e_cac9d58ae96b",
+                    "name": "3dce472e_1420_44a8_98a9_7c52e68959de",
                     "properties": {
                       "annotations": [],
                       "type": "FabricSqlDatabase",
@@ -318,7 +326,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "0c38593c_1cbd_4053_a501_9b581bc62c81",
+              "name": "df66e26a_161b_4884_8151_88c6b9ed608e",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
@@ -422,7 +430,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "1dfd4157_b0a5_4f27_944e_99ce98820474",
+              "name": "8a4a665d_2846_4501_81c9_45a8fa80c454",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
@@ -475,7 +483,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "0180045e_a101_439f_9c36_f01ade60b9af",
+              "name": "2f0a31ed_61cf_4bd5_9acc_6eea63460486",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
