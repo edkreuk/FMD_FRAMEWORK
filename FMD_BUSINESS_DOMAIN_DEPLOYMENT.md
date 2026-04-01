@@ -6,6 +6,19 @@ Topic: how-to
 Author: edkreuk
 ---
 
+A modular extension of the Fabric Metadata-Driven Framework (FMD) designed to simplify, standardize, and automate deployment of Business Domains within Microsoft Fabric. The Business Domain Framework enables organizations to scale analytics through a governed, metadata-driven approach where each business domain (for example, Sales, HR, Finance, Operations) is deployed consistently using reusable patterns, automated provisioning, and ready-to-use template assets.
+
+The FMD Business Domain Framework delivers everything needed to deploy a domain‑driven analytics workspace in Microsoft Fabric. It builds upon the core FMD Metadata Model by providing:
+
+- Automated domain workspace provisioning
+- Domain‑specific Lakehouse creation
+- Standardized Gold‑layer table patterns (dimensions and facts)
+- Deployment scripts using the Microsoft Fabric CLI
+- Metadata‑driven orchestration for repeatable ingestion, transformation, and modeling
+- Integration with existing FMD configuration and execution schemas
+
+This framework ensures that every business domain is created in a consistent, scalable, and governed way, accelerating enterprise-grade analytics delivery.
+
 # Deploy the FMD Business Domain Framework in Microsoft Fabric
 
 ![FMD Overview](/Images/FMD_DOMAIN_OVERVIEW.png)
@@ -17,30 +30,38 @@ This article describes how to deploy the Business Domains in Microsoft Fabric. F
 ### Prerequisites
 
 Before you begin, ensure the following prerequisites are met in the Admin Portal:
+
 - Contributor role is assigned on the target capacity or capacities.
 
 ### Prerequisite: Enable access in the Fabric Admin portal
 
 Sign in to the Fabric admin portal. You need to be a Fabric admin to see the tenant settings page.
 Make sure the following settings are enabled:
+
 **Microsoft Fabric settings:**
+
 - Users can create Fabric items.
+
 **Workspace settings:**
+
 - Create Workspaces
 
-Select the switch for the type of admin APIs you want to enable:
 **Developer settings:**
+
 - Service principals can create workspaces, connections, and deployment pipelines
 - Service principals can call Fabric public APIs
+
 **Admin API settings:**
+
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
 
-In case you need to use a security group add the security group to above settings.
-Add Workspace identity (after deployment) or Service Principal to the security groups
-
+> [!NOTE]
+> In case you need to use a **security group**, add the security group to the settings above.
+> Add Workspace identity (after deployment) or Service Principal to the security groups.
 
 ### Managed identity or Service Principal used for execution must have the following role assigned:
+
 - Workspace Contributor role on the workspace (Workspace Identity is automatically assigned during deployment, Service principal must be assigned manually)
 - Managed identity or Service Principal must be added to the correct security groups which have been assigned in the Prerequisite step
 
@@ -58,8 +79,9 @@ Download the deployment notebook from the setup folder to your local machine:
 - Create a new workspace (for example, `FMD_FRAMEWORK_CONFIGURATION`).
 - Import the deployment notebook into the workspace (ensure you are in the Fabric Experience):
   - `NB_SETUP_BUSINESS_DOMAINS.ipynb`
-  > [!NOTE]
-> Make sure you set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs .
+
+> [!NOTE]
+> Make sure you set Spark session timeout to at least 1 hour in the workspace settings/Data Engineering/Jobs.
 
 ![Fabric Experience](/Images/FMD_Fabric_Experience.png)
 
@@ -85,30 +107,30 @@ lakehouse_schema_enabled = True           # Set to True if you want to use the l
 driver = '{ODBC Driver 18 for SQL Server}'# Change this if you use a different driver
 overwrite_variable_library = True         # By default the Library is overwritten, change this to "False" if you have custom changes
 ```
+
 **Variable settings**
+
 ```python
-key_vault_uri_name='val_key_vault_uri_name'
 SourceWorkspaceId=''                            
 SourceLakehouseId=''                            # Your Gold lakehouse  
 SourceSchema=''
 Shortcut_TargetSchema=''
 Shortcut_TargetWorkspaceId=''
 Shortcut_TargetLakehouseId=''                   # Your Silver Lakehouse
-````
+```
 
 **Capacity settings**  
-  Specify the unique name for the capacity:
 
-  ```python
-  capacity_name_dvlm = 'Name of your capacity'
-  reassign_capacity= True                 # Set to False if you don't want to reassign the capacity to an existing workspace in case you set the capacity manually
-               
-  ```
+Specify the unique name for the capacity:
+
+```python
+capacity_name_dvlm = 'Name of your capacity'
+reassign_capacity= True                 # Set to False if you don't want to reassign the capacity to an existing workspace in case you set the capacity manually
+```
 
 **Domain settings**
 
 Define the name for the Main Domain, and you can add 1 or more business domains.
-
 
 ```python
 framework_post_fix= ''                              # postfix to be added at the end of workspace for example INTEGRATION CODE(D) FMD
@@ -123,16 +145,17 @@ configuration_database_workspace=  'Name of the workspace of your SQL Server dat
 configuration_database_name= 'Name of the configuration database'
 
 ```
+
 You need to create workspace roles for the different workspaces:
 
 > [!NOTE]
 > The id of the User, Group or Service Principal is the Object ID in Microsoft Entra ID. For a Service Principal, you can find the Object ID in the Azure Portal under 'Enterprise applications'. Don't use the Object ID of the App Registration.'
 
-
 workspace_roles_reporting
 workspace_roles_gold
 
 Check the examples below
+
 ```python
 
 # Replace placeholder IDs with real Object IDs from Microsoft Entra ID.
@@ -186,6 +209,7 @@ workspace_roles_reporting_business_domain = [
 **Repo Configuration**
 
 Location of the FMD Framework repository. Unless you have a forked version, do not change these settings. If you want to use another branch, you can change the branch name to your own branch.
+
 ```python
 #FMD Framework code
 ##### DO NOT CHANGE UNLESS SPECIFIED OTHERWISE ####
@@ -196,7 +220,7 @@ folder_prefix = ""
 ###################################################
 ```
 
-### 5. Run the deployment
+### 4. Run the deployment
 
 Execute the **notebook** to apply your configuration and deploy the framework.
 

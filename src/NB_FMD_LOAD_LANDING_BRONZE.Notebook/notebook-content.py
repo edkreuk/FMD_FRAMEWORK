@@ -86,6 +86,7 @@ first_row_is_header = True
 infer_schema = True
 key_vault =default_settings.key_vault_uri_name
 cleansing_rules = []
+dq_rules = []
 
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
@@ -226,6 +227,10 @@ GetCleansingRule = (
     f"[execution].[sp_GetBronzeCleansingRule]"
     f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
 )
+GetDQRule = (
+    f"[execution].[sp_GetBronzeDQRule]"
+    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
+)
 
 # METADATA ********************
 
@@ -252,9 +257,6 @@ execute_with_outputs(StartNotebookActivity, driver, connstring, database)
 # CELL ********************
 
 #Make sure you have disabled V-Order, Bronze we want to load fast
-
-spark.conf.set("sprk.sql.parquet.vorder.enabled", "false")
-
 spark.conf.set("spark.sql.parquet.int96RebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.int96RebaseModeInWrite", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInRead", "CORRECTED")
@@ -263,6 +265,9 @@ spark.conf.set("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
 spark.conf.set('spark.microsoft.delta.optimize.fast.enabled', True)
 spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
 spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
+
+spark.conf.set("spark.fabric.resourceProfile", "writeHeavy")
+
 
 # METADATA ********************
 

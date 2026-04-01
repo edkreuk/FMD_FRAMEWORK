@@ -239,8 +239,6 @@ execute_with_outputs(StartNotebookActivity, driver, connstring, database)
 
 #Make sure you have enabled V-Order
 
-spark.conf.set("spark.sql.parquet.vorder.enabled", "true")
-
 spark.conf.set("spark.sql.parquet.int96RebaseModeInRead", "CORRECTED")
 spark.conf.set("spark.sql.parquet.int96RebaseModeInWrite", "CORRECTED")
 spark.conf.set("spark.sql.parquet.datetimeRebaseModeInRead", "CORRECTED")
@@ -251,6 +249,9 @@ spark.conf.set('spark.microsoft.delta.optimize.fileLevelTarget.enabled', True)
 spark.conf.set('spark.databricks.delta.autoCompact.enabled', True)
 
 spark.conf.set('spark.microsoft.delta.properties.defaults.enableChangeDataFeed',True)
+
+#readHeavyForSpark	
+spark.conf.set("spark.fabric.resourceProfile", "readHeavyForSpark")
 
 # METADATA ********************
 

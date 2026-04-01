@@ -27,7 +27,7 @@
             },
             "schema": [],
             "connectionSettings": {
-              "name": "4e3d685d_3698_42a7_944e_423527dd395d",
+              "name": "2e2ba292_9153_46e4_8594_ca19945ca658",
               "properties": {
                 "type": "FabricSqlDatabase",
                 "typeProperties": {

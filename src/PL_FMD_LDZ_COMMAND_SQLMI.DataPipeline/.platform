@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_FMD_LDZ_COMMAND_SQLMI"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "39304935-0c83-becd-4627-81954eb64a9a"
+  }
+}

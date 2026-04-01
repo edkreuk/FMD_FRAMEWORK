@@ -71,7 +71,7 @@
                 "sink": {
                   "type": "ParquetSink",
                   "storeSettings": {
-                    "type": "LakehouseWriteSettings",
+                    "type": "AzureBlobStorageWriteSettings",
                     "copyBehavior": "PreserveHierarchy"
                   },
                   "formatSettings": {
@@ -81,7 +81,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "b787fbab_c58b_4357_9777_8edfd977c96e",
+                      "name": "341e9d9e_46a4_48ba_b6ed_b1e5d3bda4ba",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -1053,7 +1053,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "242dc438_b953_4b4e_bd0f_a61e772fc85f",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
@@ -1108,7 +1108,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "SQL_FMD_FRAMEWORK",
+              "name": "3c3a9325_a7d9_46f6_b847_b07eda0a02cf",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
@@ -1210,7 +1210,7 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "7e5ef157_871c_47f3_a8d4_32ed04cf5f9e",
+                      "name": "a933b388_0c4a_46cd_a94b_477cdc490569",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -2153,8 +2153,7 @@
     ],
     "parameters": {
       "Data_WorkspaceGuid": {
-        "type": "string",
-        "defaultValue": ""
+        "type": "string"
       }
     },
     "libraryVariables": {

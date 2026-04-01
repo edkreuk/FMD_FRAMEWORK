@@ -36,8 +36,9 @@ Select the switch for the type of admin APIs you want to enable:
 - Service principals can access read-only admin APIs
 - Service principals can access admin APIs used for update
 
-In case you need to use a security group add the security group to above settings 
-Add Workspace identity(after deployment) or Service Principal to the security groups
+> [!NOTE]
+> In case you need to use a **security group**, add the security group to the settings above.
+> Add Workspace identity (after deployment) or Service Principal to the security groups.
 
 
 ### Workspace identity or Service Principal used for execution must have the following role assigned:

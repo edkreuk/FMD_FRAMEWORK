@@ -38,18 +38,17 @@
               },
               "typeProperties": {
                 "source": {
-                  "type": "DelimitedTextSource",
+                  "type": "BinarySource",
                   "storeSettings": {
                     "type": "AzureBlobFSReadSettings",
-                    "recursive": true,
-                    "enablePartitionDiscovery": false
+                    "recursive": true
                   },
                   "formatSettings": {
-                    "type": "DelimitedTextReadSettings"
+                    "type": "BinaryReadSettings"
                   },
                   "datasetSettings": {
                     "annotations": [],
-                    "type": "DelimitedText",
+                    "type": "Binary",
                     "typeProperties": {
                       "location": {
                         "type": "AzureBlobFSLocation",
@@ -61,34 +60,27 @@
                           "value": "@item().SourceSchema",
                           "type": "Expression"
                         },
-                        "fileSystem": "datalanding"
-                      },
-                      "columnDelimiter": ",",
-                      "escapeChar": "\\",
-                      "firstRowAsHeader": true,
-                      "quoteChar": "\""
+                        "fileSystem": {
+                          "value": "@item().DataSourceName",
+                          "type": "Expression"
+                        }
+                      }
                     },
-                    "schema": [],
                     "externalReferences": {
                       "connection": "@item().ConnectionGuid"
                     }
                   }
                 },
                 "sink": {
-                  "type": "DelimitedTextSink",
+                  "type": "BinarySink",
                   "storeSettings": {
-                    "type": "LakehouseWriteSettings",
+                    "type": "AzureBlobStorageWriteSettings",
                     "copyBehavior": "PreserveHierarchy"
-                  },
-                  "formatSettings": {
-                    "type": "DelimitedTextWriteSettings",
-                    "fileExtension": ".txt",
-                    "quoteAllText": true
                   },
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "c592c456_a74d_4e20_a9c9_11b30951fee6",
+                      "name": "0cecaf86_6b8a_4d68_8218_08e6a4675476",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
@@ -99,37 +91,25 @@
                         }
                       }
                     },
-                    "type": "DelimitedText",
+                    "type": "Binary",
                     "typeProperties": {
                       "location": {
-                        "type": "LakehouseLocation",
+                        "type": "AzureBlobStorageLocation",
                         "fileName": {
                           "value": "@item().TargetFileName",
                           "type": "Expression"
                         },
-                        "folderPath": {
-                          "value": "@item().TargetFilePath",
-                          "type": "Expression"
-                        }
-                      },
-                      "columnDelimiter": ",",
-                      "escapeChar": "\\",
-                      "firstRowAsHeader": true,
-                      "quoteChar": "\""
-                    },
-                    "schema": []
+                        "folderPath": "@item().TargetFilePath",
+                        "container": "adls"
+                      }
+                    }
                   }
                 },
                 "enableStaging": false,
-                "validateDataConsistency": true,
-                "translator": {
-                  "type": "TabularTranslator",
-                  "typeConversion": true,
-                  "typeConversionSettings": {
-                    "allowDataTruncation": true,
-                    "treatBooleanAsNumber": false
-                  }
-                }
+                "skipErrorFile": {
+                  "dataInconsistency": false
+                },
+                "validateDataConsistency": true
               }
             },
             {
@@ -887,7 +867,7 @@
           "datasetSettings": {
             "annotations": [],
             "connectionSettings": {
-              "name": "d1af6dba_6c68_42b0_9d40_bdae3373b3f9",
+              "name": "db619fdc_91dd_41dd_b7d1_9e800caf4fb5",
               "properties": {
                 "annotations": [],
                 "type": "FabricSqlDatabase",
