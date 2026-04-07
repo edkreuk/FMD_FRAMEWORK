@@ -583,23 +583,32 @@ else:
 
 # CELL ********************
 
-#merge table 
-deltaTable = DeltaTable.forPath(spark, f'{target_data_path}')
-if IsIncremental in [False, 'false', 'False']:
-    print(' - Incremental Loading is not enabled, deletes are allowed')
-    merge = deltaTable.alias('original') \
-        .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn == updates.HashedPKColumn') \
-        .whenNotMatchedInsertAll() \
-        .whenMatchedUpdateAll('original.HashedNonKeyColumns != updates.HashedNonKeyColumns') \
-        .whenNotMatchedBySourceDelete() \
-        .execute()
-elif IsIncremental not in [False, 'false', 'False']:
-    print(' - Incremental Loading is enabled, deletes are not allowed')
-    merge = deltaTable.alias('original') \
-        .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn == updates.HashedPKColumn') \
-        .whenNotMatchedInsertAll() \
-        .whenMatchedUpdateAll('original.HashedNonKeyColumns != updates.HashedNonKeyColumns') \
-        .execute()
+#merge table
+try:
+    deltaTable = DeltaTable.forPath(spark, f'{target_data_path}')
+    if IsIncremental in [False, 'false', 'False']:
+        print(' - Incremental Loading is not enabled, deletes are allowed')
+        merge = deltaTable.alias('original') \
+            .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn == updates.HashedPKColumn') \
+            .whenNotMatchedInsertAll() \
+            .whenMatchedUpdateAll('original.HashedNonKeyColumns != updates.HashedNonKeyColumns') \
+            .whenNotMatchedBySourceDelete() \
+            .execute()
+    else:
+        print(' - Incremental Loading is enabled, deletes are not allowed')
+        merge = deltaTable.alias('original') \
+            .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn == updates.HashedPKColumn') \
+            .whenNotMatchedInsertAll() \
+            .whenMatchedUpdateAll('original.HashedNonKeyColumns != updates.HashedNonKeyColumns') \
+            .execute()
+except Exception as e:
+    # Ensure audit log is written even on failure
+    error_data = {"Action": "Error", "ErrorMessage": str(e)[:500]}
+    try:
+        execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(error_data))
+    except Exception:
+        pass  # best-effort audit logging
+    raise
 
 # METADATA ********************
 

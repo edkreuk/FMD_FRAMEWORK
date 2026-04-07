@@ -135,14 +135,14 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
 
             try:
                 cursor.commit()
-            except:
-                pass
+            except Exception:
+                pass  # commit may fail on read-only operations
 
     finally:
         try:
             conn.close()
-        except:
-            pass
+        except Exception:
+            pass  # best-effort connection cleanup
 
     return {
         "result_sets": result_sets,
