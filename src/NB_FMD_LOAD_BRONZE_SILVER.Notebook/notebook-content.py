@@ -168,50 +168,25 @@ TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 
-UpsertPipelineBronzeLayerEntity = (
-    f"[execution].[sp_UpsertPipelineBronzeLayerEntity] "
-    f"@SchemaName = \"{TargetSchema}\", "
-    f"@TableName = \"{TargetName}\", "
-    f"@IsProcessed = \"True\", "
-    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
-)
+# Stored procedure names
+SP_UPSERT_BRONZE_ENTITY = "[execution].[sp_UpsertPipelineBronzeLayerEntity]"
+SP_AUDIT_NOTEBOOK = "[logging].[sp_AuditNotebook]"
+SP_GET_CLEANSING_RULE = "[execution].[sp_GetSilverCleansingRule]"
 
-StartNotebookActivity = (
-    f"[logging].[sp_AuditNotebook] "
-    f"@NotebookGuid = \"{NotebookExecutionId}\", "
-    f"@NotebookName = \"{notebook_name}\", "
-    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
-    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
-    f"@NotebookParameters = \"{TargetName}\", "
-    f"@TriggerType = \"{TriggerType}\", "
-    f"@TriggerGuid = \"{TriggerGuid}\", "
-    f"@TriggerTime = \"{TriggerTime}\", "
-    f"@LogData = '{{\"Action\":\"Start\"}}', "
-    f"@LogType = \"StartNotebookActivity\", "
-    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
-    f"@EntityId = \"{BronzeLayerEntityId}\", "
-    f"@EntityLayer = \"{EntityLayer}\""
-)
-
-EndNotebookActivity = (
-    f"[logging].[sp_AuditNotebook] "
-    f"@NotebookGuid = \"{NotebookExecutionId}\", "
-    f"@NotebookName = \"{notebook_name}\", "
-    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
-    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
-    f"@NotebookParameters = \"{TargetName}\", "
-    f"@TriggerType = \"{TriggerType}\", "
-    f"@TriggerGuid = \"{TriggerGuid}\", "
-    f"@TriggerTime = \"{TriggerTime}\", "
-    f"@LogType = \"EndNotebookActivity\", "
-    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
-    f"@EntityId = \"{BronzeLayerEntityId}\", "
-    f"@EntityLayer = \"{EntityLayer}\""
-)
-GetCleansingRule = (
-    f"[execution].[sp_GetSilverCleansingRule]"
-    f"@SilverLayerEntityId = \"{SilverLayerEntityId}\""
-)
+# Common audit parameters
+audit_params = {
+    "NotebookGuid": NotebookExecutionId,
+    "NotebookName": notebook_name,
+    "PipelineRunGuid": PipelineRunGuid,
+    "PipelineParentRunGuid": PipelineParentRunGuid,
+    "NotebookParameters": TargetName,
+    "TriggerType": TriggerType,
+    "TriggerGuid": TriggerGuid,
+    "TriggerTime": TriggerTime,
+    "WorkspaceGuid": SourceWorkspace,
+    "EntityId": BronzeLayerEntityId,
+    "EntityLayer": EntityLayer,
+}
 
 # METADATA ********************
 
@@ -222,7 +197,7 @@ GetCleansingRule = (
 
 # CELL ********************
 
-execute_with_outputs(StartNotebookActivity, driver, connstring, database)
+execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData='{"Action":"Start"}', LogType="StartNotebookActivity")
 
 # METADATA ********************
 
@@ -333,7 +308,7 @@ if cleansing_rules == "":
 
 # CELL ********************
 
-CleansingRules=execute_with_outputs(GetCleansingRule, driver, connstring, database)
+CleansingRules=execute_with_outputs(SP_GET_CLEANSING_RULE, driver, connstring, database, SilverLayerEntityId=SilverLayerEntityId)
 rules_str = None
 # Extract the string
 rules_str = CleansingRules["result_sets"][0][0]["CleansingRules"]
@@ -432,8 +407,8 @@ else:
         }
         }
 
-    execute_with_outputs(UpsertPipelineBronzeLayerEntity, driver, connstring, database)
-    execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    execute_with_outputs(SP_UPSERT_BRONZE_ENTITY, driver, connstring, database, SchemaName=TargetSchema, TableName=TargetName, IsProcessed="True", BronzeLayerEntityId=BronzeLayerEntityId)
+    execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(result_data), LogType="EndNotebookActivity")
 
     notebookutils.notebook.exit(result_data)
 
@@ -739,8 +714,8 @@ result_data = {
 
 # CELL ********************
 
-execute_with_outputs(UpsertPipelineBronzeLayerEntity, driver, connstring, database)
-execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+execute_with_outputs(SP_UPSERT_BRONZE_ENTITY, driver, connstring, database, SchemaName=TargetSchema, TableName=TargetName, IsProcessed="True", BronzeLayerEntityId=BronzeLayerEntityId)
+execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(result_data), LogType="EndNotebookActivity")
 
 # METADATA ********************
 

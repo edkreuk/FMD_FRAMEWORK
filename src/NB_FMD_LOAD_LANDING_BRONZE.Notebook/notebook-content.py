@@ -175,62 +175,27 @@ TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 
-UpsertPipelineLandingzoneEntity = (
-    f"[execution].[sp_UpsertPipelineLandingzoneEntity] "
-    f"@Filename = \"{SourceFileName}\", "
-    f"@FilePath = \"{SourceFilePath}\", "
-    f"@IsProcessed = \"True\", "
-    f"@LandingzoneEntityId = \"{LandingzoneEntityId}\""
-)
+# Stored procedure names
+SP_UPSERT_LDZ_ENTITY = "[execution].[sp_UpsertPipelineLandingzoneEntity]"
+SP_UPSERT_BRONZE_ENTITY = "[execution].[sp_UpsertPipelineBronzeLayerEntity]"
+SP_AUDIT_NOTEBOOK = "[logging].[sp_AuditNotebook]"
+SP_GET_CLEANSING_RULE = "[execution].[sp_GetBronzeCleansingRule]"
+SP_GET_DQ_RULE = "[execution].[sp_GetBronzeDQRule]"
 
-InsertPipelineBronzeLayerEntity = (
-    f"[execution].[sp_UpsertPipelineBronzeLayerEntity] "
-    f"@SchemaName = \"{TargetSchema}\", "
-    f"@TableName = \"{TargetName}\", "
-    f"@IsProcessed = \"False\", "
-    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
-)
-
-StartNotebookActivity = (
-    f"[logging].[sp_AuditNotebook] "
-    f"@NotebookGuid = \"{NotebookExecutionId}\", "
-    f"@NotebookName = \"{notebook_name}\", "
-    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
-    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
-    f"@NotebookParameters = \"{TargetName}\", "
-    f"@TriggerType = \"{TriggerType}\", "
-    f"@TriggerGuid = \"{TriggerGuid}\", "
-    f"@TriggerTime = \"{TriggerTime}\", "
-    f"@LogData = '{{\"Action\":\"Start\"}}', "
-    f"@LogType = \"StartNotebookActivity\", "
-    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
-    f"@EntityId = \"{BronzeLayerEntityId}\", "
-    f"@EntityLayer = \"{EntityLayer}\""
-)
-
-EndNotebookActivity = (
-    f"[logging].[sp_AuditNotebook] "
-    f"@NotebookGuid = \"{NotebookExecutionId}\", "
-    f"@NotebookName = \"{notebook_name}\", "
-    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
-    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
-    f"@NotebookParameters = \"{TargetName}\", "
-    f"@TriggerType = \"{TriggerType}\", "
-    f"@TriggerGuid = \"{TriggerGuid}\", "
-    f"@TriggerTime = \"{TriggerTime}\", "
-    f"@LogType = \"EndNotebookActivity\", "
-    f"@WorkspaceGuid = \"{SourceWorkspace}\", "
-    f"@EntityId = \"{BronzeLayerEntityId}\", "
-    f"@EntityLayer = \"{EntityLayer}\""
-)
-GetCleansingRule = (
-    f"[execution].[sp_GetBronzeCleansingRule]"
-    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
-)
-GetDQRule = (
-    f"[execution].[sp_GetBronzeDQRule]"
-    f"@BronzeLayerEntityId = \"{BronzeLayerEntityId}\""
-)
+# Common audit parameters
+audit_params = {
+    "NotebookGuid": NotebookExecutionId,
+    "NotebookName": notebook_name,
+    "PipelineRunGuid": PipelineRunGuid,
+    "PipelineParentRunGuid": PipelineParentRunGuid,
+    "NotebookParameters": TargetName,
+    "TriggerType": TriggerType,
+    "TriggerGuid": TriggerGuid,
+    "TriggerTime": TriggerTime,
+    "WorkspaceGuid": SourceWorkspace,
+    "EntityId": BronzeLayerEntityId,
+    "EntityLayer": EntityLayer,
+}
 
 # METADATA ********************
 
@@ -245,7 +210,7 @@ GetDQRule = (
 
 # CELL ********************
 
-execute_with_outputs(StartNotebookActivity, driver, connstring, database)
+execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData='{"Action":"Start"}', LogType="StartNotebookActivity")
 
 # METADATA ********************
 
@@ -316,8 +281,8 @@ elif schema_enabled != True:
 
 if not notebookutils.fs.exists(source_changes_data_path):
     print("❌ Source file not found. Exiting Notebook")
-    execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
-    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    execute_with_outputs(SP_UPSERT_LDZ_ENTITY, driver, connstring, database, Filename=SourceFileName, FilePath=SourceFilePath, IsProcessed="True", LandingzoneEntityId=LandingzoneEntityId)
+    TotalRuntime = str((datetime.now() - start_audit_time))
     end_audit_time =  str(datetime.now())
     start_audit_time =str(start_audit_time)
     result_data = {
@@ -334,7 +299,7 @@ if not notebookutils.fs.exists(source_changes_data_path):
 
     }
     }
-    execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(result_data), LogType="EndNotebookActivity")
     
     notebookutils.notebook.exit(result_data)
 
@@ -469,7 +434,7 @@ if cleansing_rules == "":
 
 # CELL ********************
 
-CleansingRules=execute_with_outputs(GetCleansingRule, driver, connstring, database)
+CleansingRules=execute_with_outputs(SP_GET_CLEANSING_RULE, driver, connstring, database, BronzeLayerEntityId=BronzeLayerEntityId)
 rules_str = None
 # Extract the string
 rules_str = CleansingRules["result_sets"][0][0]["CleansingRules"]
@@ -565,9 +530,9 @@ else:
         }
         }
 
-    execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
-    execute_with_outputs(InsertPipelineBronzeLayerEntity, driver, connstring, database)
-    execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+    execute_with_outputs(SP_UPSERT_LDZ_ENTITY, driver, connstring, database, Filename=SourceFileName, FilePath=SourceFilePath, IsProcessed="True", LandingzoneEntityId=LandingzoneEntityId)
+    execute_with_outputs(SP_UPSERT_BRONZE_ENTITY, driver, connstring, database, SchemaName=TargetSchema, TableName=TargetName, IsProcessed="False", BronzeLayerEntityId=BronzeLayerEntityId)
+    execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(result_data), LogType="EndNotebookActivity")
     notebookutils.notebook.exit(result_data)
 
 # METADATA ********************
@@ -647,9 +612,9 @@ result_data = {
 
 # CELL ********************
 
-execute_with_outputs(UpsertPipelineLandingzoneEntity, driver, connstring, database)
-execute_with_outputs(InsertPipelineBronzeLayerEntity, driver, connstring, database)
-execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+execute_with_outputs(SP_UPSERT_LDZ_ENTITY, driver, connstring, database, Filename=SourceFileName, FilePath=SourceFilePath, IsProcessed="True", LandingzoneEntityId=LandingzoneEntityId)
+execute_with_outputs(SP_UPSERT_BRONZE_ENTITY, driver, connstring, database, SchemaName=TargetSchema, TableName=TargetName, IsProcessed="False", BronzeLayerEntityId=BronzeLayerEntityId)
+execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(result_data), LogType="EndNotebookActivity")
 
 # METADATA ********************
 

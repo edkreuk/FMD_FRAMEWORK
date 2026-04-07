@@ -109,38 +109,21 @@ result_data=''
 TriggerTime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
-StartNotebookActivity = (
-    f"[logging].[sp_AuditNotebook] "
-    f"@NotebookGuid = \"{NotebookExecutionId}\", "
-    f"@NotebookName = \"{notebook_name}\", "
-    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
-    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
-    f"@NotebookParameters = \"{TargetFileName}\", "
-    f"@TriggerType = \"{TriggerType}\", "
-    f"@TriggerGuid = \"{TriggerGuid}\", "
-    f"@TriggerTime = \"{TriggerTime}\", "
-    f"@LogData = '{{\"Action\":\"Start\"}}', "
-    f"@LogType = \"StartNotebookActivity\", "
-    f"@WorkspaceGuid = \"{WorkspaceGuid}\", "
-    f"@EntityId = \"{EntityId}\", "
-    f"@EntityLayer = \"{EntityLayer}\""
-)
+SP_AUDIT_NOTEBOOK = "[logging].[sp_AuditNotebook]"
 
-EndNotebookActivity = (
-    f"[logging].[sp_AuditNotebook] "
-    f"@NotebookGuid = \"{NotebookExecutionId}\", "
-    f"@NotebookName = \"{notebook_name}\", "
-    f"@PipelineRunGuid = \"{PipelineRunGuid}\", "
-    f"@PipelineParentRunGuid = \"{PipelineParentRunGuid}\", "
-    f"@NotebookParameters = \"{TargetFileName}\", "
-    f"@TriggerType = \"{TriggerType}\", "
-    f"@TriggerGuid = \"{TriggerGuid}\", "
-    f"@TriggerTime = \"{TriggerTime}\", "
-    f"@LogType = \"EndNotebookActivity\", "
-    f"@WorkspaceGuid = \"{WorkspaceGuid}\", "
-    f"@EntityId = \"{EntityId}\", "
-    f"@EntityLayer = \"{EntityLayer}\""
-)
+audit_params = {
+    "NotebookGuid": NotebookExecutionId,
+    "NotebookName": notebook_name,
+    "PipelineRunGuid": PipelineRunGuid,
+    "PipelineParentRunGuid": PipelineParentRunGuid,
+    "NotebookParameters": TargetFileName,
+    "TriggerType": TriggerType,
+    "TriggerGuid": TriggerGuid,
+    "TriggerTime": TriggerTime,
+    "WorkspaceGuid": WorkspaceGuid,
+    "EntityId": EntityId,
+    "EntityLayer": EntityLayer,
+}
 
 # METADATA ********************
 
@@ -166,7 +149,7 @@ EndNotebookActivity = (
 
 # CELL ********************
 
-execute_with_outputs(StartNotebookActivity, driver, connstring, database)
+execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData='{"Action":"Start"}', LogType="StartNotebookActivity")
 
 # METADATA ********************
 
@@ -288,7 +271,7 @@ result_data = {
 }
 
 # Write the logging entry into the logging database
-execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(result_data))
+execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(result_data), LogType="EndNotebookActivity")
 
 # Exit the notebook
 notebookutils.notebook.exit(result_data)

@@ -29,18 +29,23 @@ import struct, pyodbc
 # CELL ********************
 
 def build_exec_statement(proc_name, **params):
-    param_strs = []
+    """Build a parameterized EXEC statement for safe stored procedure execution.
+
+    Returns:
+        tuple: (sql_template with ? placeholders, list of parameter values)
+    """
+    param_placeholders = []
+    param_values = []
     for key, value in params.items():
         if value is not None:
-            if isinstance(value, str):
-                param_strs.append(f"@{key}='{value}'")
-            else:
-                param_strs.append(f"@{key}={value}")
-    
-    if param_strs:
-        return f"EXEC {proc_name}, " + ", ".join(param_strs)
+            param_placeholders.append(f"@{key}=?")
+            param_values.append(value)
+
+    if param_placeholders:
+        sql = f"EXEC {proc_name} " + ", ".join(param_placeholders)
     else:
-        return f"EXEC {proc_name}"
+        sql = f"EXEC {proc_name}"
+    return sql, param_values
 
 
 # METADATA ********************
@@ -71,25 +76,11 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
         attrs_before={1256: token_struct},
         timeout=12
     )
-    if exec_statement:
-        # Use the safe builder for stored procedures
-        sql_to_run = build_exec_statement(exec_statement, **params)
-        use_wrapper = True   # we know we appended a return code / out params trailer
-    else:
-        if not exec_statement:
-            raise ValueError("Provide either proc_name+params or exec_statement.")
-        trimmed = exec_statement.strip().upper()
-        use_wrapper = trimmed.startswith("EXEC ") or trimmed.startswith("EXECUTE ")
-        if use_wrapper and include_return_code:
-            # Add return code wrapper if it's a bare EXEC
-            sql_to_run = f"""
-            SET NOCOUNT ON;
-            DECLARE @__ret INT;
-            {exec_statement.rstrip(';')};
-            SELECT @__ret AS __return_code__;
-            """
-        else:
-            sql_to_run = exec_statement
+    if not exec_statement:
+        raise ValueError("proc_name (exec_statement) must not be empty.")
+
+    sql_to_run, sql_params = build_exec_statement(exec_statement, **params)
+    use_wrapper = True
 
 
     result_sets = []
@@ -104,7 +95,7 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
             cursor.fetchone()
             conn.timeout = 10
 
-            cursor.execute(sql_to_run)
+            cursor.execute(sql_to_run, sql_params)
 
             # Collect result sets
             while True:
