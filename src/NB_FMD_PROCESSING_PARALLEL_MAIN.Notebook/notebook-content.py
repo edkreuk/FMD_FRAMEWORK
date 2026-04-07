@@ -198,7 +198,7 @@ nb_exists = False
 try:
     notebookutils.notebook.get(nb_name)
     nb_exists = True
-except:
+except Exception:
     nb_exists = False
 
 print("=" * 50)
@@ -273,7 +273,7 @@ if not nb_exists:
     
     response = requests.post(url, headers=headers, json=payload)
 
-    if response.status_code == 201 or 202:
+    if response.status_code in (201, 202):
         print(f"Created        : Successful")
         print("=" * 50)
     else:
@@ -371,7 +371,7 @@ def safe_sort_key(pair):
     try:
         ts = extract_ts_from_name(name)
         return (ts, name)
-    except:
+    except (ValueError, AttributeError):
         return (datetime.max, name) # malformed filename → also at end
 
 largest_group_size = 1

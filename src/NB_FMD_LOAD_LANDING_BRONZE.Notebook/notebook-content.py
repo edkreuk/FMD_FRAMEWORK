@@ -514,7 +514,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 non_key_columns = [column for column in dfDataChanged.columns if column not in key_columns]
 
-#add a hashed cloumn to detect changes
+#add a hashed column to detect changes
 dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
 
 #Add RecordLoadDate to see when the record arrived
@@ -545,8 +545,7 @@ if DeltaTable.isDeltaTable(spark, target_data_path):
 else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
-    TotalRuntime = str((datetime.now() - start_audit_time)) 
-    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    TotalRuntime = str((datetime.now() - start_audit_time))
     end_audit_time =  str(datetime.now())
     start_audit_time =str(start_audit_time)
     # Your data
