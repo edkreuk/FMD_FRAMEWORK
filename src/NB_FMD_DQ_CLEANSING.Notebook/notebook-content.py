@@ -39,21 +39,39 @@
 # 
 # 
 # ## Custom functions
-# 
-# Custom functions can be added in a separate notebook NB_FMD_CUSTOM_DQ_CLEANSING
-# 
+#
+# Custom functions can be added in a separate notebook NB_FMD_CUSTOM_DQ_CLEANSING.
+# Each function must be registered to be callable from cleansing rules:
+#
 # ```
-# def <functioname> (df, columns, args):
-# 
+# def my_custom_function(df, columns, args):
 #     print(args['<custom parameter name>']) # use of custom parameters
-# 
 #     for column in columns: # apply function foreach column
 #         df = df.<custom logic>
-# 
-#     return df #always return dataframe.
+#     return df # always return dataframe
+#
+# register_cleansing_function("my_custom_function", my_custom_function)
 # ```
 # 
 
+
+# CELL ********************
+
+# Registry of allowed cleansing functions.
+# Built-in functions are registered below; custom functions from
+# NB_FMD_CUSTOM_DQ_CLEANSING can register themselves via register_cleansing_function().
+_CLEANSING_FUNCTION_REGISTRY = {}
+
+def register_cleansing_function(name, func):
+    """Register a cleansing function by name so it can be invoked from metadata rules."""
+    _CLEANSING_FUNCTION_REGISTRY[name] = func
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
 
 # CELL ********************
 
@@ -74,7 +92,7 @@ def dynamic_call_cleansing_function(df: DataFrame,
         *args, 
         **kwargs):
 
-    func = globals().get(func_name)
+    func = _CLEANSING_FUNCTION_REGISTRY.get(func_name)
 
     if func:
         try:
@@ -82,7 +100,11 @@ def dynamic_call_cleansing_function(df: DataFrame,
         except Exception as e:
             raise ValueError(f"Function '{func_name}' failed with Error: {e}")
     else:
-        raise ValueError(f"Function '{func_name}' not found")
+        available = ", ".join(sorted(_CLEANSING_FUNCTION_REGISTRY.keys()))
+        raise ValueError(
+            f"Function '{func_name}' is not a registered cleansing function. "
+            f"Available functions: {available}"
+        )
 
 # METADATA ********************
 
@@ -290,6 +312,13 @@ def parse_datetime(df: DataFrame, columns, args):
         if into and not keep_original and out_col != c:
             df = df.drop(c)
     return df
+
+# CELL ********************
+
+# Register built-in cleansing functions
+register_cleansing_function("normalize_text", normalize_text)
+register_cleansing_function("fill_nulls", fill_nulls)
+register_cleansing_function("parse_datetime", parse_datetime)
 
 # METADATA ********************
 
