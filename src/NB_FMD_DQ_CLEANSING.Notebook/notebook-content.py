@@ -117,10 +117,15 @@ def dynamic_call_cleansing_function(df: DataFrame,
         except Exception as e:
             raise ValueError(f"Function '{func_name}' failed with Error: {e}") from e
     else:
-        available = ", ".join(sorted(_CLEANSING_FUNCTION_REGISTRY.keys()))
+        available_functions = sorted(_CLEANSING_FUNCTION_REGISTRY.keys())
+        available_message = (
+            f"Available functions: {', '.join(available_functions)}"
+            if available_functions
+            else "No functions registered."
+        )
         raise ValueError(
             f"Function '{func_name}' is not a registered cleansing function. "
-            f"Available functions: {available}"
+            f"{available_message}"
         )
 
 # METADATA ********************
