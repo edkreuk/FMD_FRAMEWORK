@@ -62,10 +62,27 @@
 # NB_FMD_CUSTOM_DQ_CLEANSING can register themselves via register_cleansing_function().
 _CLEANSING_FUNCTION_REGISTRY = {}
 
-def register_cleansing_function(name, func):
+def register_cleansing_function(name, func, overwrite=False):
     """Register a cleansing function by name so it can be invoked from metadata rules."""
-    _CLEANSING_FUNCTION_REGISTRY[name] = func
+    if not isinstance(name, str):
+        raise TypeError("Cleansing function name must be a string.")
 
+    normalized_name = name.strip()
+    if not normalized_name:
+        raise ValueError("Cleansing function name must be a non-empty string.")
+
+    if not callable(func):
+        raise TypeError(
+            f"Cleansing function '{normalized_name}' must be callable."
+        )
+
+    if not overwrite and normalized_name in _CLEANSING_FUNCTION_REGISTRY:
+        raise ValueError(
+            f"Cleansing function '{normalized_name}' is already registered. "
+            "Pass overwrite=True to replace the existing registration."
+        )
+
+    _CLEANSING_FUNCTION_REGISTRY[normalized_name] = func
 # METADATA ********************
 
 # META {
