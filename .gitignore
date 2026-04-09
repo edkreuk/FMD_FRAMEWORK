@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+*.env
+
+# Sensitive files
+*secret*
+*credential*
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OMC (oh-my-claudecode)
+.omc/

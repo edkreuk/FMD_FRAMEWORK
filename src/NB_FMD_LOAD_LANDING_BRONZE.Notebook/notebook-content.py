@@ -113,7 +113,8 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, concat_ws, md5, StringType,current_timestamp
+from pyspark.sql.functions import sha2, concat_ws, current_timestamp
+from pyspark.sql.types import StringType
 
 # METADATA ********************
 
@@ -171,7 +172,7 @@ token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerb
 # CELL ********************
 
 # Ensure TriggerTime is formatted correctly
-TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+TriggerTime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 
@@ -283,22 +284,14 @@ spark.conf.set("spark.fabric.resourceProfile", "writeHeavy")
 # CELL ********************
 
 #Set SourceFile and target Location
-if schema_enabled == True:
-    #Set SourceFile and target Location
-    source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Files/{SourceFilePath}/{SourceFileName}"
-    print(source_changes_data_path)
+source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Files/{SourceFilePath}/{SourceFileName}"
+print(source_changes_data_path)
 
-    #Beware 
+if str(schema_enabled).lower() == "true":
     target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}/{TargetSchema}_{TargetName}"
-    print(target_data_path)
-elif schema_enabled != True:
-    #Set SourceFile and target Location
-    source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Files/{SourceFilePath}/{SourceFileName}"
-    print(source_changes_data_path)
-
-    #Beware 
+else:
     target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}_{TargetSchema}_{TargetName}"
-    print(target_data_path)
+print(target_data_path)
 
 
 # METADATA ********************
@@ -441,7 +434,8 @@ dfDataChanged = (dfDataChanged
 
 # CELL ********************
 
-if dfDataChanged.select('HashedPKColumn').distinct().count() != dfDataChanged.select('HashedPKColumn').count():
+dup_count = dfDataChanged.groupBy('HashedPKColumn').count().where('count > 1').limit(1).collect()
+if dup_count:
     raise ValueError(f'Source file contains duplicated rows for PK: {", ".join(key_columns)}')
 
 # METADATA ********************
@@ -515,7 +509,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 non_key_columns = [column for column in dfDataChanged.columns if column not in key_columns]
 
 #add a hashed cloumn to detect changes
-dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
+dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", sha2(concat_ws("||", *non_key_columns).cast(StringType()), 256))
 
 #Add RecordLoadDate to see when the record arrived
 dfDataChanged = dfDataChanged.withColumn('RecordLoadDate', current_timestamp())
