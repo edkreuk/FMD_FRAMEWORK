@@ -115,7 +115,7 @@ def dynamic_call_cleansing_function(df: DataFrame,
         try:
             return func(df, columns, *args, **kwargs)
         except Exception as e:
-            raise ValueError(f"Function '{func_name}' failed with Error: {e}")
+            raise ValueError(f"Function '{func_name}' failed with Error: {e}") from e
     else:
         available = ", ".join(sorted(_CLEANSING_FUNCTION_REGISTRY.keys()))
         raise ValueError(
