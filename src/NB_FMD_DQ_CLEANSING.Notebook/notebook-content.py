@@ -39,18 +39,15 @@
 # 
 # 
 # ## Custom functions
-#
-# Custom functions can be added in a separate notebook NB_FMD_CUSTOM_DQ_CLEANSING.
+# # Custom functions can be added in a separate notebook NB_FMD_CUSTOM_DQ_CLEANSING.
 # Each function must be registered to be callable from cleansing rules:
-#
-# ```
+# # ```
 # def my_custom_function(df, columns, args):
 #     print(args['<custom parameter name>']) # use of custom parameters
 #     for column in columns: # apply function foreach column
 #         df = df.<custom logic>
 #     return df # always return dataframe
-#
-# register_cleansing_function("my_custom_function", my_custom_function)
+# # register_cleansing_function("my_custom_function", my_custom_function)
 # ```
 # 
 
@@ -82,7 +79,8 @@ def register_cleansing_function(name, func, overwrite=False):
             "Pass overwrite=True to replace the existing registration."
         )
 
-    _CLEANSING_FUNCTION_REGISTRY[normalized_name] = func
+    _CLEANSING_FUNCTION_REGISTRY[normalized_name] = fun
+
 # METADATA ********************
 
 # META {

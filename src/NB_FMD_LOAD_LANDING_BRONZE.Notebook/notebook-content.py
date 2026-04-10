@@ -627,7 +627,6 @@ result_data = {
     }
     }
 
-
 # METADATA ********************
 
 # META {
