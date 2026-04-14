@@ -250,7 +250,7 @@ output_dataframe = sample_dataframe
 # CELL ********************
 
 # Ensure the existence of an output_dataframe
-if (not output_dataframe) or (type(output_dataframe) != DataFrame):
+if output_dataframe is None or not isinstance(output_dataframe, DataFrame):
     raise Exception("No output_dataframe defined, or output_dataframe not a spark dataframe.")
 
 # Write the output dataframe to Onelake

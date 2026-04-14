@@ -105,7 +105,8 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, concat_ws, md5, StringType,current_timestamp, expr
+from pyspark.sql.functions import sha2, concat_ws, current_timestamp, expr
+from pyspark.sql.types import StringType
 
 
 # METADATA ********************
@@ -164,7 +165,7 @@ token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerb
 # CELL ********************
 
 # Ensure TriggerTime is formatted correctly
-TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+TriggerTime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 
@@ -266,21 +267,15 @@ spark.conf.set("spark.fabric.resourceProfile", "readHeavyForSpark")
 
 # CELL ********************
 
-#Set SourceFile and target Location
-if schema_enabled == True:
+#Set source and target data paths
+if str(schema_enabled).lower() == "true":
     source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}/{SourceSchema}_{SourceName}"
-    print(source_changes_data_path)
-
-    #Beware 
     target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}/{TargetSchema}_{TargetName}"
-    print(target_data_path)
-elif schema_enabled  != True:
+else:
     source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}_{SourceSchema}_{SourceName}"
-    print(source_changes_data_path)
-
-    #Beware 
     target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}_{TargetSchema}_{TargetName}"
-    print(target_data_path)
+print(source_changes_data_path)
+print(target_data_path)
 
 
 # METADATA ********************
@@ -376,7 +371,7 @@ non_key_columns = [column for column in dfDataChanged.columns if column not in (
 
 #add a hashed cloumn to detect changes
 
-dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
+dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", sha2(concat_ws("||", *non_key_columns).cast(StringType()), 256))
 
 # METADATA ********************
 
@@ -737,7 +732,6 @@ result_data = {
 
     }
     }
-
 
 # METADATA ********************
 
