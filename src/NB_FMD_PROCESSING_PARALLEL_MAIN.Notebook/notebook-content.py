@@ -198,8 +198,9 @@ nb_exists = False
 try:
     notebookutils.notebook.get(nb_name)
     nb_exists = True
-except Exception:
+except Exception as e:
     nb_exists = False
+    print(f"Failed to check notebook existence for '{nb_name}': {e}")
 
 print("=" * 50)
 print(f"Notebook Name : {nb_name}")
@@ -370,7 +371,8 @@ def safe_sort_key(pair):
 
     try:
         ts = extract_ts_from_name(name)
-        return (ts, name)
+    except Exception as e:
+        print(f"Failed to parse timestamp from {name}: {e}")
     except Exception:
         return (datetime.max, name) # malformed filename → also at end
 

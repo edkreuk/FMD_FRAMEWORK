@@ -434,7 +434,7 @@ dfDataChanged = (dfDataChanged
 
 # CELL ********************
 
-dup_count = dfDataChanged.groupBy('HashedPKColumn').count().where('count > 1').count()
+dup_count = dfDataChanged.groupBy('HashedPKColumn').count().where('count > 1').limit(1).collect()
 if dup_count:
     raise ValueError(f'Source file contains duplicated rows for PK: {", ".join(key_columns)}')
 
@@ -599,8 +599,8 @@ except Exception as e:
     error_data = {"Action": "Error", "ErrorMessage": str(e)[:500]}
     try:
         execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(error_data))
-    except Exception:
-        pass  # best-effort audit logging
+    except Exception as audit_log_error:
+        print(f"Audit logging failed: {audit_log_error}")  # best-effort audit logging
     raise
 
 # METADATA ********************
