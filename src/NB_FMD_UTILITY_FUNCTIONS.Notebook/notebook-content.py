@@ -121,14 +121,24 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
 
             try:
                 cursor.commit()
+<<<<<<< HEAD
             except Exception as e:
                 print(f"Commit failed (expected for read-only operations): {e}")
+=======
+            except Exception:
+                pass  # commit may fail on read-only operations
+>>>>>>> e3a3730aa000a84cc4ffd8a650c71342416fd0ed
 
     finally:
         try:
             conn.close()
+<<<<<<< HEAD
         except Exception as e:
             print(f"Connection cleanup failed: {e}")  # best-effort connection cleanup
+=======
+        except Exception:
+            pass  # best-effort connection cleanup
+>>>>>>> e3a3730aa000a84cc4ffd8a650c71342416fd0ed
 
     return {
         "result_sets": result_sets,
