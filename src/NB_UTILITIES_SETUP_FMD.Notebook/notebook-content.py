@@ -803,7 +803,7 @@ def set_workspace_icon(workspace_id, base64_png):
             response = invoke_fabric_request("put", f"{cluster_base_url}metadata/folders/{workspace_id}", payload)
             response.raise_for_status()
             return response.json()
-        except:
+        except Exception:
             print(f"Could not set icon on workspace id {workspace_id}. Ensure that the user is admin on workspace.")
             return None
 # -------------------------------
@@ -825,7 +825,7 @@ def fill_svg(base64_svg, fill_color):
         svg_data = base64.b64decode(base64_svg).decode('utf-8')
         modified_svg = re.sub(r'fill="[^"]+"', f'fill="{fill_color}"', svg_data)
         return base64.b64encode(modified_svg.encode('utf-8')).decode('utf-8')
-    except:
+    except Exception:
         print("Failed colorfill of image. Skipping")
 
 def display_workspace_icons(workspaces):
