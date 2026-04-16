@@ -44,7 +44,6 @@
 # CELL ********************
 
 import uuid
-import requests
 
 from datetime import datetime, timezone
 from json import loads, dumps

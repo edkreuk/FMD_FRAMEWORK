@@ -72,10 +72,10 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
         timeout=12
     )
     if not exec_statement:
-        raise ValueError("Provide exec_statement (and optional params).")
-    # Use the safe builder for stored procedures
+        raise ValueError("proc_name (exec_statement) must not be empty.")
+
     sql_to_run = build_exec_statement(exec_statement, **params)
-    use_wrapper = True   # we know we appended a return code / out params trailer
+    use_wrapper = True
 
 
     result_sets = []
