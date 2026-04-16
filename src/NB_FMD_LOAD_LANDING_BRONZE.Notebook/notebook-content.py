@@ -602,9 +602,6 @@ except Exception as e:
     except Exception as audit_log_error:
         print(f"Audit logging failed: {audit_log_error}")  # best-effort audit logging
 
-    except Exception:
-        pass  # best-effort audit logging
-
     raise
 
 # METADATA ********************
