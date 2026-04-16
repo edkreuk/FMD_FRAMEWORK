@@ -237,7 +237,7 @@ result
 # CELL ********************
 
 if fail:
-    raise ValueError(F"""Notebook: {CustomNotebookName} failed with error: {e}""")
+    raise ValueError(F"""Notebook: {CustomNotebookName} failed with error: {fail}""")
 
 # METADATA ********************
 

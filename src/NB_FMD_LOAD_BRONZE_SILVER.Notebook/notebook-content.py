@@ -105,7 +105,8 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, concat_ws, md5, StringType,current_timestamp, expr
+from pyspark.sql.functions import sha2, concat_ws, current_timestamp, expr
+from pyspark.sql.types import StringType
 
 
 # METADATA ********************
@@ -164,7 +165,7 @@ token =  notebookutils.credentials.getToken('https://analysis.windows.net/powerb
 # CELL ********************
 
 # Ensure TriggerTime is formatted correctly
-TriggerTime = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+TriggerTime = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 notebook_name=  notebookutils.runtime.context['currentNotebookName']
 
 
@@ -266,21 +267,15 @@ spark.conf.set("spark.fabric.resourceProfile", "readHeavyForSpark")
 
 # CELL ********************
 
-#Set SourceFile and target Location
-if schema_enabled == True:
+#Set source and target data paths
+if str(schema_enabled).lower() == "true":
     source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}/{SourceSchema}_{SourceName}"
-    print(source_changes_data_path)
-
-    #Beware 
     target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}/{TargetSchema}_{TargetName}"
-    print(target_data_path)
-elif schema_enabled  != True:
+else:
     source_changes_data_path = f"abfss://{SourceWorkspace}@onelake.dfs.fabric.microsoft.com/{SourceLakehouse}/Tables/{DataSourceNamespace}_{SourceSchema}_{SourceName}"
-    print(source_changes_data_path)
-
-    #Beware 
     target_data_path = f"abfss://{TargetWorkspace}@onelake.dfs.fabric.microsoft.com/{TargetLakehouse}/Tables/{DataSourceNamespace}_{TargetSchema}_{TargetName}"
-    print(target_data_path)
+print(source_changes_data_path)
+print(target_data_path)
 
 
 # METADATA ********************
@@ -376,7 +371,7 @@ non_key_columns = [column for column in dfDataChanged.columns if column != 'Hash
 
 #add a hashed column to detect changes
 
-dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
+dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", sha2(concat_ws("||", *non_key_columns).cast(StringType()), 256))
 
 # METADATA ********************
 
@@ -659,47 +654,56 @@ columns_to_insert = {column: f"updates.{column}" for column in dfDataOriginal.co
 
 # CELL ********************
 
-deltaTable = DeltaTable.forPath(spark, f'{target_data_path}')
+try:
+    deltaTable = DeltaTable.forPath(spark, f'{target_data_path}')
 
-merge = deltaTable.alias('original') \
-    .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn = updates.HashedPKColumn and original.RecordStartDate = updates.RecordStartDate') \
-    .whenMatchedUpdate(
-            #
-            # Handle rows to be (soft-) deleted: 
-            # These rows have action 'D' and are NOT deleted in the original
-            #
-            condition="original.IsCurrent == True AND original.IsDeleted == False AND updates.Action = 'D'",
+    merge = deltaTable.alias('original') \
+        .merge(dfDataChanged.alias('updates'), 'original.HashedPKColumn = updates.HashedPKColumn and original.RecordStartDate = updates.RecordStartDate') \
+        .whenMatchedUpdate(
+                #
+                # Handle rows to be (soft-) deleted:
+                # These rows have action 'D' and are NOT deleted in the original
+                #
+                condition="original.IsCurrent == True AND original.IsDeleted == False AND updates.Action = 'D'",
+                set={
+                    "IsDeleted": lit(True),
+                    "RecordEndDate": col('updates.RecordEndDate')
+                }) \
+        .whenMatchedUpdate(
+                #
+                # Handle rows to be updated.
+                # These rows have either action 'D' and ARE deleted in the original (so IsCurrent needs to be set to False)
+                # Or these have action 'U' and, are accompanied by inserts, but IsCurrent must be set to False.
+                #
+            condition="updates.HashedNonKeyColumns == original.HashedNonKeyColumns and original.IsCurrent = 1  ",
             set={
-                "IsDeleted": lit(True),
-                "RecordEndDate": col('updates.RecordEndDate')
+                "IsCurrent": lit(0),
+                "RecordEndDate": col('updates.RecordStartDate')
             }) \
-    .whenMatchedUpdate(
-            #
-            # Handle rows to be updated.
-            # These rows have either action 'D' and ARE deleted in the original (so IsCurrent needs to be set to False)
-            # Or these have action 'U' and, are accompanied by inserts, but IsCurrent must be set to False. 
-            #
-        condition="updates.HashedNonKeyColumns == original.HashedNonKeyColumns and original.IsCurrent = 1  ",
-        set={
-            "IsCurrent": lit(0),
-            "RecordEndDate": col('updates.RecordStartDate')
-        }) \
-    .whenNotMatchedInsert(
-            #
-            # Handle inserts.
-            # These rows have action 'I' and must be inserted.
-            #
-        values={**columns_to_insert,
-                "HashedPKColumn": col("updates.HashedPKColumn"),
-                "HashedNonKeyColumns": col("updates.HashedNonKeyColumns"),
-                "IsCurrent": lit(1),
-                "RecordStartDate": current_timestamp(),
-                "RecordModifiedDate": current_timestamp(),
-                "RecordEndDate": lit('9999-12-31').cast('timestamp'),
-                "IsDeleted": lit(0)})
+        .whenNotMatchedInsert(
+                #
+                # Handle inserts.
+                # These rows have action 'I' and must be inserted.
+                #
+            values={**columns_to_insert,
+                    "HashedPKColumn": col("updates.HashedPKColumn"),
+                    "HashedNonKeyColumns": col("updates.HashedNonKeyColumns"),
+                    "IsCurrent": lit(1),
+                    "RecordStartDate": current_timestamp(),
+                    "RecordModifiedDate": current_timestamp(),
+                    "RecordEndDate": lit('9999-12-31').cast('timestamp'),
+                    "IsDeleted": lit(0)})
 
-# Execute the merge operation
-merge.execute()
+    # Execute the merge operation
+    merge.execute()
+except Exception as e:
+    # Ensure audit log is written even on failure
+    error_data = {"Action": "Error", "ErrorMessage": str(e)[:500]}
+    try:
+        execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(error_data))
+    except Exception as audit_error:
+        print(f"Audit logging failed: {audit_error}")  # best-effort audit logging
+    raise
 
 # METADATA ********************
 
@@ -729,7 +733,6 @@ result_data = {
 
     }
     }
-
 
 # METADATA ********************
 

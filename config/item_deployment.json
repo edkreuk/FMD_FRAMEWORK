@@ -75,6 +75,11 @@
         "type": "DataPipeline"
     },
         {
+        "name": "PL_FMD_LDZ_COPY_FROM_SQLMI_01.DataPipeline",
+        "id": "4891cd0a-214f-a88f-40b5-ac40b9c65cd1",
+        "type": "DataPipeline"
+    },
+        {
         "name": "PL_FMD_LDZ_COPY_FROM_ORACLE_01.DataPipeline",
         "id": "2d7d2d52-be18-b5ea-4ccd-b7c0abb80439",
         "type": "DataPipeline"
@@ -107,6 +112,11 @@
     {
         "name": "PL_FMD_LDZ_COMMAND_ONELAKE.DataPipeline",
         "id": "36346796-f9dc-47b9-a248-c440a11c1aa0",
+        "type": "DataPipeline"
+    },
+        {
+        "name": "PL_FMD_LDZ_COMMAND_SQLMI.DataPipeline",
+        "id": "39304935-0c83-becd-4627-81954eb64a9a",
         "type": "DataPipeline"
     },
     {

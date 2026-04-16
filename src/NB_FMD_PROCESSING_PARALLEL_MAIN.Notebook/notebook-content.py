@@ -200,6 +200,8 @@ try:
     nb_exists = True
 except Exception:
     nb_exists = False
+    print(f"Failed to check notebook existence for '{nb_name}': {e}")
+
 
 print("=" * 50)
 print(f"Notebook Name : {nb_name}")
@@ -373,6 +375,7 @@ def safe_sort_key(pair):
         return (ts, name)
     except (ValueError, AttributeError):
         return (datetime.max, name) # malformed filename → also at end
+
 
 largest_group_size = 1
 
