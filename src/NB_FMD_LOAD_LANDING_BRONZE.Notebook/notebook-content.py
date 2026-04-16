@@ -539,8 +539,7 @@ if DeltaTable.isDeltaTable(spark, target_data_path):
 else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
-    TotalRuntime = str((datetime.now() - start_audit_time)) 
-    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    TotalRuntime = str((datetime.now() - start_audit_time))
     end_audit_time =  str(datetime.now())
     start_audit_time =str(start_audit_time)
     # Your data

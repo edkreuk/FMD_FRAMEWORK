@@ -44,7 +44,6 @@
 # CELL ********************
 
 import uuid
-import requests
 
 from datetime import datetime, timezone
 from json import loads, dumps
@@ -238,7 +237,7 @@ result
 # CELL ********************
 
 if fail:
-    raise ValueError(F"""Notebook: {CustomNotebookName} failed with error: {e}""")
+    raise ValueError(F"""Notebook: {CustomNotebookName} failed with error: {fail}""")
 
 # METADATA ********************
 
