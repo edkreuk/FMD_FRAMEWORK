@@ -71,25 +71,11 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
         attrs_before={1256: token_struct},
         timeout=12
     )
-    if exec_statement:
-        # Use the safe builder for stored procedures
-        sql_to_run = build_exec_statement(exec_statement, **params)
-        use_wrapper = True   # we know we appended a return code / out params trailer
-    else:
-        if not exec_statement:
-            raise ValueError("Provide either proc_name+params or exec_statement.")
-        trimmed = exec_statement.strip().upper()
-        use_wrapper = trimmed.startswith("EXEC ") or trimmed.startswith("EXECUTE ")
-        if use_wrapper and include_return_code:
-            # Add return code wrapper if it's a bare EXEC
-            sql_to_run = f"""
-            SET NOCOUNT ON;
-            DECLARE @__ret INT;
-            {exec_statement.rstrip(';')};
-            SELECT @__ret AS __return_code__;
-            """
-        else:
-            sql_to_run = exec_statement
+    if not exec_statement:
+        raise ValueError("Provide exec_statement (and optional params).")
+    # Use the safe builder for stored procedures
+    sql_to_run = build_exec_statement(exec_statement, **params)
+    use_wrapper = True   # we know we appended a return code / out params trailer
 
 
     result_sets = []
@@ -135,14 +121,24 @@ def execute_with_outputs(exec_statement, driver, connstring, database, **params)
 
             try:
                 cursor.commit()
-            except:
-                pass
+
+            except Exception as e:
+                print(f"Commit failed (expected for read-only operations): {e}")
+
+            except Exception:
+                pass  # commit may fail on read-only operations
+
 
     finally:
         try:
             conn.close()
-        except:
-            pass
+
+        except Exception as e:
+            print(f"Connection cleanup failed: {e}")  # best-effort connection cleanup
+
+        except Exception:
+            pass  # best-effort connection cleanup
+
 
     return {
         "result_sets": result_sets,

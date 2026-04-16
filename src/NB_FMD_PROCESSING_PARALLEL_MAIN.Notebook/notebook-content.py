@@ -198,8 +198,10 @@ nb_exists = False
 try:
     notebookutils.notebook.get(nb_name)
     nb_exists = True
-except:
+except Exception as e:
     nb_exists = False
+    print(f"Failed to check notebook existence for '{nb_name}': {e}")
+
 
 print("=" * 50)
 print(f"Notebook Name : {nb_name}")
@@ -273,7 +275,7 @@ if not nb_exists:
     
     response = requests.post(url, headers=headers, json=payload)
 
-    if response.status_code == 201 or 202:
+    if response.status_code in (201, 202):
         print(f"Created        : Successful")
         print("=" * 50)
     else:
@@ -371,8 +373,10 @@ def safe_sort_key(pair):
     try:
         ts = extract_ts_from_name(name)
         return (ts, name)
-    except:
+    except Exception as e:
+        print(f"Failed to parse timestamp from {name}: {e}")
         return (datetime.max, name) # malformed filename → also at end
+
 
 largest_group_size = 1
 
