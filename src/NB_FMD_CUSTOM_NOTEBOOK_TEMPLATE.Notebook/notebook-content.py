@@ -85,7 +85,8 @@ TargetFileName = ""
 TargetLakehouseGuid = ""
 WorkspaceGuid = ""
 LastLoadValue = ""
-key_vault =default_settings.key_vault_uri_name
+key_vault = default_settings.key_vault_uri_name
+# default_settings.key_vault_uri_name
 ###############################Logging Parameters###############################
 driver = '{ODBC Driver 18 for SQL Server}'
 connstring=config_settings.fmd_fabric_db_connection
