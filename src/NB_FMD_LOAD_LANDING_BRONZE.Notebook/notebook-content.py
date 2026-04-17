@@ -509,7 +509,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 non_key_columns = [column for column in dfDataChanged.columns if column not in key_columns]
 
 #add a hashed cloumn to detect changes
-dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", sha2(concat_ws("||", *non_key_columns).cast(StringType()), 256))
+dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType()), 256))
 
 #Add RecordLoadDate to see when the record arrived
 dfDataChanged = dfDataChanged.withColumn('RecordLoadDate', current_timestamp())

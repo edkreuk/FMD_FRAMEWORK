@@ -371,7 +371,7 @@ non_key_columns = [column for column in dfDataChanged.columns if column != 'Hash
 
 #add a hashed column to detect changes
 
-dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", sha2(concat_ws("||", *non_key_columns).cast(StringType()), 256))
+dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns",md5(concat_ws("||", *non_key_columns).cast(StringType()), 256))
 
 # METADATA ********************
 
