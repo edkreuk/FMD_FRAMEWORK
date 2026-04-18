@@ -287,7 +287,7 @@ print(target_data_path)
 
 # CELL ********************
 
-#Read all incoming changes in Parquet format
+#Read all incoming changes in Delta format
 dfDataChanged= spark.read\
                 .format("delta") \
                 .load(f"{source_changes_data_path}")
@@ -367,7 +367,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # CELL ********************
 
-non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn')]
+non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn',)]
 
 #add a hashed cloumn to detect changes
 dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
@@ -411,7 +411,8 @@ if DeltaTable.isDeltaTable(spark, target_data_path):
 else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
-    TotalRuntime = str((datetime.now() - start_audit_time)) 
+    end_audit_time = datetime.now()
+    TotalRuntime = str((end_audit_time - start_audit_time)) 
 
     # Your data
     result_data = {
@@ -443,8 +444,7 @@ else:
 # ## Add columns for Merge SCD 2
 
 # CELL ********************
-
-#add a new column MergeKey based on the HashedPKColumn
+# Add Action column for merge processing
 dfDataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
 dfDataChanged = dfDataChanged.withColumn('Action', lit('U'))
 
@@ -703,8 +703,6 @@ except Exception as e:
     except Exception as audit_error:
         print(f"Audit logging failed: {audit_error}")  # best-effort audit logging
 
-    except Exception:
-        pass  # best-effort audit logging
 
     raise
 
