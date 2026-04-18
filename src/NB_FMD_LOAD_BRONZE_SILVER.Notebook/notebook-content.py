@@ -699,13 +699,13 @@ except Exception as e:
     error_data = {"Action": "Error", "ErrorMessage": str(e)[:500]}
     try:
         execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(error_data))
-<<<<<<< HEAD
+
     except Exception as audit_error:
         print(f"Audit logging failed: {audit_error}")  # best-effort audit logging
-=======
+
     except Exception:
         pass  # best-effort audit logging
->>>>>>> e3a3730aa000a84cc4ffd8a650c71342416fd0ed
+
     raise
 
 # METADATA ********************
