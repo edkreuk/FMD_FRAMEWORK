@@ -105,7 +105,7 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, concat_ws, current_timestamp, expr
+from pyspark.sql.functions import sha2, md5, oncat_ws, current_timestamp, expr
 from pyspark.sql.types import StringType
 
 
@@ -287,7 +287,7 @@ print(target_data_path)
 
 # CELL ********************
 
-#Read all incoming changes in Delta format
+#Read all incoming changes in Parquet format
 dfDataChanged= spark.read\
                 .format("delta") \
                 .load(f"{source_changes_data_path}")
@@ -367,11 +367,10 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # CELL ********************
 
-non_key_columns = [column for column in dfDataChanged.columns if column != 'HashedPKColumn']
+non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn')]
 
-#add a hashed column to detect changes
-
-dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns",md5(concat_ws("||", *non_key_columns).cast(StringType()), 256))
+#add a hashed cloumn to detect changes
+dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
 
 # METADATA ********************
 
@@ -412,9 +411,7 @@ if DeltaTable.isDeltaTable(spark, target_data_path):
 else:
     # Use first load when no data exists yet and then exit 
     dfDataChanged.write.format("delta").mode("overwrite").save(target_data_path)
-    TotalRuntime = str((datetime.now() - start_audit_time))
-    end_audit_time = str(datetime.now())
-    start_audit_time = str(start_audit_time)
+    TotalRuntime = str((datetime.now() - start_audit_time)) 
 
     # Your data
     result_data = {
@@ -448,6 +445,7 @@ else:
 # CELL ********************
 
 #add a new column MergeKey based on the HashedPKColumn
+dfDataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
 dfDataChanged = dfDataChanged.withColumn('Action', lit('U'))
 
 # METADATA ********************
@@ -701,8 +699,13 @@ except Exception as e:
     error_data = {"Action": "Error", "ErrorMessage": str(e)[:500]}
     try:
         execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(error_data))
+<<<<<<< HEAD
+    except Exception as audit_error:
+        print(f"Audit logging failed: {audit_error}")  # best-effort audit logging
+=======
     except Exception:
         pass  # best-effort audit logging
+>>>>>>> e3a3730aa000a84cc4ffd8a650c71342416fd0ed
     raise
 
 # METADATA ********************
