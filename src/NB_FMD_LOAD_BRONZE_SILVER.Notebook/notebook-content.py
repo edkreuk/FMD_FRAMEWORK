@@ -105,7 +105,7 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, md5, oncat_ws, current_timestamp, expr
+from pyspark.sql.functions import sha2, md5, concat_ws, current_timestamp, expr
 from pyspark.sql.types import StringType
 
 
