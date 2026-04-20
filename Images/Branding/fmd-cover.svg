@@ -1,0 +1,71 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coverBg" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#081327"/>
+      <stop offset="0.55" stop-color="#0B2A4A"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="lineGlow" x1="260" y1="760" x2="1660" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#99F6E4"/>
+      <stop offset="1" stop-color="#7DD3FC"/>
+    </linearGradient>
+    <filter id="softBlur" x="0" y="0" width="1920" height="1080" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="32"/>
+    </filter>
+    <linearGradient id="logoBgGradient" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1F3A"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="logoRingGradient" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A7F3D0"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#coverBg)"/>
+
+  <g filter="url(#softBlur)">
+    <ellipse cx="1620" cy="180" rx="320" ry="180" fill="#38BDF8" fill-opacity="0.28"/>
+    <ellipse cx="290" cy="880" rx="420" ry="240" fill="#34D399" fill-opacity="0.24"/>
+  </g>
+
+  <path d="M180 760C380 620 560 520 760 500C950 481 1120 532 1260 478C1430 413 1560 260 1740 210" stroke="url(#lineGlow)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M210 820C380 700 610 620 810 610C980 601 1170 645 1340 598C1510 550 1620 430 1780 360" stroke="#A7F3D0" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- fmd-logo.svg embedded, scaled to 110x110 at position (210,148) -->
+  <g transform="translate(210,148) scale(0.2148)">
+    <rect x="24" y="24" width="464" height="464" rx="96" fill="url(#logoBgGradient)"/>
+    <circle cx="256" cy="256" r="156" stroke="url(#logoRingGradient)" stroke-width="18"/>
+    <circle cx="256" cy="256" r="114" stroke="#7DD3FC" stroke-opacity="0.55" stroke-width="10"/>
+    <text x="256" y="268" text-anchor="middle" dominant-baseline="auto"
+          font-family="Segoe UI, Arial, sans-serif" font-size="90" font-weight="700"
+          fill="#F8FAFC">FMD</text>
+    <text x="256" y="300" text-anchor="middle"
+          font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400"
+          fill="#A7F3D0">Fabric Metadata-Driven</text>
+    <text x="256" y="326" text-anchor="middle"
+          font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400"
+          fill="#A7F3D0">Framework</text>
+    <circle cx="382" cy="130" r="16" fill="#A7F3D0" fill-opacity="0.95"/>
+  </g>
+
+  <text x="360" y="220" fill="#F8FAFC" font-size="78" font-family="Segoe UI, Arial, sans-serif" font-weight="700">FMD Framework</text>
+  <text x="362" y="286" fill="#A7F3D0" font-size="36" font-family="Segoe UI, Arial, sans-serif" font-weight="500">Metadata-Driven Framework for Microsoft Fabric</text>
+
+  <g fill="#CFFAFE" fill-opacity="0.85" font-family="Segoe UI, Arial, sans-serif">
+    <text x="360" y="430" font-size="30" font-weight="600">Landing Zone</text>
+    <text x="612" y="430" font-size="30" font-weight="600">Bronze</text>
+    <text x="804" y="430" font-size="30" font-weight="600">Silver</text>
+    <text x="986" y="430" font-size="30" font-weight="600">Gold</text>
+  </g>
+
+  <g>
+    <circle cx="390" cy="480" r="14" fill="#A7F3D0"/>
+    <circle cx="636" cy="480" r="14" fill="#7DD3FC"/>
+    <circle cx="826" cy="480" r="14" fill="#38BDF8"/>
+    <circle cx="1008" cy="480" r="14" fill="#F59E0B"/>
+    <path d="M405 480H620" stroke="#99F6E4" stroke-width="5"/>
+    <path d="M651 480H810" stroke="#7DD3FC" stroke-width="5"/>
+    <path d="M841 480H994" stroke="#38BDF8" stroke-width="5"/>
+  </g>
+</svg>
