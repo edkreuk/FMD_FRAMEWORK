@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1F3A"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="ringGradient" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A7F3D0"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="24" y="24" width="464" height="464" rx="96" fill="url(#bgGradient)"/>
+
+  <circle cx="256" cy="256" r="156" stroke="url(#ringGradient)" stroke-width="18"/>
+  <circle cx="256" cy="256" r="114" stroke="#7DD3FC" stroke-opacity="0.55" stroke-width="10"/>
+
+  <text x="256" y="268" text-anchor="middle" dominant-baseline="auto"
+        font-family="Segoe UI, Arial, sans-serif" font-size="90" font-weight="700"
+        fill="#F8FAFC">FMD</text>
+
+  <text x="256" y="300" text-anchor="middle"
+        font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400"
+        fill="#A7F3D0">Fabric Metadata-Driven</text>
+  <text x="256" y="326" text-anchor="middle"
+        font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="400"
+        fill="#A7F3D0">Framework</text>
+
+  <circle cx="382" cy="130" r="16" fill="#A7F3D0" fill-opacity="0.95"/>
+</svg>

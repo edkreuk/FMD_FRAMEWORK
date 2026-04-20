@@ -1,0 +1,15 @@
+Primary theme color for Fabric portal branding
+Hex: #0F766E
+RGB: 15, 118, 110
+
+Supporting palette
+- Teal Primary:    #0F766E  — main brand color, background gradient end, logo bg
+- Dark Navy:       #081327  — cover background gradient start
+- Mid Navy:        #0B2A4A  — cover background gradient mid
+- Deep Navy:       #0B1F3A  — logo background gradient start
+- Data Blue:       #38BDF8  — ring gradient end, glow accent
+- Sky Blue:        #7DD3FC  — inner ring stroke, line glow gradient end
+- Aqua Glow:       #99F6E4  — line glow gradient start
+- Mint Accent:     #A7F3D0  — ring gradient start, subtitle text, accent dot
+- Green Soft:      #34D399  — cover background ellipse glow
+- White Text:      #F8FAFC  — primary text (title, FMD label)
