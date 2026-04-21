@@ -5,12 +5,6 @@
 # META {
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
-# META   },
-# META   "dependencies": {
-# META     "lakehouse": {
-# META       "default_lakehouse_name": "",
-# META       "default_lakehouse_workspace_id": ""
-# META     }
 # META   }
 # META }
 
@@ -442,18 +436,11 @@ else:
 # MARKDOWN ********************
 
 # ## Add columns for Merge SCD 2
-
 # CELL ********************
 # Add Action column for merge processing
-dfDataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
-dfDataChanged = dfDataChanged.withColumn('Action', lit('U'))
+# DataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
+# DataChanged = dfDataChanged.withColumn('Action', lit('U'))
 
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
 
 # CELL ********************
 
