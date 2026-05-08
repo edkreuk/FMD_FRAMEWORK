@@ -121,7 +121,7 @@ def create_fabric_domain(domain_name):
     DomainExists=run_fab_command(f'exists .domains/{domain_name}.Domain',capture_output=True, silently_continue=True)
     if DomainExists != "* true":
         try:
-            print(f"Creating Domain: {name}")
+            print(f"Creating Domain: {domain_name}")
             result = run_fab_command(f'create .domains/{domain_name}.Domain',  capture_output=True, silently_continue=True)
             print(f"✅ {domain_name} Domain Created'")
         except Exception as e:
