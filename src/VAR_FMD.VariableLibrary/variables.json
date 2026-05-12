@@ -8,24 +8,6 @@
       "value": ""
     },
     {
-      "name": "key_vault_tenant_id",
-      "note": "",
-      "type": "String",
-      "value": ""
-    },
-    {
-      "name": "key_vault_client_id",
-      "note": "",
-      "type": "String",
-      "value": ""
-    },
-    {
-      "name": "key_vault_client_secret",
-      "note": "",
-      "type": "String",
-      "value": ""
-    },
-    {
       "name": "lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
