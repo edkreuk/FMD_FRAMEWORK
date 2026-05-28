@@ -46,6 +46,7 @@
 config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
 default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
 
+
 # METADATA ********************
 
 # META {
@@ -361,7 +362,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # CELL ********************
 
-non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn',)]
+non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn','HashedNonKeyColumns')]
 
 #add a hashed cloumn to detect changes
 dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
@@ -436,10 +437,10 @@ else:
 # MARKDOWN ********************
 
 # ## Add columns for Merge SCD 2
-# CELL ********************
-# Add Action column for merge processing
-# DataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
-# DataChanged = dfDataChanged.withColumn('Action', lit('U'))
+# - ********************
+# - Add Action column for merge processing
+# - DataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
+# - DataChanged = dfDataChanged.withColumn('Action', lit('U'))
 
 
 # CELL ********************
