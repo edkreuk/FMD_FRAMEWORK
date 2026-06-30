@@ -3,6 +3,9 @@
 
 The **Fabric Metadata‑Driven Framework (FMD)** is a powerful and extensible **Microsoft Fabric framework** designed to automate, orchestrate, and standardize **metadata‑driven data pipelines**. Built for lakehouse‑first architectures, FMD provides a configurable and reusable approach to ingestion, transformation, governance, and automation across Microsoft Fabric.
 
+[![License](https://img.shields.io/badge/License-MIT-green.svg)]((https://github.com/edkreuk/FMD_FRAMEWORK/blob/main/LICENSE))
+
+
 ## 🚀 Why the FMD Framework?
 Modern data platforms demand agility, scalability, and consistency. FMD simplifies these challenges by enabling:
 - **Dynamic, metadata‑driven pipelines**  

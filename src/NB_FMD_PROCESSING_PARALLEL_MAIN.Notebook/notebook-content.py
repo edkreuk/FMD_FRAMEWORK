@@ -198,7 +198,7 @@ nb_exists = False
 try:
     notebookutils.notebook.get(nb_name)
     nb_exists = True
-except Exception:
+except Exception as e:
     nb_exists = False
     print(f"Failed to check notebook existence for '{nb_name}': {e}")
 

@@ -58,9 +58,12 @@
                     "type": "LakehouseTable",
                     "schema": [],
                     "typeProperties": {
-                      "schema": "dbo",
+                      "schema": {
+                        "value": "@item().SourceSchema",
+                        "type": "Expression"
+                      },
                       "table": {
-                        "value": "@concat(item().SourceSchema,'_',item().SourceName)",
+                        "value": "@item().SourceName",
                         "type": "Expression"
                       }
                     }
@@ -69,7 +72,7 @@
                 "sink": {
                   "type": "ParquetSink",
                   "storeSettings": {
-                    "type": "LakehouseWriteSettings",
+                    "type": "AzureBlobStorageWriteSettings",
                     "copyBehavior": "PreserveHierarchy"
                   },
                   "formatSettings": {
@@ -1017,8 +1020,7 @@
     ],
     "parameters": {
       "Data_WorkspaceGuid": {
-        "type": "string",
-        "defaultValue": ""
+        "type": "string"
       }
     },
     "libraryVariables": {

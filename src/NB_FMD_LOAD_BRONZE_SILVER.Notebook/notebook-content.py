@@ -5,12 +5,6 @@
 # META {
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
-# META   },
-# META   "dependencies": {
-# META     "lakehouse": {
-# META       "default_lakehouse_name": "",
-# META       "default_lakehouse_workspace_id": ""
-# META     }
 # META   }
 # META }
 
@@ -51,6 +45,7 @@
 
 config_settings=notebookutils.variableLibrary.getLibrary("VAR_CONFIG_FMD")
 default_settings=notebookutils.variableLibrary.getLibrary("VAR_FMD")
+
 
 # METADATA ********************
 
@@ -367,7 +362,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # CELL ********************
 
-non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn',)]
+non_key_columns = [column for column in dfDataChanged.columns if column not in ('HashedPKColumn','HashedNonKeyColumns')]
 
 #add a hashed cloumn to detect changes
 dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
@@ -442,18 +437,11 @@ else:
 # MARKDOWN ********************
 
 # ## Add columns for Merge SCD 2
+# - ********************
+# - Add Action column for merge processing
+# - DataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
+# - DataChanged = dfDataChanged.withColumn('Action', lit('U'))
 
-# CELL ********************
-# Add Action column for merge processing
-dfDataChanged = dfDataChanged.withColumn('HashedPKColumn', dfDataChanged['HashedPKColumn'])
-dfDataChanged = dfDataChanged.withColumn('Action', lit('U'))
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
 
 # CELL ********************
 
