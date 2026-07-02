@@ -5,6 +5,11 @@
         "type": "Notebook"
     },
     {
+        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW.Notebook",
+        "id": "10cf7721-6a9b-a421-47f3-7f2a17d1540f",
+        "type": "Notebook"
+    },
+    {
         "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
         "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
         "type": "Notebook"
@@ -12,6 +17,11 @@
     {
         "name": "NB_FMD_LOAD_LANDING_BRONZE.Notebook",
         "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
+        "type": "Notebook"
+    },
+        {
+        "name": "NB_FMD_PURVIEW_LINEAGE_TABLE_COLUMN.Notebook",
+        "id": "b90d9c15-4258-871f-48a6-0189524ce351",
         "type": "Notebook"
     },
     {
@@ -141,6 +151,11 @@
     },
     {
         "name": "PL_TOOLING_POST_ASQL_TO_FMD.DataPipeline",
+        "id": "20cbc814-b94e-9c75-4cf3-c5bb3886877b",
+        "type": "DataPipeline"
+    },
+        {
+        "name": "PL_FMD_TOOLING_LOAD_TO_PURVIEW.DataPipeline",
         "id": "20cbc814-b94e-9c75-4cf3-c5bb3886877b",
         "type": "DataPipeline"
     },

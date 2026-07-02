@@ -1,0 +1,144 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderQuery": {
+              "value": "WITH cte AS (\n    SELECT\n        LandingzoneEntityId,\n        FilePath,\n        FileName,\n        ROW_NUMBER() OVER (\n            PARTITION BY LandingzoneEntityId\n            ORDER BY InsertDateTime ASC\n        ) AS rn\n    FROM execution.PipelineLandingzoneEntity\n)\n\nSELECT\n    CONCAT(\n        '[',\n        STRING_AGG(\n            CONVERT(\n                NVARCHAR(MAX),\n                CONCAT(\n                    '{\"path\": \"NB_FMD_PURVIEW_LINEAGE_TABLE_COLUMN\", \"params\":{',\n\n                    '\"BrzTableSchema01\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [BrzTableSchema01]), 'json'), '\",',\n                    '\"SlvTableSchema01\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [SlvTableSchema01]), 'json'), '\",',\n                    '\"LdzFileName01\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [LdzFileName01]), 'json'), '\",',\n                    '\"BrzTableName01\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [BrzTableName01]), 'json'), '\",',\n                    '\"SlvTableName01\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [SlvTableName01]), 'json'), '\",',\n                     '\"SourceFileName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [SourceFileName]), 'json'), '\",',\n\n                    '\"LdzWorkspace\" : \"', LOWER(CONVERT(NVARCHAR(36), [LdzWorkspaceId])), '\",',\n                    '\"BrzWorkspace\" : \"', LOWER(CONVERT(NVARCHAR(36), [BrzWorkspaceId])), '\",',\n                    '\"SlvWorkspace\" : \"', LOWER(CONVERT(NVARCHAR(36), [SlvWorkspaceId])), '\",',\n                    \n                    '\"LdzLakehouse\" : \"', LOWER(CONVERT(NVARCHAR(36), [LdzLakehouseId])), '\",',\n                    '\"BrzLakehouse\" : \"', LOWER(CONVERT(NVARCHAR(36), [BrzLakehouseId])), '\",',\n                    '\"SlvLakehouse\" : \"', LOWER(CONVERT(NVARCHAR(36), [SlvLakehouseId])), '\",',\n                                        \n                    '\"LdzWorkspaceName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [LdzWorkspaceName]), 'json'), '\",',\n                    '\"BrzWorkspaceName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [BrzWorkspaceName]), 'json'), '\",',\n                    '\"SlvWorkspaceName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [SlvWorkspaceName]), 'json'), '\",',\n                    '\"LdzLakehouseName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [LdzLakehouseName]), 'json'), '\",',\n                    '\"BrzLakehouseName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [BrzLakehouseName]), 'json'), '\",',\n                    '\"SlvLakehouseName\" : \"', STRING_ESCAPE(CONVERT(NVARCHAR(MAX), [SlvLakehouseName]), 'json'), '\"',\n\n                    '}}'\n                )\n            ),\n            ', '\n        ) WITHIN GROUP (ORDER BY [BrzTableName01], [SlvTableName01]),\n        ']'\n    ) AS NotebookParams\nFROM\n(\n    SELECT\n        DS.Namespace AS BrzTableSchema01,\n        DS.Namespace AS SlvTableSchema01,\n        concat(cte.FilePath,'/',cte.FileName) as LdzFileName01,\n        cte.FileName as SourceFileName,\n        CONCAT(BLE.[Schema], '_', BLE.[Name]) AS BrzTableName01,\n        CONCAT(SLE.[Schema], '_', SLE.[Name]) AS SlvTableName01,\n        WL.[WorkspaceGuid] AS LdzWorkspaceId,\n        WB.[WorkspaceGuid] AS BrzWorkspaceId,\n        WS.[WorkspaceGuid] AS SlvWorkspaceId,\n        LLH.[LakehouseGuid] AS LdzLakehouseId,\n        BLH.[LakehouseGuid] AS BrzLakehouseId,\n        SLH.[LakehouseGuid] AS SlvLakehouseId,\n        LLH.[Name] AS LdzLakehouseName,\n        BLH.[Name] AS BrzLakehouseName,\n        SLH.[Name] AS SlvLakehouseName,\n        WL.[Name] AS LdzWorkspaceName,\n        WB.[Name] AS BrzWorkspaceName,\n        WS.[Name] AS SlvWorkspaceName\n    FROM [integration].[SilverLayerEntity] SLE\n    INNER JOIN [integration].[BronzeLayerEntity] BLE\n        ON SLE.BronzeLayerEntityId = BLE.BronzeLayerEntityId\n    INNER JOIN [integration].[LandingzoneEntity] LZE\n        ON LZE.LandingzoneEntityId = BLE.LandingzoneEntityId\n    LEFT JOIN cte ON CTE.LandingzoneEntityId = LZE.LandingzoneEntityId\n    INNER JOIN [integration].[DataSource] DS\n        ON DS.[DataSourceId] = LZE.[DataSourceId]\n    INNER JOIN [integration].[Lakehouse] LLH\n        ON LZE.LakehouseId = LLH.LakehouseId\n    INNER JOIN [integration].[Lakehouse] BLH\n        ON BLE.LakehouseId = BLH.LakehouseId\n    INNER JOIN [integration].[Lakehouse] SLH\n        ON SLE.LakehouseId = SLH.LakehouseId\n    INNER JOIN [integration].[Workspace] WL\n        ON WL.[WorkspaceGuid] = LLH.[WorkspaceGuid]\n    INNER JOIN [integration].[Workspace] WB\n        ON WB.[WorkspaceGuid] = BLH.[WorkspaceGuid]\n    INNER JOIN [integration].[Workspace] WS\n        ON WS.[WorkspaceGuid] = SLH.[WorkspaceGuid]\n    WHERE 1 = 1\n        AND LZE.IsActive = 1\n        AND BLE.IsActive = 1\n        AND SLE.IsActive = 1\n        AND  WL.[WorkspaceGuid]='@{pipeline().parameters.Data_WorkspaceGuid}'\n\t\tAND cte.rn=1\n) AS Input;\n",
+              "type": "Expression"
+            },
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "connectionSettings": {
+              "name": "f0c26e70_bcc0_44b5_9d8e_fbd012061e6f",
+              "properties": {
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "artifactId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_database_guid",
+                  "workspaceId": "@pipeline().libraryVariables.VAR_CONFIG_FMD_fmd_config_workspace_guid"
+                },
+                "externalReferences": {
+                  "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.01:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "LK_GET_ENTITIES_PURVIEW",
+        "description": "LK_GET_ENTITIES_PURVIEW",
+        "dependsOn": []
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(length(json(activity('LK_GET_ENTITIES_PURVIEW').output.value[0].NotebookParams)), 0)\n",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [],
+          "ifFalseActivities": [
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "10cf7721-6a9b-a421-47f3-7f2a17d1540f",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "Path": {
+                    "value": "@activity('LK_GET_ENTITIES_PURVIEW').output.value[0].notebookParams",
+                    "type": "string"
+                  },
+                  "useRootDefaultLakehouse": {
+                    "value": true,
+                    "type": "bool"
+                  },
+                  "driver": {
+                    "value": "{ODBC Driver 18 for SQL Server}",
+                    "type": "string"
+                  }
+                },
+                "sessionTag": "fmd_framework"
+              },
+              "policy": {
+                "timeout": "0.01:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "NB_FMD_PROCESSING_PARALLEL_MAIN",
+              "dependsOn": []
+            },
+            {
+              "type": "Fail",
+              "typeProperties": {
+                "message": {
+                  "value": "@concat(activity('NB_FMD_PROCESSING_PARALLEL_MAIN').output.result.error.evalue,'--------------------------------', 'https://app.powerbi.com/',activity('NB_FMD_PROCESSING_PARALLEL_MAIN').output.SparkMonitoringURL, '?trident=1&tab=related','  ' )",
+                  "type": "Expression"
+                },
+                "errorCode": "Notebooks failed"
+              },
+              "name": "FA_THROW_ERROR",
+              "dependsOn": [
+                {
+                  "activity": "NB_FMD_PROCESSING_PARALLEL_MAIN",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "IF_RESULT_NOT_EMPTY",
+        "dependsOn": [
+          {
+            "activity": "LK_GET_ENTITIES_PURVIEW",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "Data_WorkspaceGuid": {
+        "type": "string",
+        "defaultValue": "3e43b742-3e41-4ec0-a414-03adf83c08e7"
+      }
+    },
+    "libraryVariables": {
+      "VAR_FMD_key_vault_uri_name": {
+        "type": "String",
+        "variableName": "key_vault_uri_name",
+        "libraryName": "VAR_FMD"
+      },
+      "VAR_CONFIG_FMD_fmd_config_database_guid": {
+        "type": "String",
+        "variableName": "fmd_config_database_guid",
+        "libraryName": "VAR_CONFIG_FMD"
+      },
+      "VAR_CONFIG_FMD_fmd_config_workspace_guid": {
+        "type": "String",
+        "variableName": "fmd_config_workspace_guid",
+        "libraryName": "VAR_CONFIG_FMD"
+      }
+    }
+  }
+}

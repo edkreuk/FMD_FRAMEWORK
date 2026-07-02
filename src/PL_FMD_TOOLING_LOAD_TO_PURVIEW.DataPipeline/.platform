@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "PL_FMD_TOOLING_LOAD_TO_PURVIEW",
+    "description": "Load data column level and lineage to Purview based on metadata"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "78439211-a76c-a426-4934-268e37d55689"
+  }
+}
