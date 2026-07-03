@@ -62,13 +62,13 @@ LdzLakehouseName='LH_DATA_LANDINGZONE'
 BrzLakehouseName='LH_BRONZE_LAYER'
 SlvLakehouseName='LH_SILVER_LAYER'
 
-LdzWorkspace='3e43b742-3e41-4ec0-a414-03adf83c08e7'
-BrzWorkspace='3e43b742-3e41-4ec0-a414-03adf83c08e7'
-SlvWorkspace='3e43b742-3e41-4ec0-a414-03adf83c08e7'
+LdzWorkspace=''
+BrzWorkspace=''
+SlvWorkspace=''
 
-LdzLakehouse='f2466325-470b-4a6d-8820-300d86788c84'
-BrzLakehouse='039f527b-d821-4d19-a47b-eab345ed166c'
-SlvLakehouse='41c29853-15af-44ef-8160-05958bed1cec'
+LdzLakehouse=''
+BrzLakehouse=''
+SlvLakehouse=''
 
 # METADATA ********************
 
