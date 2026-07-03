@@ -4,19 +4,164 @@
 
 [Microsoft Purview](https://learn.microsoft.com/en-us/purview/purview) is a unified data governance solution that provides data discovery, classification, lineage, and compliance capabilities across your entire data estate. When used alongside the **Fabric Metadata-Driven Framework (FMD)**, Purview gives data teams a complete picture of where data comes from, how it flows through the Medallion layers, and how it is classified — all from a single portal.
 
-This page describes how to connect Microsoft Fabric to Microsoft Purview, scan your FMD lakehouses, view end-to-end data lineage, and apply sensitivity labels to data assets.
+The FMD Framework provides a dedicated notebook — **`NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW`** — that extends the standard parallel processing notebook to automatically push **column-level lineage** to Microsoft Purview after every processing batch. This gives you a precise, column-to-column trace from Landing Zone through Bronze and Silver in the Purview lineage graph.
+
+This page describes:
+1. How `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` works and how to configure it.
+2. The column-level lineage data model used (Apache Atlas entities).
+3. How to connect Microsoft Fabric to Microsoft Purview and view the resulting lineage.
+4. How to scan your FMD lakehouses and apply sensitivity labels.
 
 ---
 
-## Why Use Purview with FMD?
+## NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW
 
-| Capability | Benefit |
+### What the notebook does
+
+`NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` is a drop-in replacement for `NB_FMD_PROCESSING_PARALLEL_MAIN`. It performs the same parallel orchestration of Bronze and Silver processing notebooks and then, once all batches succeed, registers column-level lineage in Microsoft Purview for every entity that was processed.
+
+**Processing flow:**
+
+```
+Pipeline trigger
+    │
+    ▼
+NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW
+    │
+    ├─► [Batch 1..N] runMultiple → NB_FMD_LOAD_LANDING_BRONZE (parallel)
+    │                            → NB_FMD_LOAD_BRONZE_SILVER   (parallel)
+    │
+    └─► [After all batches] For each entity:
+            1. Read source Delta table schema  (Spark)
+            2. Read target Delta table schema  (Spark)
+            3. Build column mapping JSON
+            4. POST Atlas entities to Purview  (REST API)
+```
+
+### Parameters
+
+The notebook accepts all parameters from `NB_FMD_PROCESSING_PARALLEL_MAIN` plus three Purview-specific parameters:
+
+| Parameter | Type | Description |
+|---|---|---|
+| `Path` | String (JSON) | Entity list — same format as `NB_FMD_PROCESSING_PARALLEL_MAIN` |
+| `useRootDefaultLakehouse` | Boolean | Use the root default lakehouse for Delta reads |
+| `PipelineRunGuid` | String | Pipeline run GUID (injected by the calling pipeline) |
+| `PipelineGuid` | String | Parent pipeline GUID |
+| `TriggerGuid` | String | Trigger GUID |
+| `TriggerTime` | String | Trigger timestamp |
+| `TriggerType` | String | Trigger type (e.g. `Schedule`) |
+| `driver` | String | ODBC driver (default: `{ODBC Driver 18 for SQL Server}`) |
+| **`purview_account_name`** | String | Purview account name **without** `.purview.azure.com` (e.g. `my-purview`) |
+| **`purview_collection_name`** | String | Purview collection to register assets in (leave blank for root collection) |
+| **`purview_enabled`** | Boolean | Set to `False` to run without pushing lineage (default: `True`) |
+
+### How to replace the standard notebook
+
+To switch from `NB_FMD_PROCESSING_PARALLEL_MAIN` to `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW`:
+
+1. Open `PL_FMD_LOAD_BRONZE` (or `PL_FMD_LOAD_SILVER`, `PL_FMD_LOAD_ALL`) in your Code workspace.
+2. Find the **Notebook activity** that calls `NB_FMD_PROCESSING_PARALLEL_MAIN`.
+3. Change the notebook reference to `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW`.
+4. Add the three new parameters (`purview_account_name`, `purview_collection_name`, `purview_enabled`) to the activity's parameter settings.
+5. Save and publish the pipeline.
+
+---
+
+## Column-Level Lineage Data Model
+
+### Apache Atlas entity types
+
+Purview uses the [Apache Atlas](https://atlas.apache.org/) data model internally. For each FMD entity that is processed, the notebook upserts **three Atlas entities** via the Purview Data Map REST API:
+
+| Atlas entity | `typeName` | Represents |
+|---|---|---|
+| Source table | `azure_datalake_gen2_resource_set` | Input Delta table (e.g. Bronze layer) |
+| Target table | `azure_datalake_gen2_resource_set` | Output Delta table (e.g. Silver layer) |
+| Process | `Process` | The FMD transformation step that links them |
+
+> `azure_datalake_gen2_resource_set` is used because Microsoft Fabric Lakehouses are backed by OneLake, which presents as Azure Data Lake Storage Gen2 from the perspective of the Purview scanner.
+
+### Qualified name patterns
+
+Every Atlas entity is identified by a `qualifiedName`. The notebook constructs qualified names as follows:
+
+| Entity | Qualified name pattern |
 |---|---|
-| **Automated data discovery** | Purview automatically scans and catalogues Delta tables in Landing Zone, Bronze, Silver, and Gold lakehouses |
-| **End-to-end lineage** | Lineage is captured from source system → Landing Zone → Bronze → Silver → Gold, including notebook and pipeline runs |
-| **Sensitivity classification** | Purview classifiers detect PII, financial data, and other sensitive patterns across your Delta tables |
-| **Unified data catalog** | Business users can search for and understand datasets without needing direct Fabric access |
-| **Compliance and auditing** | Purview Compliance Manager and audit logs complement the FMD `logging` schema for full regulatory traceability |
+| Source Delta table | `onelake://{workspace_guid}/{source_lakehouse}/{schema}/{table}` |
+| Target Delta table | `onelake://{workspace_guid}/{target_lakehouse}/{schema}/{table}` |
+| Process | `fmd://process/{layer}/{workspace_guid}/{schema}/{table}` |
+
+Where `{layer}` is one of:
+- `landing_to_bronze` — for `NB_FMD_LOAD_LANDING_BRONZE` notebooks
+- `bronze_to_silver` — for `NB_FMD_LOAD_BRONZE_SILVER` notebooks
+
+### The `columnMapping` attribute
+
+The `Process` entity carries a `columnMapping` attribute that encodes the column-to-column mapping as a JSON string. Purview reads this attribute to render the column lineage graph in the catalog.
+
+**Format:**
+
+```json
+[
+  {
+    "DatasetMapping": [
+      { "Source": "CustomerID",   "Sink": "CustomerID"   },
+      { "Source": "CustomerName", "Sink": "CustomerName" },
+      { "Source": "EmailAddress", "Sink": "EmailAddress" },
+      { "Source": "ModifiedDate", "Sink": "ModifiedDate" }
+    ]
+  }
+]
+```
+
+**How the mapping is built:**
+
+1. The notebook reads the source Delta table schema with `spark.read.format("delta").load(...)`.
+2. It reads the target Delta table schema the same way.
+3. Columns that exist in **both** source and target (matched case-insensitively by name) are included.
+4. Columns that exist only in the source (e.g. raw ingestion metadata) or only in the target (e.g. SCD Type 2 audit columns) are omitted from the mapping.
+
+### Example Atlas payload
+
+Below is a representative payload that the notebook POSTs to the Purview Atlas bulk endpoint:
+
+```json
+{
+  "entities": [
+    {
+      "typeName": "azure_datalake_gen2_resource_set",
+      "guid": "-1",
+      "attributes": {
+        "qualifiedName": "onelake://a1b2c3d4-…/LH_BRONZE_LAYER/dbo/Customer",
+        "name": "Customer (LH_BRONZE_LAYER)"
+      }
+    },
+    {
+      "typeName": "azure_datalake_gen2_resource_set",
+      "guid": "-2",
+      "attributes": {
+        "qualifiedName": "onelake://a1b2c3d4-…/LH_SILVER_LAYER/dbo/Customer",
+        "name": "Customer (LH_SILVER_LAYER)"
+      }
+    },
+    {
+      "typeName": "Process",
+      "guid": "-3",
+      "attributes": {
+        "qualifiedName": "fmd://process/bronze_to_silver/a1b2c3d4-…/dbo/Customer",
+        "name": "FMD Bronze To Silver: dbo.Customer",
+        "description": "FMD Framework automated processing step. Pipeline run: …",
+        "inputs":  [{ "guid": "-1", "typeName": "azure_datalake_gen2_resource_set" }],
+        "outputs": [{ "guid": "-2", "typeName": "azure_datalake_gen2_resource_set" }],
+        "columnMapping": "[{\"DatasetMapping\":[{\"Source\":\"CustomerID\",\"Sink\":\"CustomerID\"},{\"Source\":\"CustomerName\",\"Sink\":\"CustomerName\"}]}]"
+      }
+    }
+  ]
+}
+```
+
+---
 
 ---
 
@@ -27,9 +172,12 @@ Before configuring the integration, ensure the following are in place:
 1. **Microsoft Purview account** — An active Microsoft Purview account provisioned in the same Azure tenant as your Fabric capacity.
 2. **Microsoft Fabric enabled** — The Fabric tenant must have the Purview integration setting enabled.
 3. **Appropriate roles**:
-   - `Purview Data Curator` or `Purview Data Reader` role in the Purview account (to scan and browse assets).
-   - `Fabric Workspace Admin` or `Member` role in the FMD workspaces to allow Purview to scan them.
-4. **Managed Identity or Service Principal** configured in both Purview and Fabric with the required permissions.
+   - `Purview Data Curator` role in the Purview account (required to write entities via the Atlas API).
+   - `Fabric Workspace Admin` or `Member` role in the FMD workspaces.
+4. **Workspace Identity or Service Principal** granted the `Purview Data Curator` role so the notebook can authenticate to the Purview Atlas API using an AAD token.
+
+> [!NOTE]
+> The notebook uses `notebookutils.credentials.getToken('https://purview.azure.com')` to obtain an AAD bearer token — no passwords or client secrets are stored.
 
 ---
 
@@ -46,29 +194,26 @@ Before configuring the integration, ensure the following are in place:
 > [!NOTE]
 > Only one Purview account can be connected to a Fabric tenant at a time.
 
-### 1.2 Enable sensitivity labels (optional)
+### 1.2 Grant the Fabric Workspace Identity the Data Curator role
 
-1. In the Fabric Admin Portal, go to **Tenant Settings → Information Protection**.
-2. Enable **Apply sensitivity labels to content**.
-3. Ensure your Purview account has sensitivity labels published for the tenant via the Microsoft Purview Compliance Portal.
+The notebook authenticates as the Workspace Identity. To allow it to write Atlas entities:
+
+1. Open the [Microsoft Purview portal](https://purview.microsoft.com).
+2. Navigate to **Data Map → Collections**.
+3. Select the target collection (or root).
+4. Click **Role assignments**.
+5. Add the Fabric Workspace Identity (or Service Principal) to the **Data Curators** role.
 
 ---
 
 ## Step 2 — Register Microsoft Fabric as a Data Source in Purview
 
+Registering Fabric workspaces in Purview enables the automatic scanner to discover tables and enrich the entities that `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` creates via the Atlas API.
+
 1. Open the [Microsoft Purview portal](https://purview.microsoft.com).
 2. Navigate to **Data Map → Data Sources**.
-3. Click **+ Register**.
-4. Search for and select **Microsoft Fabric**.
-5. Fill in the required details:
-
-| Field | Value |
-|---|---|
-| Name | A descriptive name (e.g. `FMD_FABRIC`) |
-| Tenant ID | Your Azure AD tenant ID |
-| Fabric workspace | Select the FMD workspaces to register (see table below) |
-
-Register each FMD workspace that you want to catalogue:
+3. Click **+ Register** and select **Microsoft Fabric**.
+4. Register each FMD workspace:
 
 | FMD Workspace | Contains |
 |---|---|
@@ -76,8 +221,6 @@ Register each FMD workspace that you want to catalogue:
 | `<DOMAIN> CODE (D/P)` | Notebooks, Pipelines, Variable Libraries |
 | `FMD_FRAMEWORK_CONFIGURATION` | SQL_FMD_FRAMEWORK database |
 | Business Domain Data workspace | LH_GOLD_LAYER and reporting assets |
-
-6. Click **Register** to save the data source.
 
 ---
 
@@ -87,83 +230,45 @@ Register each FMD workspace that you want to catalogue:
 
 1. In the Purview Data Map, select the registered Fabric data source.
 2. Click **New scan**.
-3. Provide a **scan name** (e.g. `SCAN_FMD_BRONZE_SILVER`).
-4. Select the **scope**: choose the specific lakehouses you want to scan (e.g. `LH_BRONZE_LAYER`, `LH_SILVER_LAYER`).
-5. Choose or create a **scan rule set** — use the default Microsoft Fabric rule set or create a custom set that includes the file types used by FMD (Delta Parquet).
-6. Select an **integration runtime** — use the default AutoResolveIntegrationRuntime for Fabric-native assets.
+3. Scope the scan to the lakehouses you want to catalogue (`LH_BRONZE_LAYER`, `LH_SILVER_LAYER`, etc.).
+4. Choose or create a scan rule set that includes Delta Parquet file types.
+5. Schedule the scan to run after each `PL_FMD_LOAD_ALL` pipeline run to keep the catalog current.
 
-### 3.2 Set a scan trigger
-
-Purview supports both **one-time** and **recurring** scans. For FMD, a recurring scan aligned to your pipeline schedule is recommended:
-
-- After each `PL_FMD_LOAD_ALL` run, new Delta tables or updated partitions may appear in Bronze/Silver.
-- A daily or post-pipeline trigger keeps the catalog up to date.
-
-### 3.3 Run the scan
-
-Click **Save and run**. The first scan may take several minutes depending on the number of tables. Monitor progress in **Scan History**.
+Running a scan ensures that Purview has entities for your lakehouse tables. The Atlas API calls from `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` will then **enrich those entities** with column-level lineage on top of what the scanner already discovered.
 
 ---
 
-## Step 4 — View Data Assets in the Purview Catalog
+## Step 4 — View Column-Level Lineage in Purview
 
-Once the scan completes, all Delta tables and other Fabric items are visible in the Purview Data Catalog.
+Once `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` has run:
 
-### Browsing by Medallion layer
+1. Open the [Microsoft Purview portal](https://purview.microsoft.com).
+2. Search for a table name (e.g. `Customer`).
+3. Open the asset (e.g. `Customer (LH_SILVER_LAYER)`).
+4. Select the **Lineage** tab.
+5. Click the **Process** node (labelled `FMD Bronze To Silver: dbo.Customer`).
+6. Click **View column lineage** to expand the column-to-column mapping.
 
-Use the **Browse assets** view and filter by:
+The lineage graph shows:
 
-- **Source type**: Microsoft Fabric
-- **Lakehouse**: filter by `LH_BRONZE_LAYER`, `LH_SILVER_LAYER`, or `LH_GOLD_LAYER`
-- **Classification**: filter by PII, financial, or custom classification labels applied during the scan
-
-### Searching for a specific entity
-
-Use the Purview search bar to find an entity by its table name. For example, searching for `Customer` returns:
-
-- `LH_BRONZE_LAYER.dbo.Customer` — Bronze Delta table
-- `LH_SILVER_LAYER.dbo.Customer` — Silver SCD Type 2 table
-- `LH_GOLD_LAYER.gold.DimCustomer` — Gold dimension table (if a Business Domain is deployed)
-
----
-
-## Step 5 — Data Lineage
-
-Microsoft Purview automatically captures lineage for Fabric pipelines and notebooks that move or transform data.
-
-### Lineage captured automatically
-
-The following FMD artifacts emit lineage to Purview when they run:
-
-| FMD Artifact | Lineage captured |
-|---|---|
-| `PL_FMD_LDZ_COPY_FROM_*` | Source system → LH_DATA_LANDINGZONE |
-| `NB_FMD_LOAD_LANDING_BRONZE` | LH_DATA_LANDINGZONE → LH_BRONZE_LAYER |
-| `NB_FMD_LOAD_BRONZE_SILVER` | LH_BRONZE_LAYER → LH_SILVER_LAYER |
-| `NB_LOAD_GOLD` (Business Domain) | LH_SILVER_LAYER → LH_GOLD_LAYER |
-
-> [!NOTE]
-> Lineage from Fabric pipelines and notebooks is captured automatically in Purview when the Fabric–Purview integration is enabled. No additional configuration inside FMD notebooks is required.
-
-### Viewing lineage in Purview
-
-1. Open a data asset in the Purview catalog (e.g. `LH_SILVER_LAYER.dbo.Customer`).
-2. Select the **Lineage** tab.
-3. Use the interactive graph to trace data back to its source system and forward to the Gold layer and reporting datasets.
+```
+LH_BRONZE_LAYER / dbo.Customer
+  ├── CustomerID    ──────────────►  LH_SILVER_LAYER / dbo.Customer
+  ├── CustomerName  ──────────────►    ├── CustomerID
+  ├── EmailAddress  ──────────────►    ├── CustomerName
+  └── ModifiedDate  ──────────────►    ├── EmailAddress
+                                       └── ModifiedDate
+```
 
 ---
 
-## Step 6 — Sensitivity Labels and Classification
+## Step 5 — Sensitivity Labels and Classification
 
 ### Automatic classification
 
-During each scan, Purview applies built-in classifiers to detect sensitive data patterns (e.g. email addresses, national IDs, credit card numbers) in column names and sampled values.
-
-Classification results are visible on each asset's **Schema** tab.
+During each Purview scan, built-in classifiers detect sensitive data patterns (email addresses, national IDs, credit card numbers) in column names and sampled values. Classification results appear on the **Schema** tab of each asset.
 
 ### Applying sensitivity labels manually
-
-If a table or column is not automatically classified, you can apply a sensitivity label manually:
 
 1. Open the asset in the Purview catalog.
 2. Click **Edit** (pencil icon).
@@ -172,19 +277,21 @@ If a table or column is not automatically classified, you can apply a sensitivit
 
 ### Propagating labels to Power BI
 
-Sensitivity labels applied to Fabric lakehouse tables propagate downstream to Power BI semantic models and reports when the report is built on top of that data. This ensures end-to-end data protection from lakehouse to dashboard.
+Sensitivity labels applied to Fabric lakehouse tables propagate downstream to Power BI semantic models and reports built on top of that data, ensuring end-to-end data protection from lakehouse to dashboard.
 
 ---
 
 ## Purview & FMD Logging Schema
 
-The FMD `logging` schema in `SQL_FMD_FRAMEWORK` records every pipeline and notebook execution. You can cross-reference FMD execution logs with Purview scan history and lineage events to produce a complete audit trail:
+The FMD `logging` schema in `SQL_FMD_FRAMEWORK` records every pipeline and notebook execution. You can cross-reference FMD execution logs with Purview scan history and Atlas process entities to build a complete audit trail:
 
 | FMD log table | Purview counterpart |
 |---|---|
 | `logging.PipelineExecution` | Purview activity log for pipeline runs |
-| `logging.NotebookExecution` | Purview lineage node for notebook runs |
+| `logging.NotebookExecution` | Atlas `Process` entity created by `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` |
 | `logging.CopyActivityExecution` | Purview lineage edge from source to landing zone |
+
+The `PipelineRunGuid` that appears in both the FMD log tables and the Atlas `Process` entity description links the two systems for every run.
 
 ---
 
@@ -192,12 +299,14 @@ The FMD `logging` schema in `SQL_FMD_FRAMEWORK` records every pipeline and noteb
 
 | Symptom | Likely cause | Resolution |
 |---|---|---|
+| `401 Unauthorized` from Purview API | Workspace Identity not in `Purview Data Curator` role | Add the Workspace Identity to the Data Curators role on the target Purview collection |
+| `400 Bad Request` from Purview API | Invalid entity type or malformed `columnMapping` JSON | Check the Purview portal for type definition errors; validate the JSON payload shape |
+| Column mapping is empty (`[]`) | Source and target Delta tables have no columns in common | Verify that both tables exist and have been loaded at least once before lineage registration runs |
+| Lineage node not visible after run | Purview scan has not yet run or entity qualified names do not match scan results | Run a Purview scan to enrich the entities created by the Atlas API calls |
+| `purview_account_name` not set | Parameter left blank in the pipeline activity | Set `purview_account_name` in the pipeline activity that calls `NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW` |
+| Processing succeeds but Purview call fails | Notebook continues and exits normally — Purview errors are non-blocking | Check the notebook output for `⚠` lines in the Purview Lineage Summary section |
 | Scan fails with `Unauthorized` | Purview managed identity lacks Fabric workspace access | Add the Purview managed identity as a **Viewer** or higher on each FMD workspace |
-| Assets not appearing after scan | Scan scope excludes the target lakehouse | Edit the scan and expand the scope to include all lakehouses |
-| Lineage not showing for notebooks | Fabric–Purview integration not enabled at tenant level | Enable the Purview integration in the Fabric Admin Portal (Step 1) |
-| Sensitivity labels not visible | Labels not published in Compliance Portal | Publish sensitivity labels via the Microsoft Purview Compliance Portal and wait for replication (up to 24 hours) |
 | Duplicate assets in catalog | Multiple scans registered the same workspace | Delete duplicate data source registrations and keep only one per workspace |
-| Scan times out on large lakehouses | Too many Delta table partitions | Narrow the scan scope to specific schemas or tables, or schedule scans during off-peak hours |
 
 ---
 
@@ -206,7 +315,9 @@ The FMD `logging` schema in `SQL_FMD_FRAMEWORK` records every pipeline and noteb
 - [Microsoft Purview documentation](https://learn.microsoft.com/en-us/purview/purview)
 - [Connect Microsoft Fabric to Microsoft Purview](https://learn.microsoft.com/en-us/fabric/governance/microsoft-purview-fabric-overview)
 - [Microsoft Fabric data lineage in Purview](https://learn.microsoft.com/en-us/fabric/governance/lineage)
+- [Apache Atlas REST API — entity bulk](https://atlas.apache.org/api/v2/resource_EntityREST.html)
 - [Sensitivity labels in Microsoft Fabric](https://learn.microsoft.com/en-us/fabric/governance/sensitivity-labels-overview)
+- [NB_FMD_PROCESSING_PARALLEL_MAIN](../src/NB_FMD_PROCESSING_PARALLEL_MAIN.Notebook/notebook-content.py) — the base parallel processing notebook
 - [FMD Framework deployment guide](../FMD_FRAMEWORK_DEPLOYMENT.md)
 - [FMD Framework documentation](https://erwindekreuk.com/fmd-framework/)
 - [FMD Wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki)
