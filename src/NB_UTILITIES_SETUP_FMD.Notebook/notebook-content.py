@@ -19,7 +19,8 @@
 
 variable_parameters = {
     "key_vault_uri_name": key_vault_uri_name,
-    "lakehouse_schema_enabled": lakehouse_schema_enabled
+    "lakehouse_schema_enabled": lakehouse_schema_enabled,
+       "purview_account_name": purview_account_name
 }
 
 # METADATA ********************

@@ -192,6 +192,13 @@
                 "datatype": "Boolean",
                 "source": "lakehouse_schema_enabled"
             }
+            ,
+            {
+                "name": "purview_account_name",
+                "type": "variable",
+                "datatype": "String",
+                "source": "purview_account_name"
+            }
         ]
     }
     ,

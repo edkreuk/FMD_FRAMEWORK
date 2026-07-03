@@ -12,6 +12,12 @@
       "note": "",
       "type": "Boolean",
       "value": ""
+    }    ,
+    {
+      "name": "purview_account_name",
+      "note": "",
+      "type": "String",
+      "value": ""
     }
   ]
 }
