@@ -4,11 +4,7 @@
         "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
         "type": "Notebook"
     },
-    {
-        "name": "NB_FMD_PROCESSING_PARALLEL_MAIN_PURVIEW.Notebook",
-        "id": "10cf7721-6a9b-a421-47f3-7f2a17d1540f",
-        "type": "Notebook"
-    },
+
     {
         "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
         "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
@@ -20,8 +16,8 @@
         "type": "Notebook"
     },
         {
-        "name": "NB_FMD_PURVIEW_LINEAGE_TABLE_COLUMN.Notebook",
-        "id": "b90d9c15-4258-871f-48a6-0189524ce351",
+        "name": "NB_FMD_FABRIC_PURVIEW_LINEAGE_TABLE_COLUMN_EXTRACTOR.Notebook",
+        "id": "b7ad5eb9-f6e2-9b38-4fb4-60c886e65b72",
         "type": "Notebook"
     },
     {

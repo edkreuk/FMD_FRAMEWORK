@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "NB_FMD_FABRIC_PURVIEW_LINEAGE_TABLE_COLUMN_EXTRACTOR",
+    "description": "Extracts table and column-level lineage from Microsoft Fabric Lakehouses and registers it in Microsoft Purview. Supports creating lineage processes with column mapping for data governance and asset tracking."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "b7ad5eb9-f6e2-9b38-4fb4-60c886e65b72"
+  }
+}
