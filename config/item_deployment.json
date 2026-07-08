@@ -4,6 +4,7 @@
         "id": "bf2101e2-a101-b8df-43bf-5f6ba130a279",
         "type": "Notebook"
     },
+
     {
         "name": "NB_FMD_LOAD_BRONZE_SILVER.Notebook",
         "id": "556fd16b-ed49-4f7b-83a8-a79252ee54f9",
@@ -12,6 +13,11 @@
     {
         "name": "NB_FMD_LOAD_LANDING_BRONZE.Notebook",
         "id": "f7be6488-6508-4bcd-8c79-296a37f52a25",
+        "type": "Notebook"
+    },
+        {
+        "name": "NB_FMD_FABRIC_PURVIEW_LINEAGE_TABLE_COLUMN_EXTRACTOR.Notebook",
+        "id": "b7ad5eb9-f6e2-9b38-4fb4-60c886e65b72",
         "type": "Notebook"
     },
     {
@@ -145,6 +151,11 @@
         "type": "DataPipeline"
     },
     {
+        "name": "PL_FMD_TOOLING_LOAD_TO_PURVIEW.DataPipeline",
+        "id": "78439211-a76c-a426-4934-268e37d55689",
+        "type": "DataPipeline"
+    },
+    {
         "name": "PL_FMD_LOAD_LANDINGZONE.DataPipeline",
         "id": "38f06ae6-bf9a-4f2c-a364-461c66b8f104",
         "type": "DataPipeline"
@@ -176,6 +187,13 @@
                 "type": "variable",
                 "datatype": "Boolean",
                 "source": "lakehouse_schema_enabled"
+            }
+            ,
+            {
+                "name": "purview_account_name",
+                "type": "variable",
+                "datatype": "String",
+                "source": "purview_account_name"
             }
         ]
     }

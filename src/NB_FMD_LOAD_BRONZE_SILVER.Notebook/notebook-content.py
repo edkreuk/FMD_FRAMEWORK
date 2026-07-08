@@ -664,7 +664,7 @@ try:
             condition="updates.HashedNonKeyColumns == original.HashedNonKeyColumns and original.IsCurrent = 1  ",
             set={
                 "IsCurrent": lit(0),
-                "RecordEndDate": col('updates.RecordStartDate')
+                "RecordEndDate": col('updates.RecordEndDate')
             }) \
         .whenNotMatchedInsert(
                 #
