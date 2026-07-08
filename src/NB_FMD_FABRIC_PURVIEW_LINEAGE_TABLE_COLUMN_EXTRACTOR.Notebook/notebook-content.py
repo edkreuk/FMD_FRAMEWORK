@@ -118,7 +118,6 @@ processtype='Notebook'   #NotebookName, Shortcut, MLV
 fabric_path_type_name='fabric_lakehouse_path' 
 fabric_table_type_name = 'fabric_lakehouse_table'
 
-
 driver = '{ODBC Driver 18 for SQL Server}'
 process_type_name = "FMD Fabric to Purview Lineage Extractor Process"
 
@@ -226,17 +225,17 @@ def create_lineage_process(
         try:
             existing = client.get_entity(
                 qualifiedName=process_qn,
-                typeName=process_type_name
+                typeName="FMD Fabric to Purview Lineage Extractor Process"
             )
             process_guid = existing["entities"][0]["guid"]
         except:
             process_guid = "-1"  # new process
         labels = labels or []
-        process_guid = temp_guid if process_guid == "-1" else process_guid
+        process_guid=temp_guid
         process = AtlasProcess(
         name=process_name,
         typeName=process_type_name,
-        description="Lineage Created by Fabric Purview Accelerator",
+        description="Lineage Created by FMD Fabric Purview Accelerator",
         qualified_name=process_qn,
         labels=[labels],
         inputs=[input_entity],
@@ -245,7 +244,7 @@ def create_lineage_process(
         attributes={
             "columnMapping": json.dumps(column_mapping),
 
-            "userDescription": f'<div>Lineage<p>Created by Fabric Purview Accelerator</p> <p> Process {process_qn}</p>'
+            "userDescription": f'<div>Lineage Created by FMD Fabric Purview Accelerator</p> <p> Process {process_qn}</p>'
 
         },
         # This custom attribute flips a switch inside of the Purview UI to render
@@ -263,12 +262,14 @@ def create_lineage_process(
             )
         print(f"   QualifiedName: {process_qn}")
         print("✅ Lineage created")
-        process_guid = results["guidAssignments"].get(str(process.guid), process.guid)
+        process_guid = results["guidAssignments"].get(str(process.guid))
         print(f'Search for "{process.name}" or use guid {process_guid}')
 
     except Exception as e:
-        print(f"ERROR: {type(e).__name__}: {e}")
-        return None, process_guid
+            print(f"ERROR: {type(e).__name__}: {e}")
+
+        
+    return results, process_guid
 
 
 # METADATA ********************
@@ -296,7 +297,7 @@ f"INNER JOIN sys.columns c ON t.object_id = c.object_id "
 f"INNER JOIN sys.types AS ty ON c.user_type_id=ty.user_type_id"
 f" where 1=1"
 )
-sqlquery_whereclause=(f" and t.name ='{filter}'" )
+
 
 
 # METADATA ********************
@@ -445,22 +446,11 @@ conn_sql = pyodbc.connect(
 )
 
 query = """
-WITH cte AS (
-    SELECT
-        LandingzoneEntityId,
-        FilePath,
-        FileName,
-        ROW_NUMBER() OVER (
-            PARTITION BY LandingzoneEntityId
-            ORDER BY InsertDateTime ASC
-        ) AS rn
-    FROM execution.PipelineLandingzoneEntity
-)
 SELECT
     DS.Namespace AS BrzTableSchema01,
     DS.Namespace AS SlvTableSchema01,
-    CONCAT(cte.FilePath,'/',cte.FileName) as LdzFileName01,
-    cte.FileName as SourceFileName,
+    CONCAT(LZE.FilePath,'/',DS.NameSpace,'/',LZE.FileName) as LdzFolderPath,
+    LZE.FileName as LdzFolder,
     CONCAT(BLE.[Schema], '_', BLE.[Name]) AS BrzTableName01,
     CONCAT(SLE.[Schema], '_', SLE.[Name]) AS SlvTableName01,
     WL.[WorkspaceGuid] AS LdzWorkspaceId,
@@ -480,9 +470,6 @@ INNER JOIN [integration].[BronzeLayerEntity] BLE
     ON SLE.BronzeLayerEntityId = BLE.BronzeLayerEntityId
 INNER JOIN [integration].[LandingzoneEntity] LZE
     ON LZE.LandingzoneEntityId = BLE.LandingzoneEntityId
-LEFT JOIN cte
-    ON cte.LandingzoneEntityId = LZE.LandingzoneEntityId
-   AND cte.rn = 1
 INNER JOIN [integration].[DataSource] DS
     ON DS.[DataSourceId] = LZE.[DataSourceId]
 INNER JOIN [integration].[Lakehouse] LLH
@@ -725,7 +712,8 @@ df_lineage_mapping = (
         col("LdzWorkspaceName").alias("LdzWorkspaceName"),
         col("LdzLakehouseId").alias("LdzLakehouseId"),
         col("LdzLakehouseName").alias("LdzLakehouseName"),
-        col("LdzFileName01").alias("LdzFileName01"),
+        col("LdzFolder").alias("LdzFolder"),
+        col("LdzFolderPath").alias("LdzFolderPath"),
 
         col("BrzWorkspaceId").alias("BrzWorkspaceId"),
         col("BrzWorkspaceName").alias("BrzWorkspaceName"),
@@ -762,7 +750,8 @@ for row in df_lineage_mapping:
     InputWorkspaceName01 = row["LdzWorkspaceName"]
     InputLakehouseId01 = row["LdzLakehouseId"]
     InputLakehouseName01 = row["LdzLakehouseName"]
-    InputFileName01 = row["LdzFileName01"]
+    InputFolder = row["LdzFolder"]
+    InputFolderPath = row["LdzFolderPath"]
 
     OutputWorkspaceId01 = row["BrzWorkspaceId"]
     OutputWorkspaceName01 = row["BrzWorkspaceName"]
@@ -771,21 +760,21 @@ for row in df_lineage_mapping:
     OutputTableSchema01 = row["BrzSchemaName"]
     OutputTableName01 = row["BrzTableName"]
 
-    if InputFileName01 and InputFileName01 != "/":
-        qualified_name_input01=f"https://app.fabric.microsoft.com/groups/{InputWorkspaceId01.lower()}/lakehouses/{InputLakehouseId01.lower()}/files/{InputFileName01}"
-        qualified_name_output01=f"https://app.fabric.microsoft.com/groups/{OutputWorkspaceId01.lower()}/lakehouses/{OutputLakehouseId01.lower()}/tables/{OutputTableSchema01.lower()}%252F{OutputTableName01.lower()}"
+     
+    qualified_name_input01=f"https://app.fabric.microsoft.com/groups/{InputWorkspaceId01.lower()}/lakehouses/{InputLakehouseId01.lower()}/files/{InputFolderPath}"
+    qualified_name_output01=f"https://app.fabric.microsoft.com/groups/{OutputWorkspaceId01.lower()}/lakehouses/{OutputLakehouseId01.lower()}/tables/{OutputTableSchema01.lower()}%252F{OutputTableName01.lower()}"
 
-        #create Landingzone entity and upload to Purview
-        input_table= get_or_create_entity(entity_name=InputFileName01, type_name=fabric_path_type_name ,qualified_name = qualified_name_input01, temp_guid = "-1")
+    #create Landingzone entity and upload to Purview
+    input_table= get_or_create_entity(entity_name=InputFolder, type_name=fabric_path_type_name ,qualified_name = qualified_name_folder01, temp_guid = "-1")
 
-        #create Bronze entity and upload to Purview
-        output_table=get_or_create_entity(entity_name=OutputTableName01, type_name=fabric_table_type_name ,qualified_name = qualified_name_output01, temp_guid = "-2")
+    #create Bronze entity and upload to Purview
+    output_table=get_or_create_entity(entity_name=OutputTableName01, type_name=fabric_table_type_name ,qualified_name = qualified_name_output01, temp_guid = "-2")
 
-        process_qn = (f"fmdprocess://{InputWorkspaceName01}/{InputFileName01} to {OutputTableSchema01}/{OutputTableName01}")
-        print(process_qn)
-        process_name=(f"{ldzprocesstype} Lineage {InputFileName01} to {OutputTableSchema01}.{OutputTableName01}")
-        results=create_lineage_process(input_entity=input_table, output_entity = output_table, process_type_name=process_type_name, process_name = process_name, process_qn = process_qn, temp_guid='-5', labels=BrzLayerName, column_mapping=[])
-        #print(json.dumps(results, indent=2))
+    process_qn = (f"fmdprocess://{InputWorkspaceName01}/{InputFolder} to {OutputTableSchema01}/{OutputTableName01}")
+    print(process_qn)
+    process_name=(f"{ldzprocesstype} Lineage Folder {InputFolder} to {OutputTableSchema01}.{OutputTableName01}")
+    results=create_lineage_process(input_entity=input_table, output_entity = output_table, process_type_name=process_type_name, process_name = process_name, process_qn = process_qn, temp_guid='-5', labels=BrzLayerName, column_mapping=[])
+    #print(json.dumps(results, indent=2)) 
 
 # METADATA ********************
 
@@ -911,7 +900,7 @@ for table in table_mappings:
     #create Silver(output) entity and upload to Purview
     output_table=get_or_create_entity(entity_name=OutputTableName01, type_name=fabric_table_type_name ,qualified_name = qualified_name_output01, temp_guid = "-4")
     
-    process_qn = (f"fmdprocess://{SourceWorkspaceName}/{InputTableSchema01}/{InputTableName01} to {OutputTableSchema01}/{OutputTableName01}")
+    process_qn = (f"fmdprocess://{SourceWorkspaceName}/{InputTableSchema01}/{InputTableName01}->{OutputTableSchema01}/{OutputTableName01}")
     process_name=(f"{processtype} Lineage {InputTableSchema01}.{InputTableName01} to {OutputTableSchema01}.{OutputTableName01}")
     results=create_lineage_process(input_entity=input_table, output_entity = output_table, process_type_name =process_type_name, process_name = process_name, process_qn = process_qn,temp_guid='-999', labels=SlvLayerName, column_mapping=column_mapping)
     #print(json.dumps(results, indent=2))
