@@ -601,7 +601,7 @@ config = {
     }
 }
 
-SourceWorkspace=row["BrzWorkspaceName"]
+SourceWorkspaceName=row["BrzWorkspaceName"]
 
 # METADATA ********************
 
