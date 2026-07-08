@@ -226,17 +226,17 @@ def create_lineage_process(
         try:
             existing = client.get_entity(
                 qualifiedName=process_qn,
-                typeName="FMD Fabric to Purview Lineage Extractor Process"
+                typeName=process_type_name
             )
             process_guid = existing["entities"][0]["guid"]
         except:
             process_guid = "-1"  # new process
         labels = labels or []
-        process_guid=temp_guid
+        process_guid = temp_guid if process_guid == "-1" else process_guid
         process = AtlasProcess(
         name=process_name,
         typeName=process_type_name,
-        description="Lineage Created by FMD Fabric Purview Accelerator",
+        description="Lineage Created by Fabric Purview Accelerator",
         qualified_name=process_qn,
         labels=[labels],
         inputs=[input_entity],
@@ -245,7 +245,7 @@ def create_lineage_process(
         attributes={
             "columnMapping": json.dumps(column_mapping),
 
-            "userDescription": f'<div>Lineage Created by FMD Fabric Purview Accelerator</p> <p> Process {process_qn}</p>'
+            "userDescription": f'<div>Lineage<p>Created by Fabric Purview Accelerator</p> <p> Process {process_qn}</p>'
 
         },
         # This custom attribute flips a switch inside of the Purview UI to render
@@ -263,14 +263,12 @@ def create_lineage_process(
             )
         print(f"   QualifiedName: {process_qn}")
         print("✅ Lineage created")
-        process_guid = results["guidAssignments"].get(str(process.guid))
+        process_guid = results["guidAssignments"].get(str(process.guid), process.guid)
         print(f'Search for "{process.name}" or use guid {process_guid}')
 
     except Exception as e:
-            print(f"ERROR: {type(e).__name__}: {e}")
-
-        
-    return results, process_guid
+        print(f"ERROR: {type(e).__name__}: {e}")
+        return None, process_guid
 
 
 # METADATA ********************
@@ -783,7 +781,7 @@ for row in df_lineage_mapping:
         #create Bronze entity and upload to Purview
         output_table=get_or_create_entity(entity_name=OutputTableName01, type_name=fabric_table_type_name ,qualified_name = qualified_name_output01, temp_guid = "-2")
 
-        process_qn = (f"fmdprocess://{InputWorkspaceName01}/{InputFileName01}-{OutputTableSchema01}/{OutputTableName01}")
+        process_qn = (f"fmdprocess://{InputWorkspaceName01}/{InputFileName01} to {OutputTableSchema01}/{OutputTableName01}")
         print(process_qn)
         process_name=(f"{ldzprocesstype} Lineage {InputFileName01} to {OutputTableSchema01}.{OutputTableName01}")
         results=create_lineage_process(input_entity=input_table, output_entity = output_table, process_type_name=process_type_name, process_name = process_name, process_qn = process_qn, temp_guid='-5', labels=BrzLayerName, column_mapping=[])
@@ -913,7 +911,7 @@ for table in table_mappings:
     #create Silver(output) entity and upload to Purview
     output_table=get_or_create_entity(entity_name=OutputTableName01, type_name=fabric_table_type_name ,qualified_name = qualified_name_output01, temp_guid = "-4")
     
-    process_qn = (f"fmdprocess://{SourceWorkspaceName}/{InputTableSchema01}/{InputTableName01}->{OutputTableSchema01}/{OutputTableName01}")
+    process_qn = (f"fmdprocess://{SourceWorkspaceName}/{InputTableSchema01}/{InputTableName01} to {OutputTableSchema01}/{OutputTableName01}")
     process_name=(f"{processtype} Lineage {InputTableSchema01}.{InputTableName01} to {OutputTableSchema01}.{OutputTableName01}")
     results=create_lineage_process(input_entity=input_table, output_entity = output_table, process_type_name =process_type_name, process_name = process_name, process_qn = process_qn,temp_guid='-999', labels=SlvLayerName, column_mapping=column_mapping)
     #print(json.dumps(results, indent=2))
