@@ -765,7 +765,7 @@ for row in df_lineage_mapping:
     qualified_name_output01=f"https://app.fabric.microsoft.com/groups/{OutputWorkspaceId01.lower()}/lakehouses/{OutputLakehouseId01.lower()}/tables/{OutputTableSchema01.lower()}%252F{OutputTableName01.lower()}"
 
     #create Landingzone entity and upload to Purview
-    input_table= get_or_create_entity(entity_name=InputFolder, type_name=fabric_path_type_name ,qualified_name = qualified_name_folder01, temp_guid = "-1")
+    input_table= get_or_create_entity(entity_name=InputFolder, type_name=fabric_path_type_name ,qualified_name = qualified_name_input01, temp_guid = "-1")
 
     #create Bronze entity and upload to Purview
     output_table=get_or_create_entity(entity_name=OutputTableName01, type_name=fabric_table_type_name ,qualified_name = qualified_name_output01, temp_guid = "-2")
