@@ -12,7 +12,7 @@
     C.[ConnectionGuid] AS [ConnectionGuid],
     [SourceSchema],
     [SourceName],
-    [FilePath] + '/' + DS.[Namespace] + FORMAT(GETUTCDATE(), '/yyyy/MM/dd') AS [TargetFilePath],
+    [FilePath] + '/' + DS.[Namespace]+ '/' +LZE.[FileName] + FORMAT(GETUTCDATE(), '/yyyy/MM/dd') AS [TargetFilePath],
     LZE.[FileName] + '_' + FORMAT(GETUTCDATE(), 'yyyyMMddHHmm') + '.' + [FileType] AS [TargetFileName],
     LZE.[FileType] AS [TargetFileType],
     LH.[LakehouseGuid] AS [TargetLakehouseGuid],
