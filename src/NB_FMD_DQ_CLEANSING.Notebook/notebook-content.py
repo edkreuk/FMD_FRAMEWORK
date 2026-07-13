@@ -181,7 +181,7 @@ def handle_cleansing_functions(df: DataFrame, cleansing_rules):
             print(f"'function' missing in: {rule}")
             continue
 
-        parameters = rule.get("parameters")
+        parameters = rule.get("parameters") or {}
         columns_raw = rule.get("columns")
 
         columns = (
