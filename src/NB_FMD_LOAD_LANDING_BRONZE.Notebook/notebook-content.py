@@ -506,7 +506,7 @@ dfDataChanged=handle_cleansing_functions(dfDataChanged,cleansing_rules)
 
 # CELL ********************
 
-non_key_columns = [column for column in dfDataChanged.columns if column not in (key_columns, 'HashedPKColumn')]
+non_key_columns = [column for column in dfDataChanged.columns if column not in key_columns and column != 'HashedPKColumn']
 
 #add a hashed cloumn to detect changes
 dfDataChanged = dfDataChanged.withColumn("HashedNonKeyColumns", md5(concat_ws("||", *non_key_columns).cast(StringType())))
