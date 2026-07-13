@@ -2149,6 +2149,44 @@
             }
           }
         }
+      },
+      {
+        "name": "FA_THROW_ERROR",
+        "type": "Fail",
+        "dependsOn": [
+          {
+            "activity": "SP_FAIL_AUDIT_PIPELINE",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "message": {
+            "value": "@concat('Landing zone failed in ', pipeline().PipelineName, '. See logging for pipeline run ', pipeline().RunId, '.')",
+            "type": "Expression"
+          },
+          "errorCode": "Landingzone failed"
+        }
+      },
+      {
+        "name": "FA_THROW_ERROR_1",
+        "type": "Fail",
+        "dependsOn": [
+          {
+            "activity": "SP_FAIL_AUDIT_PIPELINE_0",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "message": {
+            "value": "@concat('Landing zone failed in ', pipeline().PipelineName, '. See logging for pipeline run ', pipeline().RunId, '.')",
+            "type": "Expression"
+          },
+          "errorCode": "Landingzone failed"
+        }
       }
     ],
     "parameters": {
