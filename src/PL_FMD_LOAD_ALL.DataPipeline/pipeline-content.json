@@ -681,6 +681,54 @@
             ]
           }
         ]
+      },
+      {
+        "type": "Fail",
+        "typeProperties": {
+          "message": "The Landingzone layer failed. The failure is already recorded in logging.PipelineExecution; query it for the failing entity.",
+          "errorCode": "LandingzoneFailed"
+        },
+        "name": "FA_THROW_ERROR_LDZ",
+        "dependsOn": [
+          {
+            "activity": "SP_FAIL_LDZ_AUDIT_PIPELINE",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Fail",
+        "typeProperties": {
+          "message": "The Bronze layer failed. The failure is already recorded in logging.PipelineExecution; query it for the failing entity.",
+          "errorCode": "BronzeFailed"
+        },
+        "name": "FA_THROW_ERROR_BRZ",
+        "dependsOn": [
+          {
+            "activity": "SP_FAIL_BRZ_AUDIT_PIPELINE",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Fail",
+        "typeProperties": {
+          "message": "The Silver layer failed. The failure is already recorded in logging.PipelineExecution; query it for the failing entity.",
+          "errorCode": "SilverFailed"
+        },
+        "name": "FA_THROW_ERROR_SLV",
+        "dependsOn": [
+          {
+            "activity": "SP_FAIL_SLV_AUDIT_PIPELINE",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
       }
     ],
     "parameters": {
