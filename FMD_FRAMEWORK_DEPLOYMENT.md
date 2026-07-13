@@ -60,8 +60,17 @@ Set up the following connections and note their Connection IDs for later configu
 | Connection name              | Connection type            | Authentication                                    |Remarks |
 |------------------------------|----------------------------|---------------------------------------------------|--------|
 | CON_FMD_FABRIC_PIPELINES     | Fabric Data Pipelines      | OAuth2/Service Principal/Workspace Identity       |  Connection is automatically created during deployment      |
-| CON_FMD_FABRIC_SQL           | Fabric SQL database        | OAuth2                        |  Connection needs to be created manually due to limitations      |
+| CON_FMD_FABRIC_SQL           | Fabric SQL database        | OAuth2                        |  See below: cannot be created before the first deployment run      |
 | CON_FMD_FABRIC_NOTEBOOKS     | Fabric Notebooks           | OAuth2/Service Principal/Workspace Identity       |  For future use     |
+
+> [!IMPORTANT]
+> **`CON_FMD_FABRIC_SQL` cannot be created at this point.** A Fabric SQL database connection has to name an existing database, and `SQL_FMD_FRAMEWORK` is created by the deployment in step 5. So the order is:
+>
+> 1. Run the deployment (step 5). It creates the database. Every activity that needs this connection is left without one.
+> 2. Create `CON_FMD_FABRIC_SQL` against the now existing `SQL_FMD_FRAMEWORK`, in the workspace `<domain_name> CONFIGURATION`.
+> 3. **Run the deployment a second time**, so the pipelines are redeployed with the connection bound.
+>
+> The second run is not optional. Until it happens, Fabric writes the lookup error into the pipelines' `externalReferences.connection` field, marks all five audit activities `"state": "Inactive"` with `"onInactiveMarkAs": "Succeeded"`, and every pipeline then reports success while `logging` never receives a row. Nothing fails and nothing warns.
 
 If you use Azure Data Factory Pipelines, create this additional connection:
 
@@ -146,6 +155,17 @@ You need to create workspace roles for the different workspaces:
 
 > [!NOTE]
 > The id of the User, Group or Service Principal is the Object ID in Microsoft Entra ID. For a Service Principal, you can find the Object ID in the Azure Portal under 'Enterprise applications'. Don't use the Object ID of the App Registration.'
+
+> [!NOTE]
+> If you are deploying on your own and have no groups or service principals to add, set them to an empty list, as the comment in the cell already suggests. The deployer already owns the workspaces it creates, so nothing is lost:
+> ```python
+> workspace_roles_code = []
+> workspace_roles_data = []
+> ```
+> Leaving an id in place that does not resolve in your tenant makes workspace creation fail.
+
+> [!IMPORTANT]
+> **`workspace_roles_configuration` does not exist.** `NB_SETUP_FMD.ipynb` defines only `workspace_roles_code` and `workspace_roles_data`, and the cell that creates the configuration workspace assigns `workspace_roles_data` to it. Setting `workspace_roles_configuration`, as the example below still shows, has no effect on anything.
 
 workspace_roles_code
 workspace_roles_data
