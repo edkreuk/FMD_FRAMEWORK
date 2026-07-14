@@ -416,7 +416,8 @@ for pk_column in key_columns:
 
 # Order the key columns by PrimaryKeys, not by the source, so that the hash of a row
 # does not change when the source hands its columns over in a different order.
-read_key_columns = [column for column in key_columns if column in dfDataChanged.columns]
+# Also deduplicate while preserving order to avoid hashing the same PK column twice.
+read_key_columns = list(dict.fromkeys(key_columns))
 
 # Add a column with the calculated hash, easier in later stage of with multiple PK
 dfDataChanged = (dfDataChanged
