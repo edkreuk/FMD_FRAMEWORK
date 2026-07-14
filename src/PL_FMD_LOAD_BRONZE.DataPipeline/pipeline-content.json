@@ -337,7 +337,7 @@
                   },
                   "PipelineParentRunGuid": {
                     "value": {
-                      "value": "@pipeline()?.TriggeredByPipelineRunId",
+                      "value": "@if(empty(string(pipeline()?.TriggeredByPipelineRunId)), pipeline().RunId, pipeline()?.TriggeredByPipelineRunId)",
                       "type": "Expression"
                     },
                     "type": "string"
