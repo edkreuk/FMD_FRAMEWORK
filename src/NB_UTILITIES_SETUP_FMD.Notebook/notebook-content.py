@@ -742,19 +742,35 @@ def create_fabric_sql_connection(connection_name, tenant_id, client_id, client_s
         "Authorization": "Bearer " + notebookutils.credentials.getToken("pbi"),
         "Content-Type": "application/json"
     }
-    response = requests.post("https://api.fabric.microsoft.com/v1/connections",
-                             headers=headers, json=payload, timeout=120)
-    if response.status_code in (200, 201):
-        print(f"\u2705 {connection_name} Created")
-        return response.json().get("id")
-
-    # Never print the response body: it echoes the request, secret included.
+    # A client secret created moments ago is not immediately usable: Entra has not
+    # propagated it yet, and Fabric answers DMTS_OAuthTokenRefreshFailedError. That
+    # is a timing problem, not a wrong secret, so retry before giving up. Observed:
+    # the first call failed and the next one, ~15 seconds later, succeeded.
     error_code = ""
-    try:
-        error_code = response.json().get("errorCode", "")
-    except Exception:
-        pass
+    for attempt in range(4):
+        response = requests.post("https://api.fabric.microsoft.com/v1/connections",
+                                 headers=headers, json=payload, timeout=120)
+        if response.status_code in (200, 201):
+            print(f"\u2705 {connection_name} Created")
+            return response.json().get("id")
+
+        # Never print the response body: it echoes the request, secret included.
+        error_code = ""
+        try:
+            error_code = response.json().get("errorCode", "")
+        except Exception:
+            pass
+
+        if error_code != "DMTS_OAuthTokenRefreshFailedError" or attempt == 3:
+            break
+        print(f"   {connection_name}: credential not usable yet, retrying in 15s "
+              f"(attempt {attempt + 1} of 4)")
+        time.sleep(15)
+
     print(f"\u274c Failed to create {connection_name}: HTTP {response.status_code} {error_code}")
+    if error_code == "DMTS_OAuthTokenRefreshFailedError":
+        print("   The secret was rejected. Check that it is the secret VALUE and not the "
+              "secret ID, and that the principal has access to the workspace holding the database.")
     return None
 
 def create_or_get_fmd_connection(connection_name,connection_role, type):
