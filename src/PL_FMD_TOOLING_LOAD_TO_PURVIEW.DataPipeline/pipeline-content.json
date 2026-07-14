@@ -30,7 +30,7 @@
     "parameters": {
       "Data_WorkspaceGuid": {
         "type": "string",
-        "defaultValue": "3e43b742-3e41-4ec0-a414-03adf83c08e7"
+        "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
       }
     },
     "libraryVariables": {
