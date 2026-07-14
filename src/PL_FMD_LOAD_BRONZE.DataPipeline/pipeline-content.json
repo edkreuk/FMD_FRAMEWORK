@@ -327,6 +327,20 @@
                       "type": "Expression"
                     },
                     "type": "string"
+                  },
+                  "PipelineRunGuid": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineParentRunGuid": {
+                    "value": {
+                      "value": "@if(empty(string(pipeline()?.TriggeredByPipelineRunId)), pipeline().RunId, pipeline()?.TriggeredByPipelineRunId)",
+                      "type": "Expression"
+                    },
+                    "type": "string"
                   }
                 },
                 "sessionTag": "fmd_framework"
