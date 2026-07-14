@@ -414,7 +414,10 @@ for pk_column in key_columns:
         raise ValueError(f"PK: {pk_column} doesn't exist in the source.")
         # Define all the Non-Key columns => HashExcludeColumns
 
-read_key_columns = [column for column in dfDataChanged.columns if column in key_columns]
+# Order the key columns by PrimaryKeys, not by the source, so that the hash of a row
+# does not change when the source hands its columns over in a different order.
+# Also deduplicate while preserving order to avoid hashing the same PK column twice.
+read_key_columns = list(dict.fromkeys(key_columns))
 
 # Add a column with the calculated hash, easier in later stage of with multiple PK
 dfDataChanged = (dfDataChanged
