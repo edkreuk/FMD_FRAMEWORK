@@ -6,7 +6,7 @@
         @ConnectionId INT 
         ,@DataSourceId INT = 0
         ,@Name NVARCHAR(100)
-        ,@Namespace VARCHAR(10)
+        ,@Namespace VARCHAR(100)
         ,@Type VARCHAR(30)
         ,@Description NVARCHAR(200)
         ,@IsActive BIT = 1
