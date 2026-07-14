@@ -982,3 +982,80 @@ def add_letter_to_base64_png(base64_png, letter, font_size=20, text_color="black
 # META   "language": "python",
 # META   "language_group": "jupyter_python"
 # META }
+
+# CELL ********************
+
+# -------------------------------
+# Demo data
+# -------------------------------
+
+def create_demo_data_table(code_workspace_name, data_workspace_name,
+                           lakehouse_schema_enabled, branch,
+                           repo_owner, repo_name, timeout_seconds=1200):
+    """Run NB_FMD_LOAD_DEMO_DATA so the demo entity has a table to point at.
+
+    load_demo_data registers [in].[customer] in LandingzoneEntity, BronzeLayerEntity
+    and SilverLayerEntity, but nothing creates the table itself, so a fresh deployment
+    loads nothing and reports success.
+
+    This notebook cannot do it: it is a pure Python notebook with no Spark session, and
+    it downloads only src/ and config/, not demodata/. NB_FMD_LOAD_DEMO_DATA has Spark,
+    so run it once, here, on the REST API the setup already uses.
+    """
+    start = time()
+    code_workspace_id = get_workspace_id_by_name(code_workspace_name)
+    data_workspace_id = get_workspace_id_by_name(data_workspace_name)
+    notebook_id  = get_item_id(code_workspace_name, 'NB_FMD_LOAD_DEMO_DATA.Notebook', 'id')
+    lakehouse_id = get_item_id(data_workspace_name, 'LH_DATA_LANDINGZONE.Lakehouse', 'id')
+
+    if not notebook_id or not lakehouse_id:
+        print("❌ Demo data: NB_FMD_LOAD_DEMO_DATA or LH_DATA_LANDINGZONE not found, skipping")
+        return
+
+    payload = {"executionData": {"parameters": {
+        "data_workspace_guid":        {"value": data_workspace_id, "type": "string"},
+        "landingzone_lakehouse_guid": {"value": lakehouse_id,      "type": "string"},
+        "lakehouse_schema_enabled":   {"value": bool(lakehouse_schema_enabled), "type": "bool"},
+        "repo_owner":                 {"value": repo_owner, "type": "string"},
+        "repo_name":                  {"value": repo_name,  "type": "string"},
+        "branch":                     {"value": branch,     "type": "string"},
+    }}}
+
+    print("Creating the demo table [in].[customer] in LH_DATA_LANDINGZONE")
+    response = invoke_fabric_api_request(
+        "POST",
+        f"workspaces/{code_workspace_id}/items/{notebook_id}/jobs/instances?jobType=RunNotebook",
+        payload)
+
+    location = (response.headers or {}).get("Location") if hasattr(response, "headers") else None
+    if not location:
+        print("❌ Demo data: the notebook run was not accepted")
+        return
+
+    job_url = location.split("/v1/", 1)[-1]
+    deadline = time() + timeout_seconds
+    while time() < deadline:
+        sleep(15)
+        status = invoke_fabric_api_request("GET", job_url).json().get("status")
+        if status in ("Completed", "Failed", "Cancelled", "Deduped"):
+            break
+    else:
+        status = "TimedOut"
+
+    if status == "Completed":
+        print("✅ Demo table [in].[customer] created")
+    else:
+        # Do not fail the deployment for the demo: the framework itself is fine.
+        print(f"❌ Demo data: NB_FMD_LOAD_DEMO_DATA finished as {status}. "
+              f"The framework deployed correctly; only the demo table is missing.")
+
+    tasks.append({"task_name": "Create demo data table",
+                  "task_duration": int(time() - start),
+                  "status": "success" if status == "Completed" else "failed"})
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "jupyter_python"
+# META }
