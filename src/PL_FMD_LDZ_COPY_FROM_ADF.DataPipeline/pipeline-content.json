@@ -43,7 +43,7 @@
                     "type": "String"
                   },
                   "LogType": {
-                    "value": "StartCopyAcitvity",
+                    "value": "StartCopyActivity",
                     "type": "String"
                   },
                   "PipelineGuid": {
@@ -958,6 +958,25 @@
               "connection": "372237f9-709a-48f8-8fb2-ce06940c990e"
             }
           }
+        }
+      },
+      {
+        "name": "FA_THROW_ERROR",
+        "type": "Fail",
+        "dependsOn": [
+          {
+            "activity": "SP_FAIL_AUDIT_PIPELINE",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "message": {
+            "value": "@concat('Landing zone failed in ', pipeline().PipelineName, '. See logging for pipeline run ', pipeline().RunId, '.')",
+            "type": "Expression"
+          },
+          "errorCode": "Landingzone failed"
         }
       }
     ],
