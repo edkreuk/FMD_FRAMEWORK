@@ -1015,7 +1015,7 @@ def create_demo_data_table(code_workspace_name, data_workspace_name,
     payload = {"executionData": {"parameters": {
         "data_workspace_guid":        {"value": data_workspace_id, "type": "string"},
         "landingzone_lakehouse_guid": {"value": lakehouse_id,      "type": "string"},
-        "lakehouse_schema_enabled":   {"value": str(bool(lakehouse_schema_enabled)).lower(), "type": "bool"},
+        "lakehouse_schema_enabled":   {"value": bool(lakehouse_schema_enabled), "type": "bool"},
         "repo_owner":                 {"value": repo_owner, "type": "string"},
         "repo_name":                  {"value": repo_name,  "type": "string"},
         "branch":                     {"value": branch,     "type": "string"},
