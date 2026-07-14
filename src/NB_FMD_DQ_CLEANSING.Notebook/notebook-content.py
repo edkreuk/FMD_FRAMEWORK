@@ -182,6 +182,12 @@ def handle_cleansing_functions(df: DataFrame, cleansing_rules):
             continue
 
         parameters = rule.get("parameters")
+        if parameters is None:
+            parameters = {}
+        elif not isinstance(parameters, dict):
+            raise TypeError(
+                f"'parameters' must be a dict for function '{function}' (got {type(parameters).__name__})"
+            )
         columns_raw = rule.get("columns")
 
         columns = (

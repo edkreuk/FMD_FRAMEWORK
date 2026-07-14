@@ -747,6 +747,28 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
 # Workspace Handling for Cluster Request
 # -------------------------------
 
+FABRIC_API_BASE_URL = "https://api.fabric.microsoft.com/v1/"
+
+def invoke_fabric_api_request(method, path, payload=None):
+    """Call the Fabric public REST API with a path relative to /v1/.
+
+    invoke_fabric_request() polls long running operations through this helper, but
+    it was referenced without ever being defined, so reaching the 202 branch raised
+    NameError: name 'invoke_fabric_api_request' is not defined.
+
+    Deliberately does not handle 202 itself, so that it cannot recurse into the
+    poller that calls it.
+    """
+    headers = {
+        "Authorization": "Bearer " + notebookutils.credentials.getToken("pbi"),
+        "Content-Type": "application/json"
+    }
+    return requests.request(method,
+                            FABRIC_API_BASE_URL + path.lstrip("/"),
+                            headers=headers,
+                            json=payload,
+                            timeout=240)
+
 def invoke_fabric_request(method, url, payload=None):
     
     headers = {
