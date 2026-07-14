@@ -43,7 +43,7 @@
                     "type": "String"
                   },
                   "LogType": {
-                    "value": "StartCopyAcitvity",
+                    "value": "StartCopyActivity",
                     "type": "String"
                   },
                   "PipelineGuid": {
