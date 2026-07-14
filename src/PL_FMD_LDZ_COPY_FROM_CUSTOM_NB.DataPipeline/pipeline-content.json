@@ -1020,8 +1020,15 @@
         ]
       },
       {
-        "name": "FA_THROW_ERROR",
         "type": "Fail",
+        "typeProperties": {
+          "message": {
+            "value": "@concat('Landing zone failed in ', pipeline().PipelineName, '. See logging for pipeline run ', pipeline().RunId, '.')",
+            "type": "Expression"
+          },
+          "errorCode": "Landingzone failed"
+        },
+        "name": "FA_THROW_ERROR",
         "dependsOn": [
           {
             "activity": "SP_FAIL_AUDIT_PIPELINE",
@@ -1029,14 +1036,7 @@
               "Completed"
             ]
           }
-        ],
-        "typeProperties": {
-          "message": {
-            "value": "@concat('Landing zone failed in ', pipeline().PipelineName, '. See logging for pipeline run ', pipeline().RunId, '.')",
-            "type": "Expression"
-          },
-          "errorCode": "Landingzone failed"
-        }
+        ]
       }
     ],
     "parameters": {
