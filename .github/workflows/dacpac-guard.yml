@@ -1,0 +1,97 @@
+name: dacpac is up to date
+
+# The SQLDatabase item folder contains nothing but SQL_FMD_FRAMEWORK.dacpac, and
+# that is what NB_SETUP_FMD deploys. The .sql files under src/Config_Database/ are
+# the sources of SQL_FMD_FRAMEWORK.sqlproj, which builds it.
+#
+# So a change to a .sql file reaches nobody's database until the dacpac is rebuilt.
+# This job rebuilds it and fails if the committed artefact does not match, which
+# makes that mistake impossible to merge.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/Config_Database/**"
+      - "src/SQL_FMD_FRAMEWORK.SQLDatabase/**"
+      - ".github/workflows/dacpac-guard.yml"
+  pull_request:
+    paths:
+      - "src/Config_Database/**"
+      - "src/SQL_FMD_FRAMEWORK.SQLDatabase/**"
+      - ".github/workflows/dacpac-guard.yml"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build the SQL project
+        run: dotnet build src/Config_Database/SQL_FMD_FRAMEWORK.sqlproj -c Release
+
+      - name: Compare the built model against the committed dacpac
+        shell: python
+        run: |
+          import zipfile, sys, re, difflib
+
+          BUILT     = "src/Config_Database/bin/Release/SQL_FMD_FRAMEWORK.dacpac"
+          COMMITTED = "src/SQL_FMD_FRAMEWORK.SQLDatabase/SQL_FMD_FRAMEWORK.dacpac"
+
+          def model(path):
+              # model.xml is the resolved schema. Origin.xml carries build checksums and
+              # DacMetadata a version, so comparing whole files would fail on every build.
+              return zipfile.ZipFile(path).read("model.xml").decode("utf-8")
+
+          built, committed = model(BUILT), model(COMMITTED)
+
+          if built == committed:
+              print("The committed dacpac matches the SQL sources.")
+              sys.exit(0)
+
+          print("::error::The committed dacpac does NOT match src/Config_Database/.")
+          print("")
+          print("The dacpac is the only thing that deploys: src/SQL_FMD_FRAMEWORK.SQLDatabase/")
+          print("contains nothing else, and deploy_item imports that folder. So this change")
+          print("does not reach anybody's database until the dacpac is rebuilt.")
+          print("")
+          print("Rebuild it with:")
+          print("")
+          print("    dotnet build src/Config_Database/SQL_FMD_FRAMEWORK.sqlproj -c Release")
+          print("    cp src/Config_Database/bin/Release/SQL_FMD_FRAMEWORK.dacpac \\")
+          print("       src/SQL_FMD_FRAMEWORK.SQLDatabase/SQL_FMD_FRAMEWORK.dacpac")
+          print("")
+
+          # Say WHAT differs, not just that something does. Counting the model's own
+          # element types is enough to name the drift in one line.
+          def summarise(x):
+              return {t: x.count(f'Type="{t}"') for t in
+                      ("SqlTable", "SqlProcedure", "SqlView", "SqlUser",
+                       "SqlSchema", "SqlRoleMembership", "SqlPermissionStatement",
+                       "SqlSimpleColumn", "SqlIndex", "SqlPrimaryKeyConstraint")}
+
+          a, b = summarise(committed), summarise(built)
+          drift = [(k, a[k], b[k]) for k in a if a[k] != b[k]]
+          if drift:
+              print("What changed (committed -> built):")
+              for k, old, new in drift:
+                  print(f"    {k:26} {old:4} -> {new:4}")
+          else:
+              print("Element counts match; the difference is in the object bodies.")
+
+          # A short unified diff of the first divergence, so the log is actionable.
+          d = list(difflib.unified_diff(
+              committed.splitlines(), built.splitlines(),
+              fromfile="committed dacpac", tofile="built from sources", lineterm="", n=1))
+          if d:
+              print("")
+              print("First differences:")
+              for line in d[:40]:
+                  print("    " + line[:160])
+
+          sys.exit(1)
