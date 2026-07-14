@@ -726,6 +726,11 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
         else:
              print('Connection already exists, skip creation')
     connection_id=run_fab_command(f"get .connections/{connection_name}.Connection -q id", silently_continue= True, capture_output= True)
+    _GUID_RE = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
+    if not connection_id or not _GUID_RE.match(str(connection_id).strip()):
+        print(f"⚠️ Could not resolve a valid connection ID for '{connection_name}'; skipping role assignment and returning None.")
+        return None
+    connection_id = str(connection_id).strip()
     payload_role = json.dumps(connection_role)
     try:
         run_fab_command(f'api -X post connections/{connection_id}/roleAssignments -i "{payload_role}"',capture_output=True ,silently_continue=True  )
