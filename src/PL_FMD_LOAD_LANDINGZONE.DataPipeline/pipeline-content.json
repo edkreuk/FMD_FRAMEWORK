@@ -660,7 +660,7 @@
           "storedProcedureParameters": {
             "LogData": {
               "value": {
-                "value": "{    \"Action\" : \"Error\",     \"Message\" : \"LDZ failed\"}",
+                "value": "{ \"Action\" : \"Error\", \"Message\" : \"LDZ failed\", \"Error\" : @{activity('FE_ENTITY').error}}",
                 "type": "Expression"
               },
               "type": "String"
