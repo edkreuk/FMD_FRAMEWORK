@@ -701,6 +701,78 @@ def get_existing_connections_by_id():
     return connection_list
 
 
+def create_fabric_sql_connection(connection_name, tenant_id, client_id, client_secret):
+    """Create a FabricSql connection through the Fabric REST API.
+
+    The fab CLI cannot create this one, which is why it used to be a manual step.
+    Two things make it work:
+
+      * creationMethod must be 'FabricSql.Contents'. The supported creation
+        methods are listed by GET /v1/connections/supportedConnectionTypes.
+      * FabricSql accepts only OAuth2-family credentials. WorkspaceIdentity is
+        rejected with UnsupportedCredentialType. A service principal is accepted,
+        because a service principal is a way of obtaining an OAuth2 token.
+
+    The service principal must have access to the workspace that holds the
+    database, otherwise the connector reports
+    'No workspaces are available for the current account'.
+    """
+    payload = {
+        "connectivityType": "ShareableCloud",
+        "displayName": connection_name,
+        "connectionDetails": {
+            "type": "FabricSql",
+            "creationMethod": "FabricSql.Contents",
+            "parameters": []
+        },
+        "privacyLevel": "Organizational",
+        "credentialDetails": {
+            "singleSignOnType": "None",
+            "connectionEncryption": "NotEncrypted",
+            "skipTestConnection": False,
+            "credentials": {
+                "credentialType": "ServicePrincipal",
+                "tenantId": tenant_id,
+                "servicePrincipalClientId": client_id,
+                "servicePrincipalSecret": client_secret
+            }
+        }
+    }
+    headers = {
+        "Authorization": "Bearer " + notebookutils.credentials.getToken("pbi"),
+        "Content-Type": "application/json"
+    }
+    # A client secret created moments ago is not immediately usable: Entra has not
+    # propagated it yet, and Fabric answers DMTS_OAuthTokenRefreshFailedError. That
+    # is a timing problem, not a wrong secret, so retry before giving up. Observed:
+    # the first call failed and the next one, ~15 seconds later, succeeded.
+    error_code = ""
+    for attempt in range(4):
+        response = requests.post("https://api.fabric.microsoft.com/v1/connections",
+                                 headers=headers, json=payload, timeout=120)
+        if response.status_code in (200, 201):
+            print(f"\u2705 {connection_name} Created")
+            return response.json().get("id")
+
+        # Never print the response body: it echoes the request, secret included.
+        error_code = ""
+        try:
+            error_code = response.json().get("errorCode", "")
+        except Exception:
+            pass
+
+        if error_code != "DMTS_OAuthTokenRefreshFailedError" or attempt == 3:
+            break
+        print(f"   {connection_name}: credential not usable yet, retrying in 15s "
+              f"(attempt {attempt + 1} of 4)")
+        time.sleep(15)
+
+    print(f"\u274c Failed to create {connection_name}: HTTP {response.status_code} {error_code}")
+    if error_code == "DMTS_OAuthTokenRefreshFailedError":
+        print("   The secret was rejected. Check that it is the secret VALUE and not the "
+              "secret ID, and that the principal has access to the workspace holding the database.")
+    return None
+
 def create_or_get_fmd_connection(connection_name,connection_role, type):
     """
     Ensures the workspace exists; creates it if not found.
@@ -710,7 +782,14 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
     if ConnectionExists != "* true":
         try:
             if type =='FabricSql':
-                print("FabricSql can't created automated yet to CLI limitations, please create manual")
+                if fabric_sql_sp_tenant_id and fabric_sql_sp_client_id and fabric_sql_sp_secret:
+                    create_fabric_sql_connection(connection_name,
+                                                 fabric_sql_sp_tenant_id,
+                                                 fabric_sql_sp_client_id,
+                                                 fabric_sql_sp_secret)
+                else:
+                    print("FabricSql needs a service principal to be created automatically. "
+                          "Set fabric_sql_sp_tenant_id / _client_id / _secret, or create it manually.")
             elif type =='AzureDataFactory':
                 print("AzureDataFactory can't created automated yet to CLI limitations, please create manual")
             elif type =='FabricDataPipelines':
