@@ -140,7 +140,7 @@ database=config_settings.fmd_fabric_db_name
 
 # PARAMETERS CELL ********************
 
-SourceWorkspaceId="3e43b742-3e41-4ec0-a414-03adf83c08e7"
+SourceWorkspaceId="00000000-0000-0000-0000-000000000000"
 
 # METADATA ********************
 

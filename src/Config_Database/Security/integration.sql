@@ -1,5 +1,5 @@
 CREATE SCHEMA [integration]
-    AUTHORIZATION [erwin@edkreukmsn.onmicrosoft.com];
+    AUTHORIZATION [dbo];
 
 
 GO

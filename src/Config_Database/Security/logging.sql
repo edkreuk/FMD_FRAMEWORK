@@ -1,5 +1,5 @@
 CREATE SCHEMA [logging]
-    AUTHORIZATION [erwin@edkreukmsn.onmicrosoft.com];
+    AUTHORIZATION [dbo];
 
 
 GO

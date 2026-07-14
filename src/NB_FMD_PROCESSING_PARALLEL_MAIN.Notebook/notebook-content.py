@@ -58,6 +58,7 @@ NotebookExecutionId = str(uuid.uuid4())
 Path = ""
 useRootDefaultLakehouse= True
 PipelineRunGuid = ""
+PipelineParentRunGuid = ""
 PipelineGuid = ""
 TriggerGuid = ""
 TriggerTime = ""
@@ -155,8 +156,16 @@ def batched(lst, first_size, default_size):
 PipelineName = notebookutils.runtime.context.get('currentNotebookName')
 PipelineGuid = str(notebookutils.runtime.context.get('currentNotebookId'))
 WorkspaceGuid = notebookutils.runtime.context.get('currentWorkspaceId')
-PipelineParentRunGuid = notebookutils.runtime.context.get('PipelineParentRunGuid')
-PipelineRunGuid = str(uuid.uuid4())
+# The two run ids come from the pipeline as parameters. notebookutils.runtime.context
+# has no key named PipelineParentRunGuid: Microsoft's property table for it lists 25
+# properties and this is not one of them, so the .get() below always returned None and
+# the fallback always fired, leaving 00000000-0000-0000-0000-000000000000 in every
+# logging.NotebookExecution row. Falling back to a fresh uuid4 for PipelineRunGuid keeps
+# a batch id when the notebook is run interactively.
+if not PipelineParentRunGuid:
+    PipelineParentRunGuid = notebookutils.runtime.context.get('PipelineParentRunGuid')
+if not PipelineRunGuid:
+    PipelineRunGuid = str(uuid.uuid4())
 TriggerGuid = format_guid(TriggerGuid)
 
 if not PipelineParentRunGuid:
