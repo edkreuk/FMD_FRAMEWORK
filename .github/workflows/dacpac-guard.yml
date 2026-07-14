@@ -38,7 +38,7 @@ jobs:
       - name: Compare the built model against the committed dacpac
         shell: python
         run: |
-          import zipfile, sys, re, difflib
+          import zipfile, sys, difflib
 
           BUILT     = "src/Config_Database/bin/Release/SQL_FMD_FRAMEWORK.dacpac"
           COMMITTED = "src/SQL_FMD_FRAMEWORK.SQLDatabase/SQL_FMD_FRAMEWORK.dacpac"
