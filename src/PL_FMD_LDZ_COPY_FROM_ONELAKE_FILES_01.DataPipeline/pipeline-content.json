@@ -124,12 +124,6 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "SP_UPDATE_PROCESS",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                },
-                {
                   "activity": "SP_UPDATE_LASTLOADVALIE",
                   "dependencyConditions": [
                     "Succeeded"
@@ -445,7 +439,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone",
+                  "activity": "SP_UPDATE_PROCESS",
                   "dependencyConditions": [
                     "Succeeded"
                   ]

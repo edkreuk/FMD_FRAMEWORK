@@ -139,12 +139,6 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "SP_UPDATE_PROCESS",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                },
-                {
                   "activity": "SP_UPDATE_LASTLOADVALIE",
                   "dependencyConditions": [
                     "Succeeded"
@@ -511,7 +505,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "PL_INVOKE_ADF",
+                  "activity": "SP_UPDATE_PROCESS",
                   "dependencyConditions": [
                     "Succeeded"
                   ]

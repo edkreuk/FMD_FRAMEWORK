@@ -247,12 +247,6 @@
               "name": "SP_END_AUDIT_PIPELINE_CP",
               "dependsOn": [
                 {
-                  "activity": "SP_UPDATE_PROCESS",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                },
-                {
                   "activity": "SP_UPDATE_LASTLOADVALIE",
                   "dependencyConditions": [
                     "Succeeded"
@@ -494,7 +488,7 @@
               "name": "SP_UPDATE_LASTLOADVALIE",
               "dependsOn": [
                 {
-                  "activity": "NB_FMD_PROCESSING_LANDINGZONE_MAIN",
+                  "activity": "SP_UPDATE_PROCESS",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
