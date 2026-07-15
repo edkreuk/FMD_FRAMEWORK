@@ -44,13 +44,13 @@
                   "datasetSettings": {
                     "annotations": [],
                     "linkedService": {
-                      "name": "LH_DATA_LANDINGZONE",
+                      "name": "fa1a8942_f0f0_43ec_b4ca_1437ae47c519",
                       "properties": {
                         "annotations": [],
                         "type": "Lakehouse",
                         "typeProperties": {
-                          "workspaceId": "83820824-38c1-40b3-8af0-7f717a1711df",
-                          "artifactId": "56b1d954-c50e-44ec-b982-563feb6217ba",
+                          "workspaceId": "@item().WorkspaceGuid",
+                          "artifactId": "@item().TargetLakehouseGuid",
                           "rootFolder": "Tables"
                         }
                       }
