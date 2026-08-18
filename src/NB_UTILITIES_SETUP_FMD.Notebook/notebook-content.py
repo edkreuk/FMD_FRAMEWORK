@@ -154,9 +154,6 @@ def assign_fabric_domain(domain_name, workspace_name):
     except Exception as e:
         print(f"❌ Failed to assign domain: {e}")
 
-    
-    
-
 def assign_domain_description(domain_name):
     """
     Assigns a standard description to an Domain.
@@ -238,6 +235,19 @@ def ensure_workspace_exists(workspace, workspace_name):
         else:
             raise RuntimeError(f"Workspace '{workspace_name}' could not be created or found.")
 
+def set_fabric_runtime(workspace_name, spark_version):
+    """
+    Sets the Spark Runtime version on a Workspace
+    """
+    try:
+        spark_version
+    except NameError:
+        spark_version = "2.0"
+    try:
+        run_fab_command(f"set /{workspace_name}.Workspace-q sparkSettings.environment.runtimeVersion -i {spark_version}", capture_output=True, silently_continue=True)
+        print(f"✅ Spark version {spark_version} has applied to {workspace_name}")
+    except Exception as e:
+        print(f"❌ Failed to Spark version {spark_version}: {e}")
 
 # -------------------------------
 # Item Utilities
@@ -548,6 +558,8 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
     create_workspace_identity(workspace_name)
 
     assign_workspace_identity_role(workspace_name)  #required to support Workspace identity in Fabric Pipelines connectionb
+
+    set_fabric_runtime(workspace_name, spark_version)
 
     if create_domains:
         assign_fabric_domain(domain_name, workspace_name) 
