@@ -235,19 +235,22 @@ def ensure_workspace_exists(workspace, workspace_name):
         else:
             raise RuntimeError(f"Workspace '{workspace_name}' could not be created or found.")
 
-def set_fabric_runtime(workspace_name, spark_version):
+def set_fabric_runtime(workspace_name, spark_version="2.0"):
     """
-    Sets the Spark Runtime version on a Workspace
+    Sets the Spark Runtime version on a Workspace.
     """
-    try:
-        spark_version
-    except NameError:
+    if not spark_version:
         spark_version = "2.0"
+
     try:
-        run_fab_command(f"set /{workspace_name}.Workspace-q sparkSettings.environment.runtimeVersion -i {spark_version}", capture_output=True, silently_continue=True)
-        print(f"✅ Spark version {spark_version} has applied to {workspace_name}")
+        run_fab_command(
+            f"set /{workspace_name}.Workspace -q sparkSettings.environment.runtimeVersion -i {spark_version}",
+            capture_output=True,
+            silently_continue=True,
+        )
+        print(f"✅ Spark runtime version {spark_version} applied to {workspace_name}")
     except Exception as e:
-        print(f"❌ Failed to Spark version {spark_version}: {e}")
+        print(f"❌ Failed to set Spark runtime version {spark_version} for {workspace_name}: {e}")
 
 # -------------------------------
 # Item Utilities
