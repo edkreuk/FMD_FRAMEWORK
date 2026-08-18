@@ -13,7 +13,7 @@
 # MARKDOWN ********************
 
 # # Utility Functions
-# This notebook contains function declarations for the NB_SETUP_FMD(test)
+# This notebook contains function declarations for the NB_SETUP_FMD framework. These functions are used to deploy workspaces, items, and manage connections in the Fabric environment. The functions handle tasks such as creating workspaces, assigning roles, replacing IDs in files, and managing domain assignments.
 
 # CELL ********************
 
