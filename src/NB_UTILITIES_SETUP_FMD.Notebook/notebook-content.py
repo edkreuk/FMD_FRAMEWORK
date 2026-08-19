@@ -5,7 +5,7 @@
 # META {
 # META   "kernel_info": {
 # META     "name": "jupyter",
-# META     "jupyter_kernel_name": "python3.11"
+# META     "jupyter_kernel_name": "python3.12"
 # META   },
 # META   "dependencies": {}
 # META }
@@ -468,6 +468,16 @@ def assign_workspace_identity_role(workspace_name):
     except Exception as e:
         print(f"❌ Failed to assign managed identity: {e}")
 
+def assign_workspace_environment(workspace_name, environment_name):
+    """
+    Assigns Environment to workspace
+    """
+    try:
+        run_fab_command(f"set {workspace_name}.workspace -q sparkSettings.environment.name -i {environment_name} -f", capture_output=True, silently_continue=True)
+        print(f"✅ Environment assigned to workspace '{workspace_name}'")
+    except Exception as e:
+        print(f"❌ Environment: {e}")
+
 def assign_identity_role_to_different_workspace(source_workspace_identity,workspace_name ):
     """
     Assigns role to _workspace identity in the workspace.
@@ -666,7 +676,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         tmp_path = copy_to_tmp('SQL_FMD_FRAMEWORK.SQLDatabase')  #This is the folder in Github repo
         try:
             print(f"Creating or updating SQLDatabase: {name}")
-            result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
+            result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=False)
             assign_item_description(workspace_name, name)
             print(f"✅ {name} Created/Imported'")
         except Exception as e:
