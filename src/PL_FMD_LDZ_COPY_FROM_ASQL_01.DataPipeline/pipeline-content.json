@@ -1369,12 +1369,6 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "SP_UPDATE_PROCESS_ASQL_02",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                },
-                {
                   "activity": "SP_UPDATE_LASTLOADVALIE_ASQL_02",
                   "dependencyConditions": [
                     "Succeeded"
@@ -1860,7 +1854,7 @@
               "type": "SqlServerStoredProcedure",
               "dependsOn": [
                 {
-                  "activity": "CP_source_datalandingzone_ASQL_02",
+                  "activity": "SP_UPDATE_PROCESS_ASQL_02",
                   "dependencyConditions": [
                     "Succeeded"
                   ]
