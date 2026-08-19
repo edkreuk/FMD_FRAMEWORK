@@ -566,7 +566,7 @@ except Exception as e:
     # Ensure audit log is written even on failure
     error_data = {"Action": "Error", "ErrorMessage": str(e)[:500]}
     try:
-        execute_with_outputs(EndNotebookActivity, driver, connstring, database, LogData=json.dumps(error_data))
+        execute_with_outputs(SP_AUDIT_NOTEBOOK, driver, connstring, database, **audit_params, LogData=json.dumps(error_data), LogType="EndNotebookActivity")
     except Exception as audit_log_error:
         print(f"Audit logging failed: {audit_log_error}")  # best-effort audit logging
 
