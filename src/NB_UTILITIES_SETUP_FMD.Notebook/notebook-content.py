@@ -676,7 +676,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         tmp_path = copy_to_tmp('SQL_FMD_FRAMEWORK.SQLDatabase')  #This is the folder in Github repo
         try:
             print(f"Creating or updating SQLDatabase: {name}")
-            result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=False)
+            result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
             assign_item_description(workspace_name, name)
             print(f"✅ {name} Created/Imported'")
         except Exception as e:
