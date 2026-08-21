@@ -473,10 +473,14 @@ def assign_workspace_environment(workspace_name, environment_name):
     Assigns Environment to workspace
     """
     try:
-        run_fab_command(f"set {workspace_name}.workspace -q sparkSettings.environment.name -i {environment_name} -f", capture_output=True, silently_continue=True)
+        run_fab_command(
+            f"set {workspace_name}.workspace -q sparkSettings.environment.name -i {environment_name} -f",
+            capture_output=True,
+            silently_continue=False,
+        )
         print(f"✅ Environment assigned to workspace '{workspace_name}'")
     except Exception as e:
-        print(f"❌ Environment: {e}")
+        print(f"❌ Environment assignment failed: {e}")
 
 def assign_identity_role_to_different_workspace(source_workspace_identity,workspace_name ):
     """
