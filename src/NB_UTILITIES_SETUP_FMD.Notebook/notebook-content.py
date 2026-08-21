@@ -665,7 +665,7 @@ def deploy_item(workspace_name,name, mapping_table, environment_name, tasks, lak
         assign_item_to_folder(workspace_name=workspace_name, item_id=new_id, folder_name='VariableLibraries')
         mapping_type='VariableLibrary'
     
-    elif "Environment" in name:   #Not working yet, import is giving error back
+    elif "Environment" in name:   
         try:
             print(f"Creating or updating Environment: {name}")
             result = run_fab_command(f"import {workspace_name}.Workspace/{name} -i {tmp_path} -f",capture_output=True, silently_continue=True)
