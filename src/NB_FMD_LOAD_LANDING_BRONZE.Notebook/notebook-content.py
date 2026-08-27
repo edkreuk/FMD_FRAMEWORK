@@ -113,8 +113,8 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, md5, concat_ws, current_timestamp
-from pyspark.sql.types import StringType
+from pyspark.sql.functions import sha2, md5, concat_ws, current_timestamp, col
+from pyspark.sql.types import StringType, ByteType, ShortType
 
 # METADATA ********************
 
@@ -330,10 +330,21 @@ elif SourceFileType=='xls':
 
 else:
     #Read all incoming changes in Parquet format
-    dfDataChanged= spark.read\
-                    .format(SourceFileType) \
-                    .option("header","true") \
-                    .load(f"{source_changes_data_path}")
+    #NEE expects int instead of Tinyint
+    converted_path = convert_small_numeric_columns_to_int(source_changes_data_path)
+
+    if converted_path:
+        print(f"Use converted file: {converted_path}")
+        source_changes_data_path=converted_path
+        dfDataChanged= spark.read\
+                        .format(SourceFileType) \
+                        .option("header","true") \
+                        .load(f"{source_changes_data_path}")
+    else:
+        dfDataChanged= spark.read\
+                        .format(SourceFileType) \
+                        .option("header","true") \
+                        .load(f"{source_changes_data_path}")
 
 
 # METADATA ********************

@@ -16,8 +16,80 @@
 
 # CELL ********************
 
-import struct, pyodbc
+import struct, pyodbc, os
+from pyspark.sql.functions import col
+from pyspark.sql.types import ByteType, ShortType
 
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+def convert_small_numeric_columns_to_int(path):
+
+    # Read source file
+    df = (
+        spark.read
+            .format(SourceFileType)
+            .load(path)
+    )
+
+    # Find ByteType and ShortType columns
+    changed_columns = [
+        (f.name, f.dataType.simpleString())
+        for f in df.schema.fields
+        if isinstance(f.dataType, (ByteType, ShortType))
+    ]
+
+    # Nothing to convert
+    if not changed_columns:
+        print(f"No ByteType or ShortType columns found in {path}")
+        return None
+
+    print(
+        f"Converting {len(changed_columns)} columns from ByteType/ShortType to IntegerType:"
+    )
+
+    for name, dtype in changed_columns:
+        print(f" - {name}: {dtype} -> integer")
+
+    # Cast columns
+    df = df.select(
+        *[
+            col(f.name).cast("integer").alias(f.name)
+            if isinstance(f.dataType, (ByteType, ShortType))
+            else col(f.name)
+            for f in df.schema.fields
+        ]
+    )
+
+    file_name, ext = os.path.splitext(SourceFileName)
+
+    converted_path = (
+        f"abfss://{SourceWorkspace}"
+        f"@onelake.dfs.fabric.microsoft.com/"
+        f"{SourceLakehouse}/Files/"
+        f"{SourceFilePath}/"
+        f"{file_name}_converted{ext}"
+    )
+
+    spark.conf.set("spark.native.enabled", "false")
+    # Write parquet
+    (
+        df.write
+          .mode("overwrite")
+          .parquet(converted_path)
+    )
+    spark.conf.set("spark.native.enabled", "true")
+
+    print(f"Converted parquet written to: {converted_path}")
+
+    return converted_path
 
 # METADATA ********************
 
