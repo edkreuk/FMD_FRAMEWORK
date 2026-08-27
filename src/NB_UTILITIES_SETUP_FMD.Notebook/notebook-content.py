@@ -476,7 +476,7 @@ def assign_workspace_environment(workspace_name, environment_name):
         run_fab_command(
             f"set {workspace_name}.workspace -q sparkSettings.environment.name -i {environment_name} -f",
             capture_output=True,
-            silently_continue=False,
+            silently_continue=True,
         )
         print(f"✅ Environment assigned to workspace '{workspace_name}'")
     except Exception as e:
@@ -538,7 +538,7 @@ def assign_item_to_folder(workspace_name, item_id, folder_name):
         targetFolderId = get_workspace_folder_id(workspace_name, folder_name)
     payload = json.dumps({'targetFolderId': targetFolderId})
     try:
-        run_fab_command(f"api -X post workspaces/{workspace_id}/items/{item_id}/move -i {payload}", capture_output=True, silently_continue=False)
+        run_fab_command(f"api -X post workspaces/{workspace_id}/items/{item_id}/move -i {payload}", capture_output=True, silently_continue=True)
         print(f"✅ Folder {folder_name} assigned to item in '{workspace_name}'")
     except Exception as e:
         print(f"❌ Failed to assign folder: {e}")
