@@ -68,15 +68,9 @@ def convert_small_numeric_columns_to_int(path):
         ]
     )
 
-    file_name, ext = os.path.splitext(SourceFileName)
-
-    converted_path = (
-        f"abfss://{SourceWorkspace}"
-        f"@onelake.dfs.fabric.microsoft.com/"
-        f"{SourceLakehouse}/Files/"
-        f"{SourceFilePath}/"
-        f"{file_name}_converted{ext}"
-    )
+    base, ext = os.path.splitext(path)
+    # Spark writes Parquet as a directory; avoid implying a single ".parquet" file
+    converted_path = f"{base}_converted" if ext.lower() == ".parquet" else f"{base}_converted{ext}"
 
     prev_native_enabled = spark.conf.get("spark.native.enabled", "true")
     spark.conf.set("spark.native.enabled", "false")
