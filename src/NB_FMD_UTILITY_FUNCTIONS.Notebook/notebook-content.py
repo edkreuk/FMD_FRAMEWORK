@@ -78,14 +78,17 @@ def convert_small_numeric_columns_to_int(path):
         f"{file_name}_converted{ext}"
     )
 
+    prev_native_enabled = spark.conf.get("spark.native.enabled", "true")
     spark.conf.set("spark.native.enabled", "false")
-    # Write parquet
-    (
-        df.write
-          .mode("overwrite")
-          .parquet(converted_path)
-    )
-    spark.conf.set("spark.native.enabled", "true")
+    try:
+        # Write parquet
+        (
+            df.write
+              .mode("overwrite")
+              .parquet(converted_path)
+        )
+    finally:
+        spark.conf.set("spark.native.enabled", prev_native_enabled)
 
     print(f"Converted parquet written to: {converted_path}")
 
