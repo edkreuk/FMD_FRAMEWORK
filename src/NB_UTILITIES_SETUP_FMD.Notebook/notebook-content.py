@@ -474,7 +474,7 @@ def assign_workspace_environment(workspace_name, environment_name):
     """
     try:
         run_fab_command(
-            f"set {workspace_name}.workspace -q sparkSettings.environment.name -i {environment_name} -f",
+            f"set /{workspace_name}.Workspace -q sparkSettings.environment.name -i \"{environment_name}\" -f",
             capture_output=True,
             silently_continue=True,
         )
