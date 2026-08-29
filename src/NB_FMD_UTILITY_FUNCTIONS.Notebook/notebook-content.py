@@ -33,11 +33,7 @@ from pyspark.sql.types import ByteType, ShortType
 def convert_small_numeric_columns_to_int(path):
 
     # Read source file
-    df = (
-        spark.read
-            .format(SourceFileType)
-            .load(path)
-    )
+    df = spark.read.parquet(path)
 
     # Find ByteType and ShortType columns
     changed_columns = [
