@@ -113,8 +113,8 @@ import re
 from datetime import datetime, timezone
 import json
 from delta.tables import *
-from pyspark.sql.functions import sha2, md5, concat_ws, current_timestamp, col
-from pyspark.sql.types import StringType, ByteType, ShortType
+from pyspark.sql.functions import sha2, md5, concat_ws, current_timestamp
+from pyspark.sql.types import StringType
 
 # METADATA ********************
 
