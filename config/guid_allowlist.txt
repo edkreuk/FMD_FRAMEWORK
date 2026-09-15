@@ -1,0 +1,13 @@
+# GUID's die bewust in src/, setup/ of wiki/ staan zonder in de vervang-tabel
+# (config/item_config.yaml, config/item_deployment*.json) voor te komen.
+#
+# Formaat:  <guid> — <reden>
+# Een regel zonder reden laat de guard falen. Dat is opzet: afwijken moet een
+# zichtbare, beargumenteerde handeling zijn.
+#
+# Zie docs/adr/009-guid-guard.md.
+#
+# Voorbeeld:
+# 11111111-2222-3333-4444-555555555555 — voorbeeld-GUID in wiki/LoadGroup_Scheduling.md, geen echte verwijzing
+
+00000000-0000-0000-0000-000000000001 — sentinel-connectie: de rij in integration.Connection die 'geen externe connectie' betekent, gezet door sp_UpsertConnection in NB_SETUP_FMD. Geen verwijzing naar een Fabric-item, dus niet te mappen.

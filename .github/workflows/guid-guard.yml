@@ -1,0 +1,27 @@
+name: guid-guard
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'setup/**'
+      - 'wiki/**'
+      - 'config/**'
+      - 'scripts/guid_guard.py'
+      - '.github/workflows/guid-guard.yml'
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+jobs:
+  guid-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Controleer op niet-gemapte GUID's
+        run: python scripts/guid_guard.py
