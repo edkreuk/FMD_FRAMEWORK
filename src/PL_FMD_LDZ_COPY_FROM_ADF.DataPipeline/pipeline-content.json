@@ -434,8 +434,9 @@
                 }
               },
               "externalReferences": {
-                "connection": "02e107b8-e97e-4b00-a28c-668cf9ce3d9a"
-              }
+                "connection": "d18305e6-f633-4506-982c-53ee1c9dff16"
+              },
+              "description": "PLACEHOLDER connection: er is geen Azure Data Factory in de Bitmetric-tenant. De upstream ADF-connection bestaat niet, waardoor de deploy-import faalde. Vervang deze GUID door een echte Azure Data Factory-connection voordat je deze pipeline draait -- nu faalt hij at runtime."
             },
             {
               "name": "SP_UPDATE_PROCESS",

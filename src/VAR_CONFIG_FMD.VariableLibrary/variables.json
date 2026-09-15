@@ -24,6 +24,18 @@
       "note": "",
       "type": "String",
       "value": ""
+    },
+    {
+      "name": "fmd_data_workspace_guid",
+      "note": "",
+      "type": "String",
+      "value": ""
+    },
+    {
+      "name": "fmd_landingzone_lakehouse_guid",
+      "note": "",
+      "type": "String",
+      "value": ""
     }
   ]
 }
