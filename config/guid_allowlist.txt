@@ -11,3 +11,5 @@
 # 11111111-2222-3333-4444-555555555555 — voorbeeld-GUID in wiki/LoadGroup_Scheduling.md, geen echte verwijzing
 
 00000000-0000-0000-0000-000000000001 — sentinel-connectie: de rij in integration.Connection die 'geen externe connectie' betekent, gezet door sp_UpsertConnection in NB_SETUP_FMD. Geen verwijzing naar een Fabric-item, dus niet te mappen.
+
+b9ad046b-6fcc-97ef-4b92-e4f1229b91e5 - logicalId van src/NB_FMD_CUSTOM_DQ_CLEANSING.Notebook. Dat notebook staat in src/ maar in geen enkele item_deployment*.json, dus het wordt nooit gedeployed en er is niets om het aan te mappen. Zijn tegenhanger NB_FMD_CUSTOM_NOTEBOOK_TEMPLATE is wel geregistreerd; mogelijk is dit een omissie. Registreren zou een nieuw item bij elke klant uitrollen, dus dat is een besluit, geen reparatie.

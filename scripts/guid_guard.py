@@ -14,6 +14,7 @@ Geen dependencies: draait op een kale python3.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -55,6 +56,30 @@ def read(path: Path) -> str | None:
         return path.read_text(encoding="utf-8")
     except (UnicodeDecodeError, OSError):
         return None
+
+
+def notebook_cell_ids(path: Path, text: str) -> set[str]:
+    """
+    Cel-id's van een .ipynb. Die zijn GUID-vormig, maar het zijn geen
+    verwijzingen: nbformat gebruikt ze om cellen uit elkaar te houden, en
+    deploy_item() vervangt ze niet (dat zou de notebook juist kapotmaken).
+
+    Ze per stuk op de allowlist zetten kan niet: er komen er bij zodra iemand een
+    cel toevoegt. Daarom worden ze per bestand overgeslagen, en alleen als ze
+    daadwerkelijk als cel-id in datzelfde bestand voorkomen.
+    """
+    if path.suffix.lower() != ".ipynb":
+        return set()
+    try:
+        notebook = json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        return set()
+    ids = set()
+    for cell in notebook.get("cells", []):
+        cell_id = cell.get("id") if isinstance(cell, dict) else None
+        if isinstance(cell_id, str) and GUID_RE.fullmatch(cell_id):
+            ids.add(cell_id.lower())
+    return ids
 
 
 def collect_known_guids() -> set[str]:
@@ -114,10 +139,12 @@ def main() -> int:
             text = read(path)
             if not text:
                 continue
+            ignored = notebook_cell_ids(path, text)
             for lineno, line in enumerate(text.splitlines(), 1):
                 for guid in GUID_RE.findall(line):
-                    if guid.lower() not in permitted:
-                        violations.append((path.relative_to(REPO_ROOT), lineno, guid))
+                    if guid.lower() in permitted or guid.lower() in ignored:
+                        continue
+                    violations.append((path.relative_to(REPO_ROOT), lineno, guid))
 
     if not violations:
         print(f"GUID-guard OK — {len(known)} gemapte GUID's, {len(allowlist)} op de allowlist.")
