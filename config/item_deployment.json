@@ -245,6 +245,18 @@
                 "type": "variable",
                 "datatype": "String",
                 "source": "fmd_config_workspace_guid"
+            },
+            {
+                "name": "fmd_data_workspace_guid",
+                "type": "variable",
+                "datatype": "String",
+                "source": "fmd_data_workspace_guid"
+            },
+            {
+                "name": "fmd_landingzone_lakehouse_guid",
+                "type": "variable",
+                "datatype": "String",
+                "source": "fmd_landingzone_lakehouse_guid"
             }
         ]
     }

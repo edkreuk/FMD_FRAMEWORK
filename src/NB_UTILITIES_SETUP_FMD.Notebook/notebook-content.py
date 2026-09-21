@@ -1075,6 +1075,10 @@ def create_or_get_fmd_connection(connection_name,connection_role, type):
                     print("FabricSql needs a service principal to be created automatically. "
                           "Set fabric_sql_sp_tenant_id / _client_id / _secret, or create it manually.")
             elif type =='AzureDataFactory':
+                # ponytail: when no manual connection exists yet, the get below returns an
+                # error/empty string that silently becomes this connection's mapping-table
+                # new_id, corrupting every GUID it replaces. Harden by failing loudly here
+                # once a tenant with real ADF needs this path.
                 print("AzureDataFactory can't created automated yet to CLI limitations, please create manual")
             elif type =='FabricDataPipelines':
                 run_fab_command(f"""create .connections/{connection_name}.Connection 
