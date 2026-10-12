@@ -11,6 +11,7 @@ connections:
         CON_FMD_FABRIC_PIPELINES: "6d8146c6-a438-47df-94e2-540c552eb6d7"
         CON_FMD_ADF_PIPELINES: "02e107b8-e97e-4b00-a28c-668cf9ce3d9a"
         CON_FMD_FABRIC_NOTEBOOKS: "5929775e-aff1-430c-b56e-f855d0bc63b8"
+        CON_FMD_SHAREPOINT_SOURCE: "59de20c6-8b0b-413a-97da-bea737d13ec3"
 
 
 database: 
