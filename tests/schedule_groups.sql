@@ -32,6 +32,20 @@ INSERT INTO [integration].[LandingzoneEntity]
 VALUES (@DataSourceId, @LakehouseId, 'dbo', 'Inactive', 'Inactive', 'parquet', 'test', 0);
 SET @InactiveEntityId = SCOPE_IDENTITY();
 
+SELECT @DefaultGroupId = [ScheduleGroupId]
+FROM [integration].[ScheduleGroup] WHERE [ScheduleGroupName] = N'Default';
+IF @DefaultGroupId IS NULL
+    THROW 51000, 'Direct insert did not create or find the default group.', 1;
+IF (SELECT COUNT(*) FROM [integration].[ScheduleGroupEntity]
+    WHERE [ScheduleGroupId] = @DefaultGroupId
+        AND [LandingzoneEntityId] IN (@EntityId, @InactiveEntityId)) <> 2
+    THROW 51000, 'Direct inserts were not immediately assigned to the default group.', 1;
+
+-- Simulate pre-upgrade rows without default memberships for the backfill checks.
+DELETE FROM [integration].[ScheduleGroupEntity]
+WHERE [ScheduleGroupId] = @DefaultGroupId
+    AND [LandingzoneEntityId] IN (@EntityId, @InactiveEntityId);
+
 INSERT INTO [integration].[ScheduleGroup] ([ScheduleGroupName])
 VALUES (@CustomGroupName);
 SET @CustomGroupId = SCOPE_IDENTITY();
@@ -121,5 +135,29 @@ IF NOT EXISTS (
 )
     THROW 51000, 'Combined registration did not add default membership.', 1;
 
+DECLARE @BulkEntities TABLE ([LandingzoneEntityId] BIGINT);
+INSERT INTO [integration].[LandingzoneEntity]
+    ([DataSourceId], [LakehouseId], [SourceSchema], [SourceName], [FileName], [FileType], [FilePath], [IsActive])
+OUTPUT inserted.[LandingzoneEntityId] INTO @BulkEntities
+VALUES (@DataSourceId, @LakehouseId, 'dbo', 'BulkActive', 'BulkActive', 'parquet', 'test', 1),
+       (@DataSourceId, @LakehouseId, 'dbo', 'BulkInactive', 'BulkInactive', 'parquet', 'test', 0);
+IF (SELECT COUNT(*) FROM [integration].[ScheduleGroupEntity] SGE
+    INNER JOIN @BulkEntities B ON B.[LandingzoneEntityId] = SGE.[LandingzoneEntityId]
+    WHERE SGE.[ScheduleGroupId] = @DefaultGroupId) <> 2
+    THROW 51000, 'Multi-row insert did not assign every entity to the default group.', 1;
+
+SAVE TRANSACTION InsertRollback;
+DECLARE @RolledBackEntityId BIGINT;
+INSERT INTO [integration].[LandingzoneEntity]
+    ([DataSourceId], [LakehouseId], [SourceSchema], [SourceName], [FileName], [FileType], [FilePath])
+VALUES (@DataSourceId, @LakehouseId, 'dbo', 'RolledBack', 'RolledBack', 'parquet', 'test');
+SET @RolledBackEntityId = SCOPE_IDENTITY();
+ROLLBACK TRANSACTION InsertRollback;
+IF EXISTS (
+    SELECT 1 FROM [integration].[ScheduleGroupEntity]
+    WHERE [LandingzoneEntityId] = @RolledBackEntityId
+)
+    THROW 51000, 'Default membership was not rolled back with its entity insert.', 1;
+
 ROLLBACK TRANSACTION;
-PRINT 'Schedule group initialization, idempotence, registration, and view checks passed.';
+PRINT 'Schedule group initialization, registration, direct/bulk inserts, rollback, and view checks passed.';

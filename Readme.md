@@ -70,7 +70,7 @@ All Fabric data pipelines except `PL_FMD_LOAD_BRONZE` and `PL_FMD_LOAD_SILVER` a
 
 Landing-zone lookups filter entities by this group using `execution.vw_LoadSourceToLandingzone`. Groups are stored in `integration.ScheduleGroup`; `integration.ScheduleGroupEntity` links groups to landing-zone entities. An entity can belong to multiple groups, but appears only once per group. Schedules themselves are still configured in Fabric.
 
-Deployment automatically runs `integration.sp_InitializeDefaultScheduleGroup` to create `Default` and add all existing entities to it without removing custom memberships. Both landing-zone entity registration procedures also add registered entities to `Default`. See the [upgrade instructions](./FMD_FRAMEWORK_DEPLOYMENT.md#schedule-group-upgrades) for existing deployments.
+Deployment automatically runs `integration.sp_InitializeDefaultScheduleGroup` to create `Default` and add all existing entities to it without removing custom memberships. An insert trigger assigns every new landing-zone entity to `Default` in the same transaction, including direct SQL inserts and multi-row inserts. Both landing-zone entity registration procedures also maintain default membership. See the [upgrade instructions](./FMD_FRAMEWORK_DEPLOYMENT.md#schedule-group-upgrades) for existing deployments.
 
 ## Business Domain Deployment
 A modular extension of the Fabric Metadata‑Driven Framework (FMD) designed to simplify, standardize, and automate deployment of Business Domains within Microsoft Fabric. 

@@ -269,7 +269,9 @@ Redeploy the framework database and pipelines together using `NB_SETUP_FMD.ipynb
 EXECUTE [integration].[sp_InitializeDefaultScheduleGroup];
 ```
 
-The procedure is safe to rerun: it creates the `Default` group if needed and adds missing memberships for **all** landing-zone entities, including inactive entities, without deleting custom groups or memberships. The two landing-zone entity upsert procedures also register entities in `Default`. If entities are inserted directly into the table, run initialization again.
+The procedure is safe to rerun: it creates the `Default` group if needed and adds missing memberships for **all** landing-zone entities, including inactive entities, without deleting custom groups or memberships. The insert trigger `integration.tr_LandingzoneEntity_DefaultScheduleGroup` automatically assigns every new entity to `Default`, including direct SQL inserts and multi-row inserts. It creates the default group if needed and writes memberships in the entity's transaction, so rolling back the insert also rolls back its memberships. The two landing-zone entity upsert procedures also maintain default membership.
+
+With the trigger enabled, SQL inserts that return generated IDs must use `OUTPUT ... INTO` rather than a bare `OUTPUT` clause. Bulk-copy tools that bypass triggers must enable their fire-triggers option; otherwise, run initialization afterward.
 
 All landing-zone lookups now require `ScheduleGroupName`. Pipeline parameters default to `Default`, so callers that omit the parameter continue loading the same active entities after initialization. For previously saved runs or schedules that explicitly pass an empty string, change the value to `Default`. Bronze and Silver are unchanged.
 
@@ -282,7 +284,7 @@ dotnet build src\Config_Database\SQL_FMD_FRAMEWORK.sqlproj -c Release
 Copy-Item src\Config_Database\bin\Release\SQL_FMD_FRAMEWORK.dacpac src\SQL_FMD_FRAMEWORK.SQLDatabase\SQL_FMD_FRAMEWORK.dacpac
 ```
 
-Lookup filtering can be checked locally with `python -m unittest discover -s tests -p "test_schedule_group_lookups.py"`. After deployment, run `tests\schedule_groups.sql` against a development configuration database to check initialization, repeat execution, registration, and view membership. The SQL checks roll back their changes.
+Lookup filtering can be checked locally with `python -m unittest discover -s tests -p "test_schedule_group_lookups.py"`. After deployment, run `tests\schedule_groups.sql` against a development configuration database to check initialization, repeat execution, registration, direct and multi-row inserts, transactional rollback, and view membership. The SQL checks roll back their changes.
 
 ---
 
