@@ -5,19 +5,19 @@
       "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": ""
+      "value": "x"
     },
     {
       "name": "lakehouse_schema_enabled",
       "note": "",
       "type": "Boolean",
-      "value": ""
+      "value": "x"
     }    ,
     {
       "name": "purview_account_name",
       "note": "",
       "type": "String",
-      "value": ""
+      "value": "x"
     }
   ]
 }
