@@ -261,6 +261,29 @@ folder_prefix = ""
 
 Execute the **notebook** to apply your configuration and deploy the framework.
 
+### Schedule group upgrades
+
+Redeploy the framework database and pipelines together using `NB_SETUP_FMD.ipynb`. The updated DACPAC creates `integration.ScheduleGroup` and `integration.ScheduleGroupEntity`, updates `execution.vw_LoadSourceToLandingzone`, and runs this initialization automatically after schema deployment:
+
+```sql
+EXECUTE [integration].[sp_InitializeDefaultScheduleGroup];
+```
+
+The procedure is safe to rerun: it creates the `Default` group if needed and adds missing memberships for **all** landing-zone entities, including inactive entities, without deleting custom groups or memberships. The two landing-zone entity upsert procedures also register entities in `Default`. If entities are inserted directly into the table, run initialization again.
+
+All landing-zone lookups now require `ScheduleGroupName`. Pipeline parameters default to `Default`, so callers that omit the parameter continue loading the same active entities after initialization. For previously saved runs or schedules that explicitly pass an empty string, change the value to `Default`. Bronze and Silver are unchanged.
+
+To load a subset, insert a named group into `integration.ScheduleGroup`, add the desired `(ScheduleGroupId, LandingzoneEntityId)` pairs to `integration.ScheduleGroupEntity`, and pass that name as `ScheduleGroupName`. An unknown group or a group with no active entities returns no entities; it does not fall back to loading everything. Names containing apostrophes are escaped in lookup queries.
+
+After changing SQL sources, rebuild and copy the deployment artifact:
+
+```powershell
+dotnet build src\Config_Database\SQL_FMD_FRAMEWORK.sqlproj -c Release
+Copy-Item src\Config_Database\bin\Release\SQL_FMD_FRAMEWORK.dacpac src\SQL_FMD_FRAMEWORK.SQLDatabase\SQL_FMD_FRAMEWORK.dacpac
+```
+
+Lookup filtering can be checked locally with `python -m unittest discover -s tests -p "test_schedule_group_lookups.py"`. After deployment, run `tests\schedule_groups.sql` against a development configuration database to check initialization, repeat execution, registration, and view membership. The SQL checks roll back their changes.
+
 ---
 
 Check out the [wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki) for more information and detailed guidance on using the FMD Framework and how to load demo data.
