@@ -4,6 +4,8 @@
     AS
     SELECT 
     LZE.[LandingzoneEntityId] AS [EntityId],
+    SG.[ScheduleGroupId],
+    SG.[ScheduleGroupName],
     DS.[DataSourceId] AS [DataSourceId],
     DS.[Name] AS [DataSourceName],
     DS.[Namespace] AS [DataSourceNamespace],
@@ -47,6 +49,10 @@
     END,
 CustomNotebookName
 FROM [integration].[LandingzoneEntity] LZE
+INNER JOIN [integration].[ScheduleGroupEntity] SGE
+    ON SGE.[LandingzoneEntityId] = LZE.[LandingzoneEntityId]
+INNER JOIN [integration].[ScheduleGroup] SG
+    ON SG.[ScheduleGroupId] = SGE.[ScheduleGroupId]
 INNER JOIN [integration].[Lakehouse] LH
     ON LZE.[LakehouseId] = LH.[LakehouseId]
 INNER JOIN [integration].[Workspace] W
