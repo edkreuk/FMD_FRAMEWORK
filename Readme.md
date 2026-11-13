@@ -68,7 +68,7 @@ To get started:
 
 All Fabric data pipelines except `PL_FMD_LOAD_BRONZE` and `PL_FMD_LOAD_SILVER` accept the optional string parameter `ScheduleGroupName` (default: `Default`). Set it when starting a pipeline; its value is forwarded unchanged to each invoked Fabric pipeline, except Bronze and Silver. It is not forwarded to external Azure Data Factory pipelines.
 
-Landing-zone lookups filter entities by this group using `execution.vw_LoadSourceToLandingzone`. Groups are stored in `integration.ScheduleGroup`; `integration.ScheduleGroupEntity` links groups to landing-zone entities. An entity can belong to multiple groups, but appears only once per group. Schedules themselves are still configured in Fabric.
+Landing-zone lookups filter entities by this group using `execution.vw_LoadSourceToLandingzone`. Groups are stored in `integration.ScheduleGroup`; `integration.ScheduleGroupEntity` links groups to landing-zone entities. An entity can belong to multiple groups, but appears only once per group. Manage groups with `integration.sp_UpsertScheduleGroup` and memberships with `integration.sp_UpsertScheduleGroupEntity`. Schedules themselves are still configured in Fabric.
 
 Deployment automatically runs `integration.sp_InitializeDefaultScheduleGroup` to create `Default` and add all existing entities to it without removing custom memberships. An insert trigger assigns every new landing-zone entity to `Default` in the same transaction, including direct SQL inserts and multi-row inserts. Both landing-zone entity registration procedures also maintain default membership. See the [upgrade instructions](./FMD_FRAMEWORK_DEPLOYMENT.md#schedule-group-upgrades) for existing deployments.
 

@@ -275,7 +275,14 @@ With the trigger enabled, SQL inserts that return generated IDs must use `OUTPUT
 
 All landing-zone lookups now require `ScheduleGroupName`. Pipeline parameters default to `Default`, so callers that omit the parameter continue loading the same active entities after initialization. For previously saved runs or schedules that explicitly pass an empty string, change the value to `Default`. Bronze and Silver are unchanged.
 
-To load a subset, insert a named group into `integration.ScheduleGroup`, add the desired `(ScheduleGroupId, LandingzoneEntityId)` pairs to `integration.ScheduleGroupEntity`, and pass that name as `ScheduleGroupName`. An unknown group or a group with no active entities returns no entities; it does not fall back to loading everything. Names containing apostrophes are escaped in lookup queries.
+To load a subset, create the group, add its entities, and pass the group name as `ScheduleGroupName`:
+
+```sql
+EXECUTE [integration].[sp_UpsertScheduleGroup] @ScheduleGroupName = N'Hourly';
+EXECUTE [integration].[sp_UpsertScheduleGroupEntity] @LandingzoneEntityId = 42, @ScheduleGroupName = N'Hourly';
+```
+
+Both procedures are idempotent and return the affected row. `sp_UpsertScheduleGroup` creates a group by name, or renames it when `@ScheduleGroupId` is supplied. It cannot rename `Default`, because new entities are always assigned to that group. `sp_UpsertScheduleGroupEntity` adds the membership once per `(LandingzoneEntityId, ScheduleGroup)` pair and fails if the entity or group does not exist. An unknown group or a group with no active entities returns no entities; it does not fall back to loading everything. Names containing apostrophes are escaped in lookup queries.
 
 After changing SQL sources, rebuild and copy the deployment artifact:
 

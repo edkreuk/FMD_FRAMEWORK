@@ -159,5 +159,86 @@ IF EXISTS (
 )
     THROW 51000, 'Default membership was not rolled back with its entity insert.', 1;
 
+DECLARE @UpsertGroupName NVARCHAR(100) = N'UpsertTest-' + CONVERT(NVARCHAR(36), NEWID());
+DECLARE @RenamedGroupName NVARCHAR(100) = N'Renamed-' + CONVERT(NVARCHAR(36), NEWID());
+DECLARE @UpsertGroupId INT;
+DECLARE @UpsertResult TABLE ([ScheduleGroupId] INT, [ScheduleGroupName] NVARCHAR(100));
+INSERT INTO @UpsertResult
+EXECUTE [integration].[sp_UpsertScheduleGroup] @ScheduleGroupName = @UpsertGroupName;
+SELECT @UpsertGroupId = [ScheduleGroupId] FROM @UpsertResult;
+IF @UpsertGroupId IS NULL
+    OR NOT EXISTS (SELECT 1 FROM [integration].[ScheduleGroup]
+                   WHERE [ScheduleGroupId] = @UpsertGroupId AND [ScheduleGroupName] = @UpsertGroupName)
+    THROW 51000, 'Schedule group upsert did not create the group.', 1;
+DELETE FROM @UpsertResult;
+INSERT INTO @UpsertResult
+EXECUTE [integration].[sp_UpsertScheduleGroup] @ScheduleGroupName = @UpsertGroupName;
+IF (SELECT [ScheduleGroupId] FROM @UpsertResult) <> @UpsertGroupId
+    OR (SELECT COUNT(*) FROM [integration].[ScheduleGroup] WHERE [ScheduleGroupName] = @UpsertGroupName) <> 1
+    THROW 51000, 'Repeated schedule group upsert was not idempotent.', 1;
+DELETE FROM @UpsertResult;
+INSERT INTO @UpsertResult
+EXECUTE [integration].[sp_UpsertScheduleGroup]
+    @ScheduleGroupId = @UpsertGroupId, @ScheduleGroupName = @RenamedGroupName;
+IF NOT EXISTS (SELECT 1 FROM [integration].[ScheduleGroup]
+               WHERE [ScheduleGroupId] = @UpsertGroupId AND [ScheduleGroupName] = @RenamedGroupName)
+    THROW 51000, 'Schedule group upsert did not rename the group by id.', 1;
+
+DECLARE @MembershipResult TABLE ([ScheduleGroupId] INT, [LandingzoneEntityId] BIGINT);
+INSERT INTO @MembershipResult
+EXECUTE [integration].[sp_UpsertScheduleGroupEntity]
+    @LandingzoneEntityId = @EntityId, @ScheduleGroupName = @RenamedGroupName;
+INSERT INTO @MembershipResult
+EXECUTE [integration].[sp_UpsertScheduleGroupEntity]
+    @LandingzoneEntityId = @EntityId, @ScheduleGroupName = @RenamedGroupName;
+IF (SELECT COUNT(*) FROM [integration].[ScheduleGroupEntity]
+    WHERE [ScheduleGroupId] = @UpsertGroupId AND [LandingzoneEntityId] = @EntityId) <> 1
+    OR (SELECT COUNT(*) FROM @MembershipResult
+        WHERE [ScheduleGroupId] = @UpsertGroupId AND [LandingzoneEntityId] = @EntityId) <> 2
+    THROW 51000, 'Schedule group entity upsert was not idempotent.', 1;
+IF NOT EXISTS (SELECT 1 FROM [execution].[vw_LoadSourceToLandingzone]
+               WHERE [EntityId] = @EntityId AND [ScheduleGroupName] = @RenamedGroupName)
+    THROW 51000, 'Upserted membership is not visible in the landing-zone view.', 1;
+
 ROLLBACK TRANSACTION;
-PRINT 'Schedule group initialization, registration, direct/bulk inserts, rollback, and view checks passed.';
+
+-- Validation errors are raised before any write; run them outside a transaction.
+DECLARE @ExpectedErrors INT = 0;
+BEGIN TRY
+    EXECUTE [integration].[sp_UpsertScheduleGroup] @ScheduleGroupName = N'  ';
+END TRY
+BEGIN CATCH
+    IF ERROR_NUMBER() = 50002 SET @ExpectedErrors += 1;
+END CATCH;
+BEGIN TRY
+    EXECUTE [integration].[sp_UpsertScheduleGroup] @ScheduleGroupId = -1, @ScheduleGroupName = N'Missing';
+END TRY
+BEGIN CATCH
+    IF ERROR_NUMBER() = 50003 SET @ExpectedErrors += 1;
+END CATCH;
+BEGIN TRY
+    DECLARE @DefaultId INT = (SELECT [ScheduleGroupId] FROM [integration].[ScheduleGroup]
+                              WHERE [ScheduleGroupName] = N'Default');
+    EXECUTE [integration].[sp_UpsertScheduleGroup] @ScheduleGroupId = @DefaultId, @ScheduleGroupName = N'NotDefault';
+END TRY
+BEGIN CATCH
+    IF ERROR_NUMBER() = 50004 SET @ExpectedErrors += 1;
+END CATCH;
+BEGIN TRY
+    EXECUTE [integration].[sp_UpsertScheduleGroupEntity] @LandingzoneEntityId = -1, @ScheduleGroupName = N'Default';
+END TRY
+BEGIN CATCH
+    IF ERROR_NUMBER() = 50001 SET @ExpectedErrors += 1;
+END CATCH;
+BEGIN TRY
+    DECLARE @AnyEntityId BIGINT = (SELECT TOP (1) [LandingzoneEntityId] FROM [integration].[LandingzoneEntity]);
+    EXECUTE [integration].[sp_UpsertScheduleGroupEntity]
+        @LandingzoneEntityId = @AnyEntityId, @ScheduleGroupName = N'MissingGroup-0f1b7c2e';
+END TRY
+BEGIN CATCH
+    IF ERROR_NUMBER() IN (50001, 50003) SET @ExpectedErrors += 1;
+END CATCH;
+IF @ExpectedErrors <> 5
+    THROW 51000, 'Schedule group upsert validation did not raise the expected errors.', 1;
+
+PRINT 'Schedule group initialization, registration, direct/bulk inserts, upserts, rollback, and view checks passed.';
