@@ -82,6 +82,9 @@ BEGIN
 
         DECLARE @FinalLandingzoneId INT = (SELECT TOP (1) LandingzoneEntityId FROM @LandingzoneOutput);
 
+        EXECUTE [integration].[sp_InitializeDefaultScheduleGroup]
+            @LandingzoneEntityId = @FinalLandingzoneId;
+
         ------------------------------------------------------------
         -- 2. Upsert Bronze Layer
         ------------------------------------------------------------

@@ -530,6 +530,10 @@
       "Tables": {
         "type": "string",
         "defaultValue": "(''Warehouse.StockItems'',''Warehouse.PackageTypes'',''Purchasing.PurchaseOrders'' ,''Purchasing.PurchaseOrderLines'' ,''Sales.vCustomers'',''Sales.CustomerCategories'',''Sales.Orders'' ,''Sales.OrderLines'' ,''Sales.Invoices'' ,''Sales.InvoiceLines'' ,''Sales.BuyingGroups'' ,''Sales.CustomerCategories'')"
+      },
+      "ScheduleGroupName": {
+        "type": "string",
+        "defaultValue": "Default"
       }
     },
     "variables": {

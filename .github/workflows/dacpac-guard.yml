@@ -43,18 +43,26 @@ jobs:
           BUILT     = "src/Config_Database/bin/Release/SQL_FMD_FRAMEWORK.dacpac"
           COMMITTED = "src/SQL_FMD_FRAMEWORK.SQLDatabase/SQL_FMD_FRAMEWORK.dacpac"
 
-          def model(path):
+          def deployment(path):
               # model.xml is the resolved schema. Origin.xml carries build checksums and
               # DacMetadata a version, so comparing whole files would fail on every build.
-              return zipfile.ZipFile(path).read("model.xml").decode("utf-8")
+              with zipfile.ZipFile(path) as package:
+                  return {
+                      name: package.read(name).decode("utf-8")
+                      for name in ("model.xml", "postdeploy.sql")
+                      if name in package.namelist()
+                  }
 
-          built, committed = model(BUILT), model(COMMITTED)
+          built_parts, committed_parts = deployment(BUILT), deployment(COMMITTED)
+          built, committed = built_parts["model.xml"], committed_parts["model.xml"]
 
-          if built == committed:
-              print("The committed dacpac matches the SQL sources.")
+          if built_parts == committed_parts:
+              print("The committed dacpac matches the SQL sources and post-deployment script.")
               sys.exit(0)
 
           print("::error::The committed dacpac does NOT match src/Config_Database/.")
+          if built_parts.get("postdeploy.sql") != committed_parts.get("postdeploy.sql"):
+              print("The post-deployment initialization script differs.")
           print("")
           print("The dacpac is the only thing that deploys: src/SQL_FMD_FRAMEWORK.SQLDatabase/")
           print("contains nothing else, and deploy_item imports that folder. So this change")

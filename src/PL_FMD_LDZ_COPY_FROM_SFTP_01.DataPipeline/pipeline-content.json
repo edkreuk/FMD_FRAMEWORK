@@ -134,7 +134,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='SFTP_01' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
+              "value": "SELECT *  FROM [execution].[vw_LoadSourceToLandingzone]  where DataSourceType='SFTP_01' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}' AND ScheduleGroupName=N'@{replace(pipeline().parameters.ScheduleGroupName, '''', '''''')}'",
               "type": "Expression"
             },
             "queryTimeout": "02:00:00",
@@ -1203,6 +1203,10 @@
       "Data_WorkspaceGuid": {
         "type": "string",
         "defaultValue": ""
+      },
+      "ScheduleGroupName": {
+        "type": "string",
+        "defaultValue": "Default"
       }
     },
     "libraryVariables": {

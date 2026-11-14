@@ -32,6 +32,10 @@
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -67,6 +71,10 @@
                             },
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
                               "type": "Expression"
                             }
                           },
@@ -104,6 +112,10 @@
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -139,6 +151,10 @@
                             },
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
                               "type": "Expression"
                             }
                           },
@@ -176,6 +192,10 @@
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -211,6 +231,10 @@
                             },
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
                               "type": "Expression"
                             }
                           },
@@ -248,6 +272,10 @@
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -284,6 +312,10 @@
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
                               "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
+                              "type": "Expression"
                             }
                           },
                           "waitOnCompletion": true,
@@ -319,6 +351,10 @@
                             },
                             "Data_WorkspaceGuid": {
                               "value": "@pipeline().parameters.Data_WorkspaceGuid",
+                              "type": "Expression"
+                            },
+                            "ScheduleGroupName": {
+                              "value": "@pipeline().parameters.ScheduleGroupName",
                               "type": "Expression"
                             }
                           },
@@ -606,7 +642,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT distinct     [ConnectionType] FROM [execution].[vw_LoadSourceToLandingzone] where  WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}'",
+              "value": "SELECT distinct     [ConnectionType] FROM [execution].[vw_LoadSourceToLandingzone] where  WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}' AND ScheduleGroupName=N'@{replace(pipeline().parameters.ScheduleGroupName, '''', '''''')}'",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -775,6 +811,10 @@
       "Data_WorkspaceGuid": {
         "type": "string",
         "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      },
+      "ScheduleGroupName": {
+        "type": "string",
+        "defaultValue": "Default"
       }
     },
     "libraryVariables": {

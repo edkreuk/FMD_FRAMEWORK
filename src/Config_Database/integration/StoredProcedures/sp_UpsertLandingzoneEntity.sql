@@ -17,6 +17,10 @@ WITH EXECUTE AS CALLER
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+    BEGIN TRANSACTION;
 
     DECLARE @OutputTable TABLE (LandingzoneEntityId INT);
 
@@ -70,7 +74,20 @@ BEGIN
         WHERE [LandingzoneEntityId] = @LandingzoneEntityId;
     END
 
+    DECLARE @ScheduleLandingzoneEntityId BIGINT = (SELECT LandingzoneEntityId FROM @OutputTable);
+    EXECUTE [integration].[sp_InitializeDefaultScheduleGroup]
+        @LandingzoneEntityId = @ScheduleLandingzoneEntityId;
+
+    COMMIT TRANSACTION;
+
     SELECT LandingzoneEntityId FROM @OutputTable;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        THROW;
+    END CATCH;
 END
 
 GO

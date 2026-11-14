@@ -245,6 +245,10 @@
                   "Data_WorkspaceGuid": {
                     "value": "@pipeline().parameters.Data_WorkspaceGuid",
                     "type": "Expression"
+                  },
+                  "ScheduleGroupName": {
+                    "value": "@pipeline().parameters.ScheduleGroupName",
+                    "type": "Expression"
                   }
                 },
                 "waitOnCompletion": true,
@@ -283,7 +287,7 @@
           "source": {
             "type": "FabricSqlDatabaseSource",
             "sqlReaderQuery": {
-              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='NOTEBOOK' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}' group by DatasourceType",
+              "value": "SELECT  DatasourceType  FROM [execution].[vw_LoadSourceToLandingzone]  where ConnectionType='NOTEBOOK' and WorkspaceGuid='@{pipeline().parameters.Data_WorkspaceGuid}' AND ScheduleGroupName=N'@{replace(pipeline().parameters.ScheduleGroupName, '''', '''''')}'  group by DatasourceType",
               "type": "Expression"
             },
             "partitionOption": "None",
@@ -467,6 +471,10 @@
     "parameters": {
       "Data_WorkspaceGuid": {
         "type": "string"
+      },
+      "ScheduleGroupName": {
+        "type": "string",
+        "defaultValue": "Default"
       }
     },
     "libraryVariables": {

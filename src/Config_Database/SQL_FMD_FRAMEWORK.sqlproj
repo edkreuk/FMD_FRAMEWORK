@@ -16,6 +16,8 @@
   </ItemGroup>
   <ItemGroup>
     <Build Remove=".sharedqueries\**" />
+    <Build Remove="scripts\PostDeployment.sql" />
+    <PostDeploy Include="scripts\PostDeployment.sql" />
   </ItemGroup>
   <Target Name="BeforeBuild">
     <Delete Files="$(BaseIntermediateOutputPath)\project.assets.json" />

@@ -64,6 +64,14 @@ To get started:
 5. Import the taskflow and configure your workspaces as recommended.
 6. Refer to **[wiki](https://github.com/edkreuk/FMD_FRAMEWORK/wiki)** for data model, pipelines, and logging.
 
+### Pipeline schedule group parameter
+
+All Fabric data pipelines except `PL_FMD_LOAD_BRONZE` and `PL_FMD_LOAD_SILVER` accept the optional string parameter `ScheduleGroupName` (default: `Default`). Set it when starting a pipeline; its value is forwarded unchanged to each invoked Fabric pipeline, except Bronze and Silver. It is not forwarded to external Azure Data Factory pipelines.
+
+Landing-zone lookups filter entities by this group using `execution.vw_LoadSourceToLandingzone`. Groups are stored in `integration.ScheduleGroup`; `integration.ScheduleGroupEntity` links groups to landing-zone entities. An entity can belong to multiple groups, but appears only once per group. Manage groups with `integration.sp_UpsertScheduleGroup` and memberships with `integration.sp_UpsertScheduleGroupEntity`. Schedules themselves are still configured in Fabric.
+
+Deployment automatically runs `integration.sp_InitializeDefaultScheduleGroup` to create `Default` and add all existing entities to it without removing custom memberships. An insert trigger assigns every new landing-zone entity to `Default` in the same transaction, including direct SQL inserts and multi-row inserts. Both landing-zone entity registration procedures also maintain default membership. See the [upgrade instructions](./FMD_FRAMEWORK_DEPLOYMENT.md#schedule-group-upgrades) for existing deployments.
+
 ## Business Domain Deployment
 A modular extension of the Fabric Metadata‑Driven Framework (FMD) designed to simplify, standardize, and automate deployment of Business Domains within Microsoft Fabric. 
 Review the **[Business Domain Deployment Framework Deployment Guide](./FMD_BUSINESS_DOMAIN_DEPLOYMENT.md)**.

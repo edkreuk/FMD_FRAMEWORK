@@ -31,6 +31,10 @@
       "Data_WorkspaceGuid": {
         "type": "string",
         "defaultValue": "40e27fdc-775a-4ee2-84d5-48893c92d7cc"
+      },
+      "ScheduleGroupName": {
+        "type": "string",
+        "defaultValue": "Default"
       }
     },
     "libraryVariables": {
