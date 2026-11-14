@@ -5,7 +5,7 @@
       "name": "key_vault_uri_name",
       "note": "",
       "type": "String",
-      "value": "ncceuwvaultoxgn01"
+      "value": "xxxxx"
     },
     {
       "name": "lakehouse_schema_enabled",
@@ -17,7 +17,7 @@
       "name": "purview_account_name",
       "note": "",
       "type": "String",
-      "value": "ededeunpview01"
+      "value": "xxxxxxxx"
     }
   ]
 }
