@@ -594,6 +594,17 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
     workspace_id = get_workspace_id_by_name(workspace_name)
     batch_ids = {item["id"] for item in items}
     mappings = [row for row in mapping_table if row["old_id"] not in batch_ids]
+    # Pipelines reference batch items by config ID; Fabric resolves .platform logical IDs.
+    for item in items:
+        source_path = copy_to_tmp(item["name"])
+        if source_path is None:
+            raise FileNotFoundError(f"Item definition not found: {item['name']}")
+        with open(os.path.join(source_path, ".platform"), encoding="utf-8") as file:
+            source_logical_id = json.load(file)["config"]["logicalId"]
+        if source_logical_id != item["id"]:
+            mappings.append({"Description": item["name"], "environment": "config",
+                             "ItemType": item["type"], "old_id": item["id"],
+                             "new_id": source_logical_id})
     connection_list = get_existing_connections_by_id()
     definition_parts = []
     expected = {}
@@ -632,7 +643,7 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
                 relative_path = os.path.relpath(file_path, tmp_path).replace(os.sep, "/")
                 with open(file_path, "rb") as file:
                     definition_parts.append({
-                        "path": f"/{folder}/{name}/{relative_path}",
+                        "path": f"/{name}/{relative_path}",
                         "payload": base64.b64encode(file.read()).decode("ascii"),
                         "payloadType": "InlineBase64"
                     })
@@ -643,7 +654,8 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
     print(f"Bulk importing {len(items)} notebooks/pipelines into {workspace_name}")
     response = invoke_fabric_api_request(
         "post", f"workspaces/{workspace_id}/items/bulkImportDefinitions", payload)
-    response.raise_for_status()
+    if response.status_code >= 400:
+        raise RuntimeError(f"Bulk import failed with HTTP {response.status_code}: {response.text}")
     if response.status_code == 202:
         operation_id = response.headers.get("x-ms-operation-id")
         if not operation_id:

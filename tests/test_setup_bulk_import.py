@@ -97,7 +97,7 @@ class SetupBulkImport(unittest.TestCase):
                  for part in payload["definitionParts"]}
         for item in self.items:
             folder = "Notebooks" if item["type"] == "Notebook" else "DataPipelines"
-            prefix = f"/{folder}/{item['name']}/"
+            prefix = f"/{item['name']}/"
             platform = json.loads(parts[prefix + ".platform"])
             self.assertEqual(platform["config"]["logicalId"], self.logical_id(item))
             self.assertEqual(platform["metadata"]["type"], item["type"])
