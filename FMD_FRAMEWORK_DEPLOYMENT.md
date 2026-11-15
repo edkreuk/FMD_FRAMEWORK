@@ -261,6 +261,19 @@ folder_prefix = ""
 
 Execute the **notebook** to apply your configuration and deploy the framework.
 
+`NB_SETUP_FMD` imports notebooks and data pipelines together using Fabric's
+[bulk import API](https://learn.microsoft.com/en-us/rest/api/fabric/core/items/bulk-import-item-definitions),
+with one request per code workspace instead of per-item imports. Environments and
+variable libraries are deployed first. Connection and environment-specific GUIDs are
+replaced before submission, and activities using unavailable connections remain inactive.
+Pipeline definitions retain the all-zero current-workspace marker and reference
+batch items by their source logical IDs so Fabric can resolve dependencies within
+the batch. Definitions include their descriptions and folder paths: notebooks go
+into `Notebooks` and pipelines into `DataPipelines`, within the same bulk request.
+Name pairing is enabled to update existing items. Setup waits for completion and
+stops on failed or partially imported items before updating the mapping table.
+Each batch must fit the API's 128 MB limit.
+
 ### Schedule group upgrades
 
 Redeploy the framework database and pipelines together using `NB_SETUP_FMD.ipynb`. The updated DACPAC creates `integration.ScheduleGroup` and `integration.ScheduleGroupEntity`, updates `execution.vw_LoadSourceToLandingzone`, and runs this initialization automatically after schema deployment:
