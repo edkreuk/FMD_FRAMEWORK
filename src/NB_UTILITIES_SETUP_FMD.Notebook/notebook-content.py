@@ -613,7 +613,6 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
         item_type = item["type"]
         if item_type not in ("Notebook", "DataPipeline"):
             raise ValueError(f"Bulk import does not support {item_type}: {name}")
-        folder = "Notebooks" if item_type == "Notebook" else "DataPipelines"
         tmp_path = copy_to_tmp(name)
         if tmp_path is None:
             raise FileNotFoundError(f"Item definition not found: {name}")
@@ -624,7 +623,14 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
         if not logical_id or logical_id in expected:
             raise ValueError(f"Missing or duplicate logical ID for {name}: {logical_id}")
         expected[logical_id] = item
-        replace_ids_in_folder(tmp_path, mappings, environment_name)
+        item_mappings = mappings
+        if item_type == "DataPipeline":
+            # The Git definition uses this marker to resolve same-workspace logical IDs.
+            item_mappings = [
+                row for row in mappings
+                if row["old_id"] != "00000000-0000-0000-0000-000000000000"
+            ]
+        replace_ids_in_folder(tmp_path, item_mappings, environment_name)
         if item_type == "DataPipeline":
             replace_ids_and_mark_inactive(tmp_path, [], environment_name, connection_list)
         # Keep source logical identities; Fabric resolves references between batch items.

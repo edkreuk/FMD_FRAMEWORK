@@ -17,6 +17,7 @@ class Response:
     def __init__(self, status_code, body, headers=None):
         self.status_code = status_code
         self.body = body
+        self.text = json.dumps(body)
         self.headers = headers or {}
 
     def raise_for_status(self):
@@ -85,7 +86,7 @@ class SetupBulkImport(unittest.TestCase):
         self.namespace["deploy_items_bulk"](
             "CODE", self.items, self.mappings, "dev", self.tasks)
 
-    def test_real_definitions_imported_once_with_folders_and_logical_identities(self):
+    def test_real_definitions_imported_once_with_logical_dependencies(self):
         self.namespace["invoke_fabric_api_request"].return_value = Response(200, self.result())
         self.deploy()
         api = self.namespace["invoke_fabric_api_request"]
@@ -93,10 +94,28 @@ class SetupBulkImport(unittest.TestCase):
         method, path, payload = api.call_args.args
         self.assertEqual((method, path),
                          ("post", "workspaces/target-workspace/items/bulkImportDefinitions"))
+        self.assertTrue(payload["options"]["allowPairingByName"])
         parts = {part["path"]: base64.b64decode(part["payload"]).decode("utf-8")
                  for part in payload["definitionParts"]}
+        batch_logical_ids = {self.logical_id(item) for item in self.items}
+        references = []
+
+        def check_dependencies(value):
+            if isinstance(value, dict):
+                for key in ("pipelineId", "notebookId"):
+                    dependency = value.get(key)
+                    if isinstance(dependency, str) and not dependency.startswith("@"):
+                        self.assertIn(dependency, batch_logical_ids)
+                        self.assertEqual(value["workspaceId"],
+                                         "00000000-0000-0000-0000-000000000000")
+                        references.append(dependency)
+                for child in value.values():
+                    check_dependencies(child)
+            elif isinstance(value, list):
+                for child in value:
+                    check_dependencies(child)
+
         for item in self.items:
-            folder = "Notebooks" if item["type"] == "Notebook" else "DataPipelines"
             prefix = f"/{item['name']}/"
             platform = json.loads(parts[prefix + ".platform"])
             self.assertEqual(platform["config"]["logicalId"], self.logical_id(item))
@@ -104,6 +123,9 @@ class SetupBulkImport(unittest.TestCase):
             self.assertTrue(platform["metadata"].get("description"))
             content = "notebook-content.py" if item["type"] == "Notebook" else "pipeline-content.json"
             self.assertIn(prefix + content, parts)
+            if item["type"] == "DataPipeline":
+                check_dependencies(json.loads(parts[prefix + content]))
+        self.assertTrue(references)
         self.assertEqual(len(self.mappings), len(self.items) + 2)
         self.assertEqual(self.tasks[0]["status"], "success")
         self.namespace["get_existing_connections_by_id"].assert_called_once()
@@ -138,7 +160,8 @@ class SetupBulkImport(unittest.TestCase):
         part = next(part for part in payload["definitionParts"]
                     if part["path"].endswith("pipeline-content.json"))
         content = json.loads(base64.b64decode(part["payload"]))
-        self.assertEqual(content["properties"]["workspaceId"], "target-workspace")
+        self.assertEqual(content["properties"]["workspaceId"],
+                         "00000000-0000-0000-0000-000000000000")
         mapped, missing, dynamic = content["properties"]["activities"]
         self.assertEqual(mapped["externalReferences"]["connection"], "target-connection")
         self.assertNotIn("state", mapped)
@@ -146,6 +169,16 @@ class SetupBulkImport(unittest.TestCase):
                          ("Inactive", "Succeeded"))
         self.assertNotIn("state", dynamic)
         self.assertEqual(self.mappings[-1]["new_id"], "target-0")
+
+    def test_http_failure_preserves_fabric_dependency_details(self):
+        body = {"errorCode": "DependenciesCouldNotBeResolved", "requestId": "request-id",
+                "moreDetails": [{"message": "Missing dependency for PL_FMD_LOAD_ALL"}]}
+        self.namespace["invoke_fabric_api_request"].return_value = Response(400, body)
+        with self.assertRaisesRegex(RuntimeError, "DependenciesCouldNotBeResolved") as error:
+            self.deploy()
+        self.assertIn("request-id", str(error.exception))
+        self.assertIn("PL_FMD_LOAD_ALL", str(error.exception))
+        self.assertEqual(self.tasks, [])
 
     def test_async_import_polls_and_fetches_result_without_resubmitting(self):
         self.namespace["invoke_fabric_api_request"].side_effect = [
