@@ -268,10 +268,11 @@ variable libraries are deployed first. Connection and environment-specific GUIDs
 replaced before submission, and activities using unavailable connections remain inactive.
 Pipeline definitions retain the all-zero current-workspace marker and reference
 batch items by their source logical IDs so Fabric can resolve dependencies within
-the batch. Definitions include their descriptions and are imported at the workspace
-root. Name pairing is enabled to update existing items. Setup waits for completion
-and stops on failed or partially imported
-items before updating the mapping table. Each batch must fit the API's 128 MB limit.
+the batch. Definitions include their descriptions and folder paths: notebooks go
+into `Notebooks` and pipelines into `DataPipelines`, within the same bulk request.
+Name pairing is enabled to update existing items. Setup waits for completion and
+stops on failed or partially imported items before updating the mapping table.
+Each batch must fit the API's 128 MB limit.
 
 ### Schedule group upgrades
 

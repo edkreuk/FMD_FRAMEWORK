@@ -86,7 +86,7 @@ class SetupBulkImport(unittest.TestCase):
         self.namespace["deploy_items_bulk"](
             "CODE", self.items, self.mappings, "dev", self.tasks)
 
-    def test_real_definitions_imported_once_with_logical_dependencies(self):
+    def test_real_definitions_imported_once_with_folders_and_logical_dependencies(self):
         self.namespace["invoke_fabric_api_request"].return_value = Response(200, self.result())
         self.deploy()
         api = self.namespace["invoke_fabric_api_request"]
@@ -116,7 +116,12 @@ class SetupBulkImport(unittest.TestCase):
                     check_dependencies(child)
 
         for item in self.items:
-            prefix = f"/{item['name']}/"
+            folder = "Notebooks" if item["type"] == "Notebook" else "DataPipelines"
+            prefix = f"/{folder}/{item['name']}/"
+            item_parts = [part for part in payload["definitionParts"]
+                          if f"/{item['name']}/" in part["path"]]
+            self.assertTrue(item_parts)
+            self.assertTrue(all(part["path"].startswith(prefix) for part in item_parts))
             platform = json.loads(parts[prefix + ".platform"])
             self.assertEqual(platform["config"]["logicalId"], self.logical_id(item))
             self.assertEqual(platform["metadata"]["type"], item["type"])

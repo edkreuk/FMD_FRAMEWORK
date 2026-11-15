@@ -613,6 +613,7 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
         item_type = item["type"]
         if item_type not in ("Notebook", "DataPipeline"):
             raise ValueError(f"Bulk import does not support {item_type}: {name}")
+        folder = "Notebooks" if item_type == "Notebook" else "DataPipelines"
         tmp_path = copy_to_tmp(name)
         if tmp_path is None:
             raise FileNotFoundError(f"Item definition not found: {name}")
@@ -649,7 +650,7 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
                 relative_path = os.path.relpath(file_path, tmp_path).replace(os.sep, "/")
                 with open(file_path, "rb") as file:
                     definition_parts.append({
-                        "path": f"/{name}/{relative_path}",
+                        "path": f"/{folder}/{name}/{relative_path}",
                         "payload": base64.b64encode(file.read()).decode("ascii"),
                         "payloadType": "InlineBase64"
                     })
