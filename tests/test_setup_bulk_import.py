@@ -38,6 +38,7 @@ class SetupBulkImport(unittest.TestCase):
             "get_workspace_id_by_name": Mock(return_value="target-workspace"),
             "get_existing_connections_by_id": Mock(return_value=["target-connection"]),
             "invoke_fabric_api_request": Mock(),
+            "get_existing_workspace_items": Mock(return_value={}),
             "copy_to_tmp": self.copy_item, "print": Mock(),
         }
         names = {
@@ -134,6 +135,35 @@ class SetupBulkImport(unittest.TestCase):
         self.assertEqual(len(self.mappings), len(self.items) + 2)
         self.assertEqual(self.tasks[0]["status"], "success")
         self.namespace["get_existing_connections_by_id"].assert_called_once()
+
+    def test_existing_items_are_updated_in_place_and_only_new_ones_bulk_imported(self):
+        notebooks = [item for item in self.items if item["type"] == "Notebook"]
+        existing = {}
+        for index, item in enumerate(notebooks):
+            platform = json.loads((ROOT / "src" / item["name"] / ".platform").read_text())
+            existing[(item["type"], platform["metadata"]["displayName"].lower())] = f"existing-{index}"
+        self.namespace["get_existing_workspace_items"].return_value = existing
+        new_items = [item for item in self.items if item["type"] != "Notebook"]
+        self.items_all, self.items = self.items, new_items
+        result = self.result()
+        self.items = self.items_all
+        api = self.namespace["invoke_fabric_api_request"]
+        api.side_effect = [Response(200, result)] + [Response(200, {})] * len(notebooks)
+        self.deploy()
+        calls = api.call_args_list
+        self.assertEqual(calls[0].args[1], "workspaces/target-workspace/items/bulkImportDefinitions")
+        bulk_paths = [part["path"] for part in calls[0].args[2]["definitionParts"]]
+        self.assertFalse(any(path.startswith("/Notebooks/") for path in bulk_paths))
+        self.assertEqual([call.args[1] for call in calls[1:]], [
+            f"workspaces/target-workspace/items/existing-{i}/updateDefinition"
+            for i in range(len(notebooks))])
+        for call in calls[1:]:
+            paths = [part["path"] for part in call.args[2]["definition"]["parts"]]
+            self.assertIn("notebook-content.py", paths)
+            self.assertIn(".platform", paths)
+        updated = {row["new_id"] for row in self.mappings if row["ItemType"] == "Notebook"}
+        self.assertEqual(updated, {f"existing-{i}" for i in range(len(notebooks))})
+        self.assertEqual(self.tasks[0]["status"], "success")
 
     def test_connections_replaced_and_unknown_connections_inactive_before_post(self):
         self.items = [{"name": "TEST.DataPipeline", "id": "source-item", "type": "DataPipeline"}]

@@ -586,29 +586,54 @@ def deploy_workspaces(domain_name,workspace, workspace_name, environment_name, o
 # -------------------------------
 # Item deployment
 # -------------------------------
+def get_existing_workspace_items(workspace_id):
+    """Return {(type, lower-case display name): item id} for notebooks and pipelines."""
+    existing = {}
+    for item_type in ("Notebook", "DataPipeline"):
+        path = f"workspaces/{workspace_id}/items?type={item_type}"
+        while path:
+            response = invoke_fabric_api_request("get", path)
+            response.raise_for_status()
+            body = response.json()
+            for entry in body.get("value", []):
+                existing[(item_type, entry["displayName"].strip().lower())] = entry["id"]
+            token = body.get("continuationToken")
+            path = (f"workspaces/{workspace_id}/items?type={item_type}"
+                    f"&continuationToken={requests.utils.quote(token)}") if token else None
+    return existing
+
 def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, tasks):
-    """Import notebooks and pipelines together so Fabric resolves batch dependencies."""
+    """Import new notebooks/pipelines in one batch and update the ones that already exist in place."""
     if not items:
         return
     start = time()
     workspace_id = get_workspace_id_by_name(workspace_name)
     batch_ids = {item["id"] for item in items}
     mappings = [row for row in mapping_table if row["old_id"] not in batch_ids]
+    existing_items = get_existing_workspace_items(workspace_id)
+    existing = {}
     # Pipelines reference batch items by config ID; Fabric resolves .platform logical IDs.
     for item in items:
         source_path = copy_to_tmp(item["name"])
         if source_path is None:
             raise FileNotFoundError(f"Item definition not found: {item['name']}")
         with open(os.path.join(source_path, ".platform"), encoding="utf-8") as file:
-            source_logical_id = json.load(file)["config"]["logicalId"]
-        if source_logical_id != item["id"]:
-            mappings.append({"Description": item["name"], "environment": "config",
-                             "ItemType": item["type"], "old_id": item["id"],
-                             "new_id": source_logical_id})
+            platform = json.load(file)
+        source_logical_id = platform["config"]["logicalId"]
+        # Bulk import cannot overwrite an item that already exists, so those are updated in place.
+        existing_id = existing_items.get((item["type"], platform["metadata"]["displayName"].strip().lower()))
+        if existing_id:
+            existing[item["id"]] = existing_id
+        for source_id in {item["id"], source_logical_id}:
+            if existing_id or source_id != item["id"]:
+                mappings.append({"Description": item["name"], "environment": "config",
+                                 "ItemType": item["type"], "old_id": source_id,
+                                 "new_id": existing_id or source_logical_id})
     connection_list = get_existing_connections_by_id()
-    definition_parts = []
-    expected = {}
-    for item in items:
+    new_items = [item for item in items if item["id"] not in existing]
+    existing_items_to_update = [item for item in items if item["id"] in existing]
+
+    def prepare_item(item, item_mappings_all, bulk):
         name = item["name"]
         item_type = item["type"]
         if item_type not in ("Notebook", "DataPipeline"):
@@ -621,14 +646,11 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
         with open(platform_path, encoding="utf-8") as file:
             platform = json.load(file)
         logical_id = platform["config"]["logicalId"]
-        if not logical_id or logical_id in expected:
-            raise ValueError(f"Missing or duplicate logical ID for {name}: {logical_id}")
-        expected[logical_id] = item
-        item_mappings = mappings
-        if item_type == "DataPipeline":
+        item_mappings = item_mappings_all
+        if bulk and item_type == "DataPipeline":
             # The Git definition uses this marker to resolve same-workspace logical IDs.
             item_mappings = [
-                row for row in mappings
+                row for row in item_mappings_all
                 if row["old_id"] != "00000000-0000-0000-0000-000000000000"
             ]
         replace_ids_in_folder(tmp_path, item_mappings, environment_name)
@@ -644,62 +666,94 @@ def deploy_items_bulk(workspace_name, items, mapping_table, environment_name, ta
             "documentation at https://github.com/edkreuk/FMD_FRAMEWORK.")
         with open(platform_path, "w", encoding="utf-8") as file:
             json.dump(platform, file)
+        parts = []
         for root, _, files in os.walk(tmp_path):
             for file_name in sorted(files):
                 file_path = os.path.join(root, file_name)
                 relative_path = os.path.relpath(file_path, tmp_path).replace(os.sep, "/")
                 with open(file_path, "rb") as file:
-                    definition_parts.append({
-                        "path": f"/{folder}/{name}/{relative_path}",
+                    parts.append({
+                        "path": f"/{folder}/{name}/{relative_path}" if bulk else relative_path,
                         "payload": base64.b64encode(file.read()).decode("ascii"),
                         "payloadType": "InlineBase64"
                     })
+        return logical_id, parts
 
-    payload = {"definitionParts": definition_parts, "options": {"allowPairingByName": True}}
-    if len(json.dumps(payload).encode("utf-8")) > 128 * 1024 * 1024:
-        raise ValueError("Bulk import payload exceeds the Fabric 128 MB limit")
-    print(f"Bulk importing {len(items)} notebooks/pipelines into {workspace_name}")
-    response = invoke_fabric_api_request(
-        "post", f"workspaces/{workspace_id}/items/bulkImportDefinitions", payload)
-    if response.status_code >= 400:
-        raise RuntimeError(f"Bulk import failed with HTTP {response.status_code}: {response.text}")
-    if response.status_code == 202:
-        operation_id = response.headers.get("x-ms-operation-id")
-        if not operation_id:
-            raise RuntimeError("Bulk import response is missing x-ms-operation-id")
-        deadline = time() + 1800
-        while True:
-            delay = int(response.headers.get("Retry-After", "10"))
-            if time() + delay >= deadline:
-                raise TimeoutError(f"Bulk import timed out; operation {operation_id}")
-            sleep(max(1, delay))
-            response = invoke_fabric_api_request("get", f"operations/{operation_id}")
-            response.raise_for_status()
-            state = response.json()
-            if state.get("status") == "Succeeded":
-                response = invoke_fabric_api_request("get", f"operations/{operation_id}/result")
+    def wait_for_operation(response, label):
+        if response.status_code >= 400:
+            raise RuntimeError(f"{label} failed with HTTP {response.status_code}: {response.text}")
+        if response.status_code == 202:
+            operation_id = response.headers.get("x-ms-operation-id")
+            if not operation_id:
+                raise RuntimeError(f"{label} response is missing x-ms-operation-id")
+            deadline = time() + 1800
+            while True:
+                delay = int(response.headers.get("Retry-After", "10"))
+                if time() + delay >= deadline:
+                    raise TimeoutError(f"{label} timed out; operation {operation_id}")
+                sleep(max(1, delay))
+                response = invoke_fabric_api_request("get", f"operations/{operation_id}")
                 response.raise_for_status()
-                break
-            if state.get("status") not in ("NotStarted", "Running"):
-                raise RuntimeError(f"Bulk import operation {operation_id} failed: {state}")
-    elif response.status_code != 200:
-        raise RuntimeError(f"Unexpected bulk import HTTP status: {response.status_code}")
+                state = response.json()
+                if state.get("status") == "Succeeded":
+                    response = invoke_fabric_api_request("get", f"operations/{operation_id}/result")
+                    response.raise_for_status()
+                    break
+                if state.get("status") not in ("NotStarted", "Running"):
+                    raise RuntimeError(f"{label} operation {operation_id} failed: {state}")
+        elif response.status_code != 200:
+            raise RuntimeError(f"Unexpected {label} HTTP status: {response.status_code}")
+        return response
 
-    details = response.json().get("importItemDefinitionsDetails", [])
-    imported = {detail["itemLogicalId"]: detail for detail in details}
-    failures = [
-        item["name"] for logical_id, item in expected.items()
-        if logical_id not in imported
-        or imported[logical_id].get("operationStatus") != "Succeeded"
-        or not imported[logical_id].get("itemId")
-    ]
-    if failures:
-        raise RuntimeError(f"Bulk import failed or returned no result for {failures}: {details}")
-    for logical_id, item in expected.items():
+    if new_items:
+        definition_parts = []
+        expected = {}
+        for item in new_items:
+            logical_id, parts = prepare_item(item, mappings, True)
+            if not logical_id or logical_id in expected:
+                raise ValueError(f"Missing or duplicate logical ID for {item['name']}: {logical_id}")
+            expected[logical_id] = item
+            definition_parts.extend(parts)
+
+        payload = {"definitionParts": definition_parts, "options": {"allowPairingByName": True}}
+        if len(json.dumps(payload).encode("utf-8")) > 128 * 1024 * 1024:
+            raise ValueError("Bulk import payload exceeds the Fabric 128 MB limit")
+        print(f"Bulk importing {len(new_items)} notebooks/pipelines into {workspace_name}")
+        response = wait_for_operation(invoke_fabric_api_request(
+            "post", f"workspaces/{workspace_id}/items/bulkImportDefinitions", payload), "Bulk import")
+
+        details = response.json().get("importItemDefinitionsDetails", [])
+        imported = {detail["itemLogicalId"]: detail for detail in details}
+        failures = [
+            item["name"] for logical_id, item in expected.items()
+            if logical_id not in imported
+            or imported[logical_id].get("operationStatus") != "Succeeded"
+            or not imported[logical_id].get("itemId")
+        ]
+        if failures:
+            raise RuntimeError(f"Bulk import failed or returned no result for {failures}: {details}")
+        for logical_id, item in expected.items():
+            upsert_mapping(mapping_table, {
+                "Description": item["name"], "environment": environment_name,
+                "ItemType": item["type"], "old_id": item["id"],
+                "new_id": imported[logical_id]["itemId"]
+            })
+            # Items updated below may reference the newly imported ones.
+            for source_id in {item["id"], logical_id}:
+                mappings.append({"Description": item["name"], "environment": "config",
+                                 "ItemType": item["type"], "old_id": source_id,
+                                 "new_id": imported[logical_id]["itemId"]})
+
+    for item in existing_items_to_update:
+        print(f"Updating existing {item['type']} {item['name']} in {workspace_name}")
+        _, parts = prepare_item(item, mappings, False)
+        wait_for_operation(invoke_fabric_api_request(
+            "post", f"workspaces/{workspace_id}/items/{existing[item['id']]}/updateDefinition",
+            {"definition": {"parts": parts}}), f"Update of {item['name']}")
         upsert_mapping(mapping_table, {
             "Description": item["name"], "environment": environment_name,
             "ItemType": item["type"], "old_id": item["id"],
-            "new_id": imported[logical_id]["itemId"]
+            "new_id": existing[item["id"]]
         })
     tasks.append({
         "task_name": f"Bulk import item definitions {workspace_name}",
