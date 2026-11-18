@@ -473,11 +473,15 @@ def assign_workspace_environment(workspace_name, environment_name):
     Assigns Environment to workspace
     """
     try:
-        run_fab_command(
+        # fab prints a warning to stderr on success, so only the exit code is checked.
+        result = run_fab_command(
             f"set {workspace_name}.workspace -q sparkSettings.environment.name -i {environment_name} -f",
             capture_output=True,
-            silently_continue=False,
+            silently_continue=True,
+            raw_output=True,
         )
+        if result.returncode != 0:
+            raise Exception(f"exit_code {result.returncode}: {result.stderr or result.stdout}")
         print(f"✅ Environment assigned to workspace '{workspace_name}'")
     except Exception as e:
         print(f"❌ Environment assignment failed: {e}")
